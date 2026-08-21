@@ -67,7 +67,7 @@ add_action(
 				'olr-product-record',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'20260820.2'
+				'20260820.3'
 			);
 		}
 	},
@@ -98,6 +98,150 @@ add_filter(
 	10,
 	1
 );
+
+if ( ! function_exists( 'olr_render_product_record' ) ) {
+	/**
+	 * Render a contained product record without relying on the active theme's
+	 * singular-product columns. WooCommerce still owns product data, variations,
+	 * inventory, validation, and cart behavior.
+	 *
+	 * @param WC_Product $product WooCommerce product instance.
+	 * @return string
+	 */
+	function olr_render_product_record( $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return '';
+		}
+
+		$product_id   = $product->get_id();
+		$product_post = get_post( $product_id );
+		if ( ! $product_post instanceof WP_Post ) {
+			return '';
+		}
+
+		$record_page_id  = get_queried_object_id();
+		$record_page_url = $record_page_id ? get_permalink( $record_page_id ) : home_url( '/research-item/' );
+		$record_url      = add_query_arg( 'product_id', $product_id, $record_page_url );
+		$previous_post   = isset( $GLOBALS['post'] ) ? $GLOBALS['post'] : null;
+		$previous_product = isset( $GLOBALS['product'] ) ? $GLOBALS['product'] : null;
+
+		$GLOBALS['post']    = $product_post;
+		$GLOBALS['product'] = $product;
+		setup_postdata( $product_post );
+
+		$image_html = $product->get_image(
+			'woocommerce_single',
+			array(
+				'class'    => 'olr-product-view__image',
+				'loading'  => 'eager',
+				'decoding' => 'async',
+			)
+		);
+
+		$short_description = trim( (string) $product->get_short_description() );
+		$description       = trim( (string) $product->get_description() );
+		$sku               = trim( (string) $product->get_sku() );
+		$categories        = wc_get_product_category_list( $product_id, ', ' );
+		$price_html        = $product->get_price_html();
+
+		$form_action_filter = static function () use ( $record_url ) {
+			return $record_url;
+		};
+		add_filter( 'woocommerce_add_to_cart_form_action', $form_action_filter, 999 );
+		ob_start();
+		if ( function_exists( 'woocommerce_template_single_add_to_cart' ) ) {
+			woocommerce_template_single_add_to_cart();
+		}
+		$cart_html = (string) ob_get_clean();
+		remove_filter( 'woocommerce_add_to_cart_form_action', $form_action_filter, 999 );
+
+		ob_start();
+		if ( function_exists( 'wc_display_product_attributes' ) ) {
+			wc_display_product_attributes( $product );
+		}
+		$attributes_html = (string) ob_get_clean();
+
+		$related_products = array();
+		if ( function_exists( 'wc_get_related_products' ) ) {
+			foreach ( wc_get_related_products( $product_id, 4, array( $product_id ) ) as $related_id ) {
+				$related_product = wc_get_product( $related_id );
+				if ( $related_product && $related_product->is_visible() ) {
+					$related_products[] = $related_product;
+				}
+			}
+		}
+
+		if ( $previous_post instanceof WP_Post ) {
+			$GLOBALS['post'] = $previous_post;
+			setup_postdata( $previous_post );
+		} else {
+			unset( $GLOBALS['post'] );
+		}
+
+		if ( $previous_product instanceof WC_Product ) {
+			$GLOBALS['product'] = $previous_product;
+		} else {
+			unset( $GLOBALS['product'] );
+		}
+
+		ob_start();
+		?>
+		<article class="olr-product-view" aria-labelledby="olr-product-title-<?php echo esc_attr( (string) $product_id ); ?>">
+			<figure class="olr-product-view__media">
+				<?php echo wp_kses_post( $image_html ); ?>
+			</figure>
+
+			<div class="olr-product-view__summary">
+				<p class="olr-label">Off Label Research / Product record</p>
+				<h1 id="olr-product-title-<?php echo esc_attr( (string) $product_id ); ?>"><?php echo esc_html( $product->get_name() ); ?></h1>
+				<?php if ( '' !== $price_html ) : ?>
+					<div class="olr-product-view__price"><?php echo wp_kses_post( $price_html ); ?></div>
+				<?php endif; ?>
+				<?php if ( '' !== $short_description ) : ?>
+					<div class="olr-product-view__intro"><?php echo wp_kses_post( wc_format_content( $short_description ) ); ?></div>
+				<?php endif; ?>
+				<div class="olr-product-view__purchase"><?php echo $cart_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+				<dl class="olr-product-view__meta">
+					<div><dt>SKU</dt><dd><?php echo esc_html( '' !== $sku ? $sku : 'N/A' ); ?></dd></div>
+					<div><dt>Category</dt><dd><?php echo '' !== $categories ? wp_kses_post( $categories ) : esc_html__( 'Uncategorized', 'offlabel-research' ); ?></dd></div>
+				</dl>
+			</div>
+		</article>
+
+		<div class="olr-product-information">
+			<?php if ( '' !== $description ) : ?>
+				<section class="olr-product-information__section" aria-labelledby="olr-product-description-<?php echo esc_attr( (string) $product_id ); ?>">
+					<h2 id="olr-product-description-<?php echo esc_attr( (string) $product_id ); ?>">Description</h2>
+					<div class="olr-product-information__copy"><?php echo wp_kses_post( wc_format_content( $description ) ); ?></div>
+				</section>
+			<?php endif; ?>
+
+			<?php if ( '' !== trim( $attributes_html ) ) : ?>
+				<section class="olr-product-information__section" aria-labelledby="olr-product-specifications-<?php echo esc_attr( (string) $product_id ); ?>">
+					<h2 id="olr-product-specifications-<?php echo esc_attr( (string) $product_id ); ?>">Specifications</h2>
+					<div class="olr-product-information__attributes"><?php echo wp_kses_post( $attributes_html ); ?></div>
+				</section>
+			<?php endif; ?>
+		</div>
+
+		<?php if ( ! empty( $related_products ) ) : ?>
+			<section class="olr-product-related" aria-labelledby="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">
+				<h2 id="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">Related research</h2>
+				<div class="olr-product-related__grid">
+					<?php foreach ( $related_products as $related_product ) : ?>
+						<a class="olr-product-related__item" href="<?php echo esc_url( $related_product->get_permalink() ); ?>">
+							<span class="olr-product-related__media"><?php echo wp_kses_post( $related_product->get_image( 'woocommerce_thumbnail' ) ); ?></span>
+							<strong><?php echo esc_html( $related_product->get_name() ); ?></strong>
+							<span><?php echo wp_kses_post( $related_product->get_price_html() ); ?></span>
+						</a>
+					<?php endforeach; ?>
+				</div>
+			</section>
+		<?php endif; ?>
+		<?php
+		return '<div class="olr-live-product woocommerce" data-product-id="' . esc_attr( (string) $product_id ) . '">' . (string) ob_get_clean() . '</div>';
+	}
+}
 
 add_action(
 	'init',
@@ -133,7 +277,7 @@ add_action(
 						return '<div class="olr-product-state"><p class="olr-label">Product record</p><h1>' . esc_html__( 'Select a research product.', 'offlabel-research' ) . '</h1><p>' . esc_html__( 'Return to the catalog and choose a product to review its current record.', 'offlabel-research' ) . '</p><a class="olr-button" href="' . esc_url( home_url( '/shop/' ) ) . '">' . esc_html__( 'View all research', 'offlabel-research' ) . '</a></div>';
 					}
 
-					return '<div class="olr-live-product" data-product-id="' . esc_attr( (string) $product_id ) . '">' . do_shortcode( '[product_page id="' . $product_id . '"]' ) . '</div>';
+					return olr_render_product_record( $product );
 				}
 			);
 		}

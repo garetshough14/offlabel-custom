@@ -88,7 +88,7 @@ Create a WordPress page named **Research Item** with the slug `research-item`. U
 [divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/product.html" branch="main" format="html" updated_meta="false"]
 ```
 
-The bridge leaves every existing WooCommerce product URL, shop card, and singular product page untouched. During testing, visit `/research-item/?product_id=123` and replace `123` with a published WooCommerce product ID. The `[olr_product_page]` shortcode then renders WooCommerce's native `[product_page]` output only inside that isolated test page.
+The bridge leaves every existing WooCommerce product URL, shop card, and singular product page untouched. During testing, visit `/research-item/?product_id=123` and replace `123` with a published WooCommerce product ID. The `[olr_product_page]` shortcode renders a contained Off Label product record from live WooCommerce data and native add-to-cart templates only inside that isolated test page.
 
 The updated `gitpress/woocommerce-bridge.php` must be active on WordPress (Code Snippets: **Run snippet everywhere**, or require it from the child theme). If `[olr_product_page]` appears as visible text, WordPress is still running an older or inactive copy of the bridge. The bridge includes a late nested-shortcode pass and directly loads the product stylesheet as a safety net; choose **GitPress Managed** for the page to also receive the shared Off Label header and footer. Purge the GitPress, page, and CDN caches after replacing the bridge.
 
