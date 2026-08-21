@@ -82,6 +82,8 @@ For every page listed below, edit the existing WordPress page, paste the matchin
 
 The page body contains `[olr_research_catalog]`. The bridge renders the catalog from published WooCommerce products, including live images, names, prices, category counts, stock status, ordering, and pagination. Catalog cards point to the isolated `/research-item/?product_id=...` product-record page. Replace the active WordPress copy of `gitpress/woocommerce-bridge.php` whenever this catalog shortcode changes.
 
+For isolated catalog testing, create a page named **Research Catalog Test** with the slug `research-catalog-test`, use the same GitPress shortcode, and choose **GitPress Managed**. The bridge loads the catalog stylesheet on that test slug as well as the production Research and Shop routes.
+
 ### Single product
 
 Create a WordPress page named **Research Item** with the slug `research-item`. Use this GitPress shortcode and choose **GitPress Managed** as the render mode:
