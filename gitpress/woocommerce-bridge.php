@@ -5,7 +5,7 @@
  * Child theme: require this file from functions.php.
  * Code Snippets: paste everything below the opening PHP tag and run everywhere.
  * It allowlists the approved WooCommerce tags, registers read-only presentation
- * helpers, routes catalog links, and loads page-specific frontend interactions. It never
+ * helpers and loads page-specific frontend interactions. It never
  * modifies gateways, orders, prices, carts, checkout data, products, or post
  * content.
  */
@@ -20,7 +20,7 @@ add_action(
 		if ( is_front_page() ) {
 			wp_enqueue_script(
 				'olr-compliance-gate',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-newsite@main/scripts/olr-compliance-gate.js',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-compliance-gate.js',
 				array(),
 				'1.1.0',
 				true
@@ -30,7 +30,7 @@ add_action(
 		if ( is_page( 'faq' ) ) {
 			wp_enqueue_script(
 				'olr-faq',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-newsite@main/scripts/olr-faq.js',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-faq.js',
 				array(),
 				'1.0.0',
 				true
@@ -40,7 +40,7 @@ add_action(
 		if ( is_page( 'coas' ) || is_page( 'testing' ) ) {
 			wp_enqueue_script(
 				'olr-coa',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-newsite@main/scripts/olr-coa.js',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-coa.js',
 				array(),
 				'1.0.0',
 				true
@@ -238,7 +238,7 @@ add_action(
 						$image_url     = isset( $item['product_image_url'] ) ? esc_url_raw( (string) $item['product_image_url'], array( 'http', 'https' ) ) : '';
 						$category      = isset( $item['category'] ) ? sanitize_key( (string) $item['category'] ) : '';
 						$search_name   = strtolower( $product_name );
-						$asset_base    = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-newsite@main/images/products/';
+						$asset_base    = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/products/';
 
 						if ( ! in_array( $category, array( 'peptides', 'glp', 'other' ), true ) ) {
 							$category = false !== strpos( $search_name, 'tz-2' ) ? 'glp' : ( false !== strpos( $search_name, 'ipamorelin' ) || false !== strpos( $search_name, 'sermorelin' ) ? 'peptides' : 'other' );
@@ -305,49 +305,6 @@ add_action(
 			);
 		}
 	}
-);
-
-add_filter(
-	'woocommerce_loop_product_link',
-	static function ( $url, $product ) {
-		if ( ! $product instanceof WC_Product ) {
-			return $url;
-		}
-
-		$page = get_page_by_path( 'research-item', OBJECT, 'page' );
-		if ( ! $page instanceof WP_Post || 'publish' !== $page->post_status ) {
-			return $url;
-		}
-
-		$detail_url = (string) apply_filters(
-			'olr_product_detail_page_url',
-			get_permalink( $page ),
-			$product
-		);
-
-		return add_query_arg( 'product_id', $product->get_id(), $detail_url );
-	},
-	10,
-	2
-);
-
-add_filter(
-	'woocommerce_loop_add_to_cart_link',
-	static function ( $html, $product ) {
-		if ( ! $product instanceof WC_Product ) {
-			return $html;
-		}
-
-		$native_url = $product->get_permalink();
-		$detail_url = (string) apply_filters( 'woocommerce_loop_product_link', $native_url, $product );
-		if ( $native_url === $detail_url ) {
-			return $html;
-		}
-
-		return '<a class="button olr-view-product" href="' . esc_url( $detail_url ) . '">' . esc_html__( 'View research', 'offlabel-research' ) . '</a>';
-	},
-	10,
-	2
 );
 
 /*

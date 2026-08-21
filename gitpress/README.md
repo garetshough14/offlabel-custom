@@ -51,13 +51,13 @@ Install and activate GitPress 1.2.5. Open **WordPress Admin > GitPress** and kee
 Use this value for **GitPress Managed Header Shortcode**:
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/partials/header.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/partials/header.html" branch="main" format="html" updated_meta="false"]
 ```
 
 Use this value for **GitPress Managed Footer Shortcode**:
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/partials/footer.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/partials/footer.html" branch="main" format="html" updated_meta="false"]
 ```
 
 For every page listed below, edit the existing WordPress page, paste the matching shortcode into its **GitPress Shortcode** metabox, and choose **GitPress Managed** as the render mode.
@@ -65,19 +65,19 @@ For every page listed below, edit the existing WordPress page, paste the matchin
 ### Home
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/home.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/home.html" branch="main" format="html" updated_meta="false"]
 ```
 
 ### About
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/about.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/about.html" branch="main" format="html" updated_meta="false"]
 ```
 
 ### Research shop
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/research.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/research.html" branch="main" format="html" updated_meta="false"]
 ```
 
 ### Single product
@@ -85,47 +85,47 @@ For every page listed below, edit the existing WordPress page, paste the matchin
 Create a WordPress page named **Research Item** with the slug `research-item`. Use this GitPress shortcode and choose **GitPress Managed** as the render mode:
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/product.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/product.html" branch="main" format="html" updated_meta="false"]
 ```
 
-The WooCommerce bridge automatically routes catalog product-title, product-image, and card-action links to this page with the selected product ID. The `[olr_product_page]` shortcode then renders WooCommerce's native `[product_page]` output for that product. To test a product directly, visit `/research-item/?product_id=123` and replace `123` with a published WooCommerce product ID.
+The bridge leaves every existing WooCommerce product URL, shop card, and singular product page untouched. During testing, visit `/research-item/?product_id=123` and replace `123` with a published WooCommerce product ID. The `[olr_product_page]` shortcode then renders WooCommerce's native `[product_page]` output only inside that isolated test page.
 
 The updated `gitpress/woocommerce-bridge.php` must be active on WordPress (Code Snippets: **Run snippet everywhere**, or require it from the child theme). If `[olr_product_page]` appears as visible text, WordPress is still running an older or inactive copy of the bridge. The bridge includes a late nested-shortcode pass and directly loads the product stylesheet as a safety net; choose **GitPress Managed** for the page to also receive the shared Off Label header and footer. Purge the GitPress, page, and CDN caches after replacing the bridge.
 
 ### Testing and COAs
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/testing.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/testing.html" branch="main" format="html" updated_meta="false"]
 ```
 
 ### Journal
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/journal.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/journal.html" branch="main" format="html" updated_meta="false"]
 ```
 
 ### FAQ
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/faq.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/faq.html" branch="main" format="html" updated_meta="false"]
 ```
 
 ### Cart
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/cart.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/cart.html" branch="main" format="html" updated_meta="false"]
 ```
 
 ### Checkout
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/checkout.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/checkout.html" branch="main" format="html" updated_meta="false"]
 ```
 
 ### My Account
 
 ```text
-[divi_github_content owner="garetshough14" repo="offlabel-newsite" path="gitpress/pages/account.html" branch="main" format="html" updated_meta="false"]
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/account.html" branch="main" format="html" updated_meta="false"]
 ```
 
 GitPress Managed renders the global header, the selected page body, and the global footer as one server-rendered document.
@@ -134,7 +134,7 @@ GitPress Managed renders the global header, the selected page body, and the glob
 
 Install `gitpress/woocommerce-bridge.php` through Code Snippets, a child theme, or `mu-plugins`.
 
-The bridge allowlists the WooCommerce and Off Label Research shortcodes used by these page fragments, including products, single-product output, categories, cart, checkout, account, journal, document archive, and cart count output. It also routes catalog product links to the managed Research Item page and loads page-specific frontend interactions. It does not add, remove, or configure payment gateways. WooCommerce remains responsible for products, prices, inventory, customers, carts, checkout, orders, shipping, taxes, and the site's existing payment methods.
+The bridge allowlists the WooCommerce and Off Label Research shortcodes used by these page fragments, including products, isolated single-product test output, categories, cart, checkout, account, journal, document archive, and cart count output. It does not alter native product links or singular product pages, and it does not add, remove, or configure payment gateways. WooCommerce remains responsible for products, prices, inventory, customers, carts, checkout, orders, shipping, taxes, and the site's existing payment methods.
 
 ## Styling behavior
 
@@ -169,7 +169,7 @@ GitPress does not load the root preview files. WordPress only loads the files na
 WordPress page URLs cannot resolve relative repository asset paths correctly. Production fragments therefore use absolute jsDelivr URLs under:
 
 ```text
-https://cdn.jsdelivr.net/gh/garetshough14/offlabel-newsite@main/
+https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/
 ```
 
 The GitHub repository must remain public for these browser-loaded assets. A GitPress token only authenticates the server-side HTML request. It does not give visitors access to images in a private repository.
