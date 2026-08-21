@@ -90,6 +90,8 @@ Create a WordPress page named **Research Item** with the slug `research-item`. U
 
 The WooCommerce bridge automatically routes catalog product-title, product-image, and card-action links to this page with the selected product ID. The `[olr_product_page]` shortcode then renders WooCommerce's native `[product_page]` output for that product. To test a product directly, visit `/research-item/?product_id=123` and replace `123` with a published WooCommerce product ID.
 
+The updated `gitpress/woocommerce-bridge.php` must be active on WordPress (Code Snippets: **Run snippet everywhere**, or require it from the child theme). If `[olr_product_page]` appears as visible text, WordPress is still running an older or inactive copy of the bridge. The bridge includes a late nested-shortcode pass and directly loads the product stylesheet as a safety net; choose **GitPress Managed** for the page to also receive the shared Off Label header and footer. Purge the GitPress, page, and CDN caches after replacing the bridge.
+
 ### Testing and COAs
 
 ```text

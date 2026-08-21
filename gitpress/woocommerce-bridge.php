@@ -46,6 +46,21 @@ add_action(
 				true
 			);
 		}
+
+		/*
+		 * Keep the dynamic product record styled even when the WordPress page is
+		 * accidentally left in the theme's default render mode. GitPress Managed
+		 * mode is still recommended because it also supplies the shared header and
+		 * footer, but the product itself must never fall back to raw browser styles.
+		 */
+		if ( is_page( 'research-item' ) ) {
+			wp_enqueue_style(
+				'olr-product-record',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
+				array(),
+				'20260820'
+			);
+		}
 	}
 );
 
@@ -333,4 +348,21 @@ add_filter(
 	},
 	10,
 	2
+);
+
+/*
+ * Some GitPress/Divi content pipelines expand the remote page shortcode after
+ * WordPress' normal do_shortcode pass. Run one deliberately late, page-scoped
+ * pass so the nested [olr_product_page] token cannot leak into the browser.
+ */
+add_filter(
+	'the_content',
+	static function ( $content ) {
+		if ( ! is_page( 'research-item' ) || false === strpos( (string) $content, '[olr_product_page' ) ) {
+			return $content;
+		}
+
+		return do_shortcode( (string) $content );
+	},
+	99
 );
