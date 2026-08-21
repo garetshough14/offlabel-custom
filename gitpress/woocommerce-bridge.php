@@ -47,6 +47,15 @@ add_action(
 			);
 		}
 
+		if ( is_page( 'research' ) || is_page( 'shop' ) || ( function_exists( 'is_shop' ) && is_shop() ) ) {
+			wp_enqueue_style(
+				'olr-research-catalog',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
+				array(),
+				'20260821.1'
+			);
+		}
+
 		/*
 		 * Keep the dynamic product record styled even when the WordPress page is
 		 * accidentally left in the theme's default render mode. GitPress Managed
@@ -88,6 +97,7 @@ add_filter(
 			'woocommerce_my_account',
 			'woocommerce_order_tracking',
 			'olr_product_page',
+			'olr_research_catalog',
 			'olr_journal',
 			'olr_document_archive',
 			'olr_cart_count',
@@ -98,6 +108,302 @@ add_filter(
 	10,
 	1
 );
+
+if ( ! function_exists( 'olr_get_research_product_url' ) ) {
+	/**
+	 * Return the scoped product-record URL used by GitPress catalog cards.
+	 *
+	 * @param WC_Product $product WooCommerce product instance.
+	 * @return string
+	 */
+	function olr_get_research_product_url( $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return home_url( '/shop/' );
+		}
+
+		return add_query_arg( 'product_id', $product->get_id(), home_url( '/research-item/' ) );
+	}
+}
+
+if ( ! function_exists( 'olr_get_catalog_product_detail' ) ) {
+	/**
+	 * Read the most useful strength or size value from a WooCommerce product.
+	 *
+	 * @param WC_Product $product WooCommerce product instance.
+	 * @return string
+	 */
+	function olr_get_catalog_product_detail( $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return '';
+		}
+
+		foreach ( array( 'pa_strength', 'strength', 'pa_dosage', 'dosage', 'pa_ml', 'ml', 'pa_size', 'size' ) as $attribute_name ) {
+			$value = trim( wp_strip_all_tags( (string) $product->get_attribute( $attribute_name ) ) );
+			if ( '' !== $value ) {
+				$parts = array_filter( array_map( 'trim', explode( ',', $value ) ) );
+				return strtoupper( (string) reset( $parts ) );
+			}
+		}
+
+		$name = wp_strip_all_tags( $product->get_name() );
+		if ( preg_match( '/\b\d+(?:\.\d+)?\s*(?:MCG|MG|ML)\b/i', $name, $matches ) ) {
+			return strtoupper( preg_replace( '/\s+/', ' ', $matches[0] ) );
+		}
+
+		return '';
+	}
+}
+
+if ( ! function_exists( 'olr_render_catalog_product_card' ) ) {
+	/**
+	 * Render one catalog card using live WooCommerce data.
+	 *
+	 * @param WC_Product $product WooCommerce product instance.
+	 * @return string
+	 */
+	function olr_render_catalog_product_card( $product ) {
+		if ( ! $product instanceof WC_Product || ! $product->is_visible() ) {
+			return '';
+		}
+
+		$product_id   = $product->get_id();
+		$product_url  = olr_get_research_product_url( $product );
+		$product_name = trim( wp_strip_all_tags( $product->get_name() ) );
+		$detail       = olr_get_catalog_product_detail( $product );
+		$terms        = get_the_terms( $product_id, 'product_cat' );
+		$category     = __( 'Research product', 'offlabel-research' );
+
+		if ( is_array( $terms ) ) {
+			foreach ( $terms as $term ) {
+				if ( 'uncategorized' !== $term->slug ) {
+					$category = $term->name;
+					break;
+				}
+			}
+		}
+
+		$badge = '';
+		if ( ! $product->is_in_stock() ) {
+			$badge = __( 'Sold out', 'offlabel-research' );
+		} elseif ( $product->is_featured() ) {
+			$badge = __( 'Featured', 'offlabel-research' );
+		} else {
+			$created = $product->get_date_created();
+			if ( $created && $created->getTimestamp() >= strtotime( '-45 days' ) ) {
+				$badge = __( 'New', 'offlabel-research' );
+			}
+		}
+
+		$image = $product->get_image(
+			'woocommerce_single',
+			array(
+				'class'    => 'olr-research-card__image',
+				'loading'  => 'lazy',
+				'decoding' => 'async',
+			)
+		);
+
+		ob_start();
+		?>
+		<article class="olr-research-card<?php echo $product->is_in_stock() ? '' : ' is-sold-out'; ?>">
+			<a class="olr-research-card__media" href="<?php echo esc_url( $product_url ); ?>">
+				<?php if ( '' !== $badge ) : ?>
+					<span class="olr-research-card__badge"><?php echo esc_html( $badge ); ?></span>
+				<?php endif; ?>
+				<?php echo wp_kses_post( $image ); ?>
+			</a>
+			<div class="olr-research-card__body">
+				<p><?php echo esc_html( strtoupper( $category ) ); ?></p>
+				<h2><a href="<?php echo esc_url( $product_url ); ?>"><?php echo esc_html( $product_name ); ?></a></h2>
+				<?php if ( '' !== $detail ) : ?>
+					<span class="olr-research-card__detail"><?php echo esc_html( $detail ); ?></span>
+				<?php endif; ?>
+				<div class="olr-research-card__price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
+			</div>
+		</article>
+		<?php
+		return (string) ob_get_clean();
+	}
+}
+
+if ( ! function_exists( 'olr_render_research_catalog' ) ) {
+	/**
+	 * Render the editorial catalog while WooCommerce remains the data source.
+	 *
+	 * @return string
+	 */
+	function olr_render_research_catalog() {
+		if ( ! function_exists( 'wc_get_products' ) ) {
+			return '<div class="olr-catalog-empty"><h2>' . esc_html__( 'Catalog unavailable', 'offlabel-research' ) . '</h2><p>' . esc_html__( 'WooCommerce must be active to display the research catalog.', 'offlabel-research' ) . '</p></div>';
+		}
+
+		$category_slug = isset( $_GET['olr_category'] ) ? sanitize_title( wp_unslash( $_GET['olr_category'] ) ) : '';
+		$sort          = isset( $_GET['olr_sort'] ) ? sanitize_key( wp_unslash( $_GET['olr_sort'] ) ) : 'menu_order';
+		$current_page  = isset( $_GET['olr_page'] ) ? max( 1, absint( wp_unslash( $_GET['olr_page'] ) ) ) : 1;
+		$sort_options  = array(
+			'menu_order' => array( 'label' => __( 'Featured', 'offlabel-research' ), 'orderby' => 'menu_order', 'order' => 'ASC' ),
+			'newest'     => array( 'label' => __( 'Newest', 'offlabel-research' ), 'orderby' => 'date', 'order' => 'DESC' ),
+			'price'      => array( 'label' => __( 'Price: low to high', 'offlabel-research' ), 'orderby' => 'price', 'order' => 'ASC' ),
+			'price-desc' => array( 'label' => __( 'Price: high to low', 'offlabel-research' ), 'orderby' => 'price', 'order' => 'DESC' ),
+		);
+
+		if ( ! isset( $sort_options[ $sort ] ) ) {
+			$sort = 'menu_order';
+		}
+
+		$query_args = array(
+			'status'     => 'publish',
+			'limit'      => 12,
+			'page'       => $current_page,
+			'paginate'   => true,
+			'visibility' => 'catalog',
+			'orderby'    => $sort_options[ $sort ]['orderby'],
+			'order'      => $sort_options[ $sort ]['order'],
+		);
+
+		if ( '' !== $category_slug ) {
+			$query_args['category'] = array( $category_slug );
+		}
+
+		$results     = wc_get_products( $query_args );
+		$products    = isset( $results->products ) && is_array( $results->products ) ? $results->products : array();
+		$total       = isset( $results->total ) ? absint( $results->total ) : count( $products );
+		$total_pages = isset( $results->max_num_pages ) ? absint( $results->max_num_pages ) : 1;
+		$terms       = get_terms(
+			array(
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => true,
+				'parent'     => 0,
+			)
+		);
+		$terms       = is_wp_error( $terms ) ? array() : $terms;
+		$base_url    = get_queried_object_id() ? get_permalink( get_queried_object_id() ) : home_url( '/shop/' );
+		$base_url    = remove_query_arg( array( 'olr_category', 'olr_sort', 'olr_page' ), $base_url );
+		$preferred   = array( 'glp' => 10, 'peptide' => 20, 'stack' => 30, 'essential' => 40, 'bundle' => 50 );
+		$pagination_base = str_replace(
+			'999999999',
+			'%#%',
+			add_query_arg(
+				array_filter(
+					array(
+						'olr_category' => $category_slug,
+						'olr_sort'     => $sort,
+						'olr_page'     => 999999999,
+					)
+				),
+				$base_url
+			)
+		);
+
+		usort(
+			$terms,
+			static function ( $left, $right ) use ( $preferred ) {
+				$left_weight  = 100;
+				$right_weight = 100;
+				foreach ( $preferred as $needle => $weight ) {
+					if ( false !== strpos( strtolower( $left->slug . ' ' . $left->name ), $needle ) ) {
+						$left_weight = $weight;
+					}
+					if ( false !== strpos( strtolower( $right->slug . ' ' . $right->name ), $needle ) ) {
+						$right_weight = $weight;
+					}
+				}
+				return $left_weight === $right_weight ? strcasecmp( $left->name, $right->name ) : $left_weight <=> $right_weight;
+			}
+		);
+
+		$terms = array_values(
+			array_filter(
+				$terms,
+				static function ( $term ) {
+					return 'uncategorized' !== $term->slug;
+				}
+			)
+		);
+
+		ob_start();
+		?>
+		<div class="olr-research-catalog" id="catalog">
+			<nav class="olr-research-tabs" aria-label="Research categories">
+				<div class="olr-research-shell olr-research-tabs__track">
+					<a class="<?php echo '' === $category_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'olr_sort', $sort, $base_url ) ); ?>">All</a>
+					<?php foreach ( array_slice( $terms, 0, 5 ) as $term ) : ?>
+						<a class="<?php echo $category_slug === $term->slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $term->slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $term->name ); ?></a>
+					<?php endforeach; ?>
+				</div>
+			</nav>
+
+			<div class="olr-research-shell olr-research-toolbar">
+				<details class="olr-research-menu">
+					<summary>Filter <span aria-hidden="true">+</span></summary>
+					<div class="olr-research-menu__panel">
+						<a class="<?php echo '' === $category_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'olr_sort', $sort, $base_url ) ); ?>">All research</a>
+						<?php foreach ( $terms as $term ) : ?>
+							<a class="<?php echo $category_slug === $term->slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $term->slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $term->name ); ?> <span><?php echo esc_html( (string) $term->count ); ?></span></a>
+						<?php endforeach; ?>
+					</div>
+				</details>
+				<p class="olr-research-count"><?php echo esc_html( sprintf( _n( '%s product', '%s products', $total, 'offlabel-research' ), number_format_i18n( $total ) ) ); ?></p>
+				<details class="olr-research-menu olr-research-menu--sort">
+					<summary>Sort by <span aria-hidden="true">⌄</span></summary>
+					<div class="olr-research-menu__panel">
+						<?php foreach ( $sort_options as $sort_key => $sort_option ) : ?>
+							<a class="<?php echo $sort === $sort_key ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array_filter( array( 'olr_category' => $category_slug, 'olr_sort' => $sort_key ) ), $base_url ) ); ?>"><?php echo esc_html( $sort_option['label'] ); ?></a>
+						<?php endforeach; ?>
+					</div>
+				</details>
+			</div>
+
+			<?php if ( empty( $products ) ) : ?>
+				<div class="olr-research-shell olr-catalog-empty"><p class="olr-label">Catalog result</p><h2>No research products found.</h2><a class="olr-button" href="<?php echo esc_url( $base_url ); ?>">View all research</a></div>
+			<?php else : ?>
+				<div class="olr-research-shell olr-research-card-grid">
+					<?php foreach ( array_slice( $products, 0, 8 ) as $product ) : ?>
+						<?php echo olr_render_catalog_product_card( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php endforeach; ?>
+				</div>
+
+				<section class="olr-research-feature" aria-labelledby="olr-research-feature-title">
+					<div class="olr-research-feature__copy">
+						<p>Featured research</p>
+						<h2 id="olr-research-feature-title">Research<br>without<br>the noise.</h2>
+						<span>We focus on quality, evidence,<br>and doing things differently.</span>
+						<a href="<?php echo esc_url( olr_get_research_product_url( $products[0] ) ); ?>">Explore <b aria-hidden="true">→</b></a>
+					</div>
+				</section>
+
+				<?php if ( count( $products ) > 8 ) : ?>
+					<div class="olr-research-shell olr-research-card-grid olr-research-card-grid--after-feature">
+						<?php foreach ( array_slice( $products, 8, 4 ) as $product ) : ?>
+							<?php echo olr_render_catalog_product_card( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+
+				<?php if ( $total_pages > 1 ) : ?>
+					<nav class="olr-research-shell olr-research-pagination" aria-label="Catalog pages">
+						<?php
+						echo wp_kses_post(
+							paginate_links(
+								array(
+									'base'      => $pagination_base,
+									'format'    => '',
+									'current'   => $current_page,
+									'total'     => $total_pages,
+									'prev_text' => '←',
+									'next_text' => '→',
+								)
+							)
+						);
+						?>
+					</nav>
+				<?php endif; ?>
+			<?php endif; ?>
+		</div>
+		<?php
+		return (string) ob_get_clean();
+	}
+}
 
 if ( ! function_exists( 'olr_render_product_record' ) ) {
 	/**
@@ -246,6 +552,15 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 add_action(
 	'init',
 	static function () {
+		if ( ! shortcode_exists( 'olr_research_catalog' ) ) {
+			add_shortcode(
+				'olr_research_catalog',
+				static function () {
+					return olr_render_research_catalog();
+				}
+			);
+		}
+
 		if ( ! shortcode_exists( 'olr_product_page' ) ) {
 			add_shortcode(
 				'olr_product_page',
@@ -464,12 +779,15 @@ add_action(
 /*
  * Some GitPress/Divi content pipelines expand the remote page shortcode after
  * WordPress' normal do_shortcode pass. Run one deliberately late, page-scoped
- * pass so the nested [olr_product_page] token cannot leak into the browser.
+ * pass so the nested catalog and product tokens cannot leak into the browser.
  */
 add_filter(
 	'the_content',
 	static function ( $content ) {
-		if ( ! is_page( 'research-item' ) || false === strpos( (string) $content, '[olr_product_page' ) ) {
+		$has_product_token = false !== strpos( (string) $content, '[olr_product_page' );
+		$has_catalog_token = false !== strpos( (string) $content, '[olr_research_catalog' );
+
+		if ( ! $has_product_token && ! $has_catalog_token ) {
 			return $content;
 		}
 
