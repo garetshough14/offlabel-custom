@@ -54,14 +54,24 @@ add_action(
 		 * footer, but the product itself must never fall back to raw browser styles.
 		 */
 		if ( is_page( 'research-item' ) ) {
+			/* WooCommerce does not treat a shortcode-only page as is_product(). */
+			foreach ( array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general', 'photoswipe-default-skin' ) as $style_handle ) {
+				wp_enqueue_style( $style_handle );
+			}
+
+			foreach ( array( 'flexslider', 'zoom', 'photoswipe', 'photoswipe-ui-default', 'wc-add-to-cart', 'wc-add-to-cart-variation', 'wc-single-product' ) as $script_handle ) {
+				wp_enqueue_script( $script_handle );
+			}
+
 			wp_enqueue_style(
 				'olr-product-record',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'20260820'
+				'20260820.2'
 			);
 		}
-	}
+	},
+	20
 );
 
 add_filter(
