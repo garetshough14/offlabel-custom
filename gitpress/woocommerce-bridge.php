@@ -65,9 +65,9 @@ add_action(
 
 			wp_enqueue_style(
 				'olr-product-record',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
+				'https://raw.githubusercontent.com/garetshough14/offlabel-custom/main/styles.css',
 				array(),
-				'20260820.3'
+				'20260820.4'
 			);
 		}
 	},
@@ -195,7 +195,7 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 				<p class="olr-label">Off Label Research / Product record</p>
 				<h1 id="olr-product-title-<?php echo esc_attr( (string) $product_id ); ?>"><?php echo esc_html( $product->get_name() ); ?></h1>
 				<?php if ( '' !== $price_html ) : ?>
-					<div class="olr-product-view__price"><?php echo wp_kses_post( $price_html ); ?></div>
+					<div class="olr-product-view__price"><span>Current price</span><strong><?php echo wp_kses_post( $price_html ); ?></strong></div>
 				<?php endif; ?>
 				<?php if ( '' !== $short_description ) : ?>
 					<div class="olr-product-view__intro"><?php echo wp_kses_post( wc_format_content( $short_description ) ); ?></div>
