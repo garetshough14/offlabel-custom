@@ -65,9 +65,9 @@ add_action(
 
 			wp_enqueue_style(
 				'olr-product-record',
-				'https://raw.githubusercontent.com/garetshough14/offlabel-custom/main/styles.css',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@3f8384ed42b997e3112c68a8a6706132a7c387c0/styles.css',
 				array(),
-				'20260820.4'
+				'3f8384e'
 			);
 		}
 	},
