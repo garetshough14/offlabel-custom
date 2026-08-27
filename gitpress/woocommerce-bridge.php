@@ -117,6 +117,7 @@ add_filter(
 			'olr_document_archive',
 			'olr_coa_search_controls',
 			'olr_coa_page',
+			'olr_checkout_test',
 			'olr_cart_count',
 		);
 
@@ -895,8 +896,9 @@ add_filter(
 		$has_product_token = false !== strpos( (string) $content, '[olr_product_page' );
 		$has_catalog_token = false !== strpos( (string) $content, '[olr_research_catalog' );
 		$has_coa_token     = false !== strpos( (string) $content, '[olr_coa_page' );
+		$has_checkout_test_token = false !== strpos( (string) $content, '[olr_checkout_test' );
 
-		if ( ! $has_product_token && ! $has_catalog_token && ! $has_coa_token ) {
+		if ( ! $has_product_token && ! $has_catalog_token && ! $has_coa_token && ! $has_checkout_test_token ) {
 			return $content;
 		}
 
