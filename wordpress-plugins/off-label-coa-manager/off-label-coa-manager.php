@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.0' );
+define( 'OLR_COA_VERSION', '1.0.1' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -207,7 +207,10 @@ final class OLR_COA_Manager {
 	}
 
 	private function record_url( $product ) {
-		return home_url( user_trailingslashit( 'coas/' . $product->get_slug() ) );
+		$page_id  = absint( get_option( self::PAGE_OPTION ) );
+		$page_url = $page_id ? get_permalink( $page_id ) : home_url( '/receipt/' );
+
+		return add_query_arg( 'product_id', $product->get_id(), $page_url );
 	}
 
 	private function display_date( $date ) {
@@ -218,6 +221,9 @@ final class OLR_COA_Manager {
 	public function shortcode( $attributes ) {
 		$attributes = shortcode_atts( array( 'product_id' => 0 ), (array) $attributes, 'olr_coa_page' );
 		$product_id = absint( $attributes['product_id'] );
+		if ( ! $product_id && isset( $_GET['product_id'] ) ) {
+			$product_id = absint( wp_unslash( $_GET['product_id'] ) );
+		}
 		$slug = sanitize_title( (string) get_query_var( 'olr_coa_product' ) );
 		if ( ! $product_id && $slug ) { $product_post = get_page_by_path( $slug, OBJECT, 'product' ); $product_id = $product_post ? $product_post->ID : 0; }
 		$product = $product_id && function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : false;

@@ -23,7 +23,8 @@ Drafts and entries without a valid product, ISO-format date, and PDF cannot appe
 ## Public routes
 
 - `/coas/` — existing searchable Testing archive.
-- `/coas/{product-slug}/` — current report and testing history.
-- `/receipt/?product_id=123` via `[olr_coa_page product_id="123"]` — diagnostic fallback.
+- `/receipt/?product_id=123` — canonical current report and testing history link used by the archive.
+- `/coas/{product-slug}/` — optional pretty route when WordPress rewrite rules are available.
+- `[olr_coa_page product_id="123"]` — explicit diagnostic shortcode interface.
 
 The interactive PDF viewer uses a pinned PDF.js release from jsDelivr and always exposes direct open/download links if the viewer cannot load.
