@@ -37,7 +37,7 @@ add_action(
 			);
 		}
 
-		if ( is_page( 'coas' ) || is_page( 'testing' ) ) {
+		if ( is_page( 'testing' ) ) {
 			wp_enqueue_style(
 				'olr-coa-archive',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',

@@ -20,12 +20,12 @@ Go to **COA Reports → Add COA Report**, select a WooCommerce product, enter th
 
 Drafts and entries without a valid product, ISO-format date, and PDF cannot appear publicly. The Testing archive receives its rows automatically through `olr_document_archive_items`.
 
-## Public routes
+## Testing and live-page behavior
 
-- `/coas/` — existing searchable Testing archive.
-- `/coas/{product-slug}/` — canonical current report and testing-history link used by the archive.
-- `/coa/{product-slug}/` — supported singular alias.
-- `/receipt/?product_id=123` — direct diagnostic fallback that bypasses pretty routing.
+- `/testing/` — staging archive powered by the plugin.
+- `/coas/` — original live COA archive; the plugin does not intercept or restyle it.
+- `/coas/{product-slug}/` — original published WordPress child page, such as `/coas/glow/`. Staging archive links resolve this existing page.
+- `/receipt/?product_id=123` — isolated diagnostic page for previewing the generated singular design; it is not linked from the staging archive.
 - `[olr_coa_page product_id="123"]` — explicit diagnostic shortcode interface.
 
 The interactive PDF viewer uses a pinned PDF.js release from jsDelivr and always exposes direct open/download links if the viewer cannot load.
