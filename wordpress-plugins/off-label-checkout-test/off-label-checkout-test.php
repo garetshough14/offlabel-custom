@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Checkout Test
  * Description: Isolated, branded WooCommerce checkout preview at /checkout-test/ with active store gateways and a non-charging test option.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Off Label Research
  * Text Domain: off-label-checkout-test
  * Requires Plugins: woocommerce
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_CHECKOUT_TEST_VERSION', '1.0.2' );
+define( 'OLR_CHECKOUT_TEST_VERSION', '1.0.3' );
 define( 'OLR_CHECKOUT_TEST_FILE', __FILE__ );
 
 register_activation_hook(

@@ -10,6 +10,30 @@ body.olr-checkout-test-page {
   margin: 0;
   background: var(--olr-checkout-paper);
   color: var(--olr-checkout-ink);
+  overflow-x: clip;
+}
+
+/*
+ * Divi's default page template reserves a left content column and a sidebar,
+ * even when the page body itself is supplied by GitPress. Remove those page
+ * constraints on the isolated test route before sizing the checkout canvas.
+ */
+body.olr-checkout-test-page #main-content > .container,
+body.olr-checkout-test-page #main-content .container,
+body.olr-checkout-test-page #left-area,
+body.olr-checkout-test-page article.page,
+body.olr-checkout-test-page article.page > .entry-content {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  float: none !important;
+}
+
+body.olr-checkout-test-page #sidebar,
+body.olr-checkout-test-page #main-content .container::before {
+  display: none !important;
 }
 
 body.olr-checkout-test-page .olr-gitpress-site[data-olr-page="checkout-test"],
@@ -49,6 +73,12 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
 }
 
 .olr-checkout-test {
+  position: relative;
+  left: 50%;
+  width: 100vw !important;
+  max-width: none !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
   min-height: 100vh;
   background: var(--olr-checkout-paper);
   color: var(--olr-checkout-ink);
