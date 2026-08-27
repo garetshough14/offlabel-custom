@@ -76,14 +76,14 @@ add_action(
 				'olr-product-record',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles-product.css',
 				array(),
-				'20260827.1'
+				'20260827.2'
 			);
 
 			wp_enqueue_script(
 				'olr-product-detail',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-product-detail.js',
 				array( 'jquery' ),
-				'1.0.0',
+				'1.0.1',
 				true
 			);
 		}
@@ -568,7 +568,7 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 				<div class="olr-product-related__head"><h2 id="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">Recently researched</h2><a href="/shop/">View all →</a></div>
 				<div class="olr-product-related__grid">
 					<?php foreach ( $related_products as $related_product ) : ?>
-						<a class="olr-product-related__item" href="<?php echo esc_url( $related_product->get_permalink() ); ?>">
+						<a class="olr-product-related__item" href="<?php echo esc_url( olr_get_research_product_url( $related_product ) ); ?>">
 							<span class="olr-product-related__media"><?php echo wp_kses_post( $related_product->get_image( 'woocommerce_thumbnail' ) ); ?></span>
 							<strong><?php echo esc_html( $related_product->get_name() ); ?></strong>
 							<span><?php echo wp_kses_post( $related_product->get_price_html() ); ?></span>

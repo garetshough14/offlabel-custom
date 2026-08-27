@@ -70,8 +70,15 @@
     else if (notice) notice.before(purchase);
   }
 
+  function initAccordions(root) {
+    root.querySelectorAll('details').forEach(function (details) {
+      details.open = false;
+    });
+  }
+
   document.querySelectorAll('[data-olr-gallery]').forEach(initGallery);
   document.querySelectorAll('.olr-product-view__purchase form.cart').forEach(initVariationChips);
   document.querySelectorAll('.olr-product-view').forEach(initQuantity);
   document.querySelectorAll('.olr-product-view').forEach(placePurchaseLast);
+  document.querySelectorAll('.olr-product-information--accordion').forEach(initAccordions);
 }());
