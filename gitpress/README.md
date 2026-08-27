@@ -40,7 +40,7 @@ gitpress/
     footer.html
 ```
 
-`styles.css` is the one canonical stylesheet. `gitpress/partials/header.template.html` is the editable header source. The build script copies the canonical CSS into that template and writes the deployable `gitpress/partials/header.html`.
+`styles.css` is the canonical shared stylesheet. `styles-product.css` is a small, late-loaded critical layer for the isolated WooCommerce product page so Divi and WooCommerce aggregation cannot override its layout. `gitpress/partials/header.template.html` is the editable header source. The build script copies the canonical shared CSS into that template and writes the deployable `gitpress/partials/header.html`.
 
 Do not edit the embedded CSS in `header.html` directly. Edit `styles.css`, then rebuild the header.
 
@@ -182,7 +182,7 @@ If the repository becomes private, move the public assets to the WordPress Media
 
 ## Build and publish
 
-1. Edit the appropriate file in `gitpress/pages/`, `gitpress/partials/`, `styles.css`, `branding/`, or `images/`.
+1. Edit the appropriate file in `gitpress/pages/`, `gitpress/partials/`, `styles.css`, `styles-product.css`, `branding/`, or `images/`.
 2. If `styles.css` or the header template changed, run `gitpress/build-inline-header.ps1`.
 3. Confirm `gitpress/partials/header.html` contains the current CSS and no `/*__OLR_INLINE_CSS__*/` placeholder.
 4. Commit and push the page bodies, partials, stylesheet, bridge, and required assets to the public `main` branch.

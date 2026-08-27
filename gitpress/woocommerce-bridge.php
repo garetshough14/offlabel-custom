@@ -74,9 +74,9 @@ add_action(
 
 			wp_enqueue_style(
 				'olr-product-record',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles-product.css',
 				array(),
-				'20260826.1'
+				'20260827.1'
 			);
 
 			wp_enqueue_script(
