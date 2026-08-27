@@ -74,9 +74,17 @@ add_action(
 
 			wp_enqueue_style(
 				'olr-product-record',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@3f8384ed42b997e3112c68a8a6706132a7c387c0/styles.css',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'3f8384e'
+				'20260826.1'
+			);
+
+			wp_enqueue_script(
+				'olr-product-detail',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-product-detail.js',
+				array( 'jquery' ),
+				'1.0.0',
+				true
 			);
 		}
 	},
@@ -443,6 +451,7 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 				'decoding' => 'async',
 			)
 		);
+		$gallery_ids = array_values( array_filter( array_merge( array( $product->get_image_id() ), $product->get_gallery_image_ids() ) ) );
 
 		$short_description = trim( (string) $product->get_short_description() );
 		$description       = trim( (string) $product->get_description() );
@@ -493,46 +502,70 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 		ob_start();
 		?>
 		<article class="olr-product-view" aria-labelledby="olr-product-title-<?php echo esc_attr( (string) $product_id ); ?>">
-			<figure class="olr-product-view__media">
-				<?php echo wp_kses_post( $image_html ); ?>
-			</figure>
+			<div class="olr-product-view__gallery" data-olr-gallery>
+				<figure class="olr-product-view__media" data-olr-gallery-stage>
+					<?php echo wp_kses_post( $image_html ); ?>
+				</figure>
+				<?php if ( count( $gallery_ids ) > 1 ) : ?>
+					<div class="olr-product-view__thumbs" aria-label="Product gallery">
+						<?php foreach ( $gallery_ids as $index => $image_id ) : ?>
+							<button type="button" class="olr-product-view__thumb<?php echo 0 === $index ? ' is-active' : ''; ?>" data-olr-gallery-thumb data-full-src="<?php echo esc_url( wp_get_attachment_image_url( $image_id, 'woocommerce_single' ) ); ?>" aria-label="View product image <?php echo esc_attr( (string) ( $index + 1 ) ); ?>">
+								<?php echo wp_kses_post( wp_get_attachment_image( $image_id, 'woocommerce_thumbnail', false, array( 'loading' => 'lazy' ) ) ); ?>
+							</button>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+			</div>
 
 			<div class="olr-product-view__summary">
-				<p class="olr-label">Off Label Research / Product record</p>
+				<p class="olr-label">Off Label Research</p>
 				<h1 id="olr-product-title-<?php echo esc_attr( (string) $product_id ); ?>"><?php echo esc_html( $product->get_name() ); ?></h1>
+				<p class="olr-product-view__ruo">Research use only</p>
+				<div class="olr-product-view__purchase"><?php echo $cart_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 				<?php if ( '' !== $price_html ) : ?>
-					<div class="olr-product-view__price"><span>Current price</span><strong><?php echo wp_kses_post( $price_html ); ?></strong></div>
+					<div class="olr-product-view__price"><strong><?php echo wp_kses_post( $price_html ); ?></strong></div>
 				<?php endif; ?>
+				<ul class="olr-product-view__proof" aria-label="Product standards">
+					<li><span aria-hidden="true">99%</span><strong>Purity*</strong></li>
+					<li><span aria-hidden="true">△</span><strong>Third-party<br>tested</strong></li>
+					<li><span aria-hidden="true">▤</span><strong>COA<br>available</strong></li>
+				</ul>
+				<a class="olr-product-view__receipts" href="/coas/">View the receipts <span aria-hidden="true">→</span></a>
 				<?php if ( '' !== $short_description ) : ?>
 					<div class="olr-product-view__intro"><?php echo wp_kses_post( wc_format_content( $short_description ) ); ?></div>
 				<?php endif; ?>
-				<div class="olr-product-view__purchase"><?php echo $cart_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
-				<dl class="olr-product-view__meta">
-					<div><dt>SKU</dt><dd><?php echo esc_html( '' !== $sku ? $sku : 'N/A' ); ?></dd></div>
-					<div><dt>Category</dt><dd><?php echo '' !== $categories ? wp_kses_post( $categories ) : esc_html__( 'Uncategorized', 'offlabel-research' ); ?></dd></div>
-				</dl>
+				<?php if ( $product->is_purchasable() && $product->is_in_stock() ) : ?>
+					<div class="olr-volume-pricing" data-olr-volume-pricing data-unit-price="<?php echo esc_attr( wc_get_price_to_display( $product ) ); ?>">
+						<p><strong>Volume quantities</strong><span>Choose a bottle count.</span></p>
+						<div><?php foreach ( array( 1, 3, 5, 10 ) as $quantity ) : ?><button type="button" data-olr-quantity="<?php echo esc_attr( (string) $quantity ); ?>"><span><?php echo esc_html( 1 === $quantity ? '1 bottle' : $quantity . ' bottles' ); ?></span><strong><?php echo wp_kses_post( wc_price( wc_get_price_to_display( $product ) * $quantity ) ); ?></strong></button><?php endforeach; ?></div>
+					</div>
+				<?php endif; ?>
+				<div class="olr-product-view__notice"><span aria-hidden="true">i</span><p><strong>Research use only</strong>This product is intended strictly for laboratory and analytical research purposes. Not intended for human or animal consumption or use.</p></div>
 			</div>
 		</article>
 
-		<div class="olr-product-information">
+		<div class="olr-product-information olr-product-information--accordion">
 			<?php if ( '' !== $description ) : ?>
-				<section class="olr-product-information__section" aria-labelledby="olr-product-description-<?php echo esc_attr( (string) $product_id ); ?>">
-					<h2 id="olr-product-description-<?php echo esc_attr( (string) $product_id ); ?>">Description</h2>
+				<details class="olr-product-information__section">
+					<summary id="olr-product-description-<?php echo esc_attr( (string) $product_id ); ?>">Product information</summary>
 					<div class="olr-product-information__copy"><?php echo wp_kses_post( wc_format_content( $description ) ); ?></div>
-				</section>
+				</details>
 			<?php endif; ?>
 
 			<?php if ( '' !== trim( $attributes_html ) ) : ?>
-				<section class="olr-product-information__section" aria-labelledby="olr-product-specifications-<?php echo esc_attr( (string) $product_id ); ?>">
-					<h2 id="olr-product-specifications-<?php echo esc_attr( (string) $product_id ); ?>">Specifications</h2>
+				<details class="olr-product-information__section">
+					<summary id="olr-product-specifications-<?php echo esc_attr( (string) $product_id ); ?>">Testing + quality</summary>
 					<div class="olr-product-information__attributes"><?php echo wp_kses_post( $attributes_html ); ?></div>
-				</section>
+				</details>
 			<?php endif; ?>
+			<details class="olr-product-information__section"><summary>Storage + handling</summary><div class="olr-product-information__copy"><p>Store and handle according to the product label and supplied research documentation.</p></div></details>
+			<details class="olr-product-information__section"><summary>Shipping</summary><div class="olr-product-information__copy"><p>Shipping options and timing are calculated at checkout.</p></div></details>
+			<details class="olr-product-information__section"><summary>Research use</summary><div class="olr-product-information__copy"><p>For laboratory and analytical research only. Not for human or animal consumption.</p></div></details>
 		</div>
 
 		<?php if ( ! empty( $related_products ) ) : ?>
 			<section class="olr-product-related" aria-labelledby="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">
-				<h2 id="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">Related research</h2>
+				<div class="olr-product-related__head"><h2 id="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">Recently researched</h2><a href="/shop/">View all →</a></div>
 				<div class="olr-product-related__grid">
 					<?php foreach ( $related_products as $related_product ) : ?>
 						<a class="olr-product-related__item" href="<?php echo esc_url( $related_product->get_permalink() ); ?>">
