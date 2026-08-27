@@ -74,14 +74,14 @@ add_action(
 
 			wp_enqueue_style(
 				'olr-product-record',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles-product.css',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@25eca99/styles-product.css',
 				array(),
-				'20260827.3'
+				'20260827.4'
 			);
 
 			wp_enqueue_script(
 				'olr-product-detail',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-product-detail.js',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@25eca99/scripts/olr-product-detail.js',
 				array( 'jquery' ),
 				'1.1.0',
 				true
