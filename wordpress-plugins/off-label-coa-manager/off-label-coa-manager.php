@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.1' );
+define( 'OLR_COA_VERSION', '1.0.2' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -30,6 +30,7 @@ final class OLR_COA_Manager {
 
 	private function __construct() {
 		add_action( 'init', array( $this, 'register' ) );
+		add_action( 'init', array( $this, 'maybe_upgrade' ), 99 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save' ), 10, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
@@ -41,6 +42,7 @@ final class OLR_COA_Manager {
 		add_filter( 'post_row_actions', array( $this, 'row_actions' ), 10, 2 );
 		add_filter( 'olr_document_archive_items', array( $this, 'archive_items' ), 10, 2 );
 		add_filter( 'query_vars', array( $this, 'query_vars' ) );
+		add_filter( 'request', array( $this, 'route_receipt_request' ), 1 );
 		add_filter( 'redirect_canonical', array( $this, 'prevent_receipt_redirect' ), 10, 2 );
 		add_shortcode( 'olr_coa_page', array( $this, 'shortcode' ) );
 		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
@@ -92,12 +94,45 @@ final class OLR_COA_Manager {
 			)
 		);
 
-		add_rewrite_rule( '^coas/([^/]+)/?$', 'index.php?page_id=' . absint( get_option( self::PAGE_OPTION ) ) . '&olr_coa_product=$matches[1]', 'top' );
+		add_rewrite_rule( '^coa(?:s)?/([^/]+)/?$', 'index.php?page_id=' . absint( get_option( self::PAGE_OPTION ) ) . '&olr_coa_product=$matches[1]', 'top' );
+	}
+
+	public function maybe_upgrade() {
+		if ( OLR_COA_VERSION === get_option( 'olr_coa_manager_version' ) ) {
+			return;
+		}
+
+		flush_rewrite_rules( false );
+		update_option( 'olr_coa_manager_version', OLR_COA_VERSION );
 	}
 
 	public function query_vars( $vars ) {
 		$vars[] = 'olr_coa_product';
 		return $vars;
+	}
+
+	/**
+	 * Route receipt paths before WordPress can reinterpret the product slug as
+	 * an attachment, post, category, or approximate canonical match.
+	 */
+	public function route_receipt_request( $query_vars ) {
+		$request_path = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+		$home_path    = (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH );
+		$request_path = trim( preg_replace( '#^' . preg_quote( trim( $home_path, '/' ), '#' ) . '/?#', '', trim( $request_path, '/' ) ), '/' );
+
+		if ( ! preg_match( '#^coa(?:s)?/([^/]+)$#i', $request_path, $matches ) ) {
+			return $query_vars;
+		}
+
+		$page_id = absint( get_option( self::PAGE_OPTION ) );
+		if ( ! $page_id || 'publish' !== get_post_status( $page_id ) ) {
+			return $query_vars;
+		}
+
+		return array(
+			'page_id'         => $page_id,
+			'olr_coa_product' => sanitize_title( $matches[1] ),
+		);
 	}
 
 	public function prevent_receipt_redirect( $redirect, $requested ) {
@@ -207,10 +242,7 @@ final class OLR_COA_Manager {
 	}
 
 	private function record_url( $product ) {
-		$page_id  = absint( get_option( self::PAGE_OPTION ) );
-		$page_url = $page_id ? get_permalink( $page_id ) : home_url( '/receipt/' );
-
-		return add_query_arg( 'product_id', $product->get_id(), $page_url );
+		return home_url( user_trailingslashit( 'coas/' . $product->get_slug() ) );
 	}
 
 	private function display_date( $date ) {
