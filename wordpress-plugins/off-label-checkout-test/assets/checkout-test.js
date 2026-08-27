@@ -98,6 +98,7 @@
 
     stage = nextStage;
     root.setAttribute('data-olr-checkout-stage', stage);
+    updateSectionHeading();
     root.querySelectorAll('[data-olr-stage-target]').forEach(function (button) {
       var buttonStage = button.getAttribute('data-olr-stage-target');
       var buttonIndex = stages.indexOf(buttonStage);
@@ -144,6 +145,23 @@
     benefits.className = 'olr-checkout-test__benefits';
     benefits.innerHTML = '<div><strong>Fast shipping</strong><span>Orders ship quickly from our facility.</span></div><div><strong>Tracking provided</strong><span>Track your order every step of the way.</span></div><div><strong>Secure checkout</strong><span>Your information is always protected.</span></div>';
     form.querySelector('#customer_details').insertBefore(benefits, form.querySelector('.olr-checkout-navigation'));
+  }
+
+  function normalizeThirdPartyOptIns() {
+    if (!form) return;
+    form.querySelectorAll('label').forEach(function (label) {
+      var copy = label.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+      if (copy.indexOf('exclusive emails') === -1 && copy.indexOf('discounts and product information') === -1) return;
+      var row = label.closest('.form-row') || label.closest('p');
+      if (row && !row.classList.contains('olr-research-updates-field')) row.style.display = 'none';
+    });
+  }
+
+  function updateSectionHeading() {
+    if (!form) return;
+    var heading = form.querySelector('.woocommerce-billing-fields > h3');
+    if (!heading) return;
+    heading.textContent = stage === 'information' ? 'Contact' : (stage === 'shipping' ? 'Shipping address' : 'Order information');
   }
 
   function moveShippingMethods() {
@@ -212,6 +230,8 @@
     form.setAttribute('data-olr-enhanced', 'true');
     refreshNavigation();
     addBenefits();
+    normalizeThirdPartyOptIns();
+    updateSectionHeading();
     moveShippingMethods();
     addPromo();
     addSecureNotice();

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Checkout Test
  * Description: Isolated, branded WooCommerce checkout preview at /checkout-test/ with a non-charging test gateway.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Off Label Research
  * Text Domain: off-label-checkout-test
  * Requires Plugins: woocommerce
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_CHECKOUT_TEST_VERSION', '1.0.0' );
+define( 'OLR_CHECKOUT_TEST_VERSION', '1.0.1' );
 define( 'OLR_CHECKOUT_TEST_FILE', __FILE__ );
 
 register_activation_hook(
@@ -178,7 +178,7 @@ add_filter(
 			'label'    => __( 'Email me research updates and new releases', 'off-label-checkout-test' ),
 			'required' => false,
 			'class'    => array( 'form-row-wide', 'olr-research-updates-field' ),
-			'priority' => 25,
+			'priority' => 120,
 		);
 		return $fields;
 	}
