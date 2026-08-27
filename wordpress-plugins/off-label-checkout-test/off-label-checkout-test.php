@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Off Label Checkout Test
- * Description: Isolated, branded WooCommerce checkout preview at /checkout-test/ with a non-charging test gateway.
- * Version: 1.0.1
+ * Description: Isolated, branded WooCommerce checkout preview at /checkout-test/ with active store gateways and a non-charging test option.
+ * Version: 1.0.2
  * Author: Off Label Research
  * Text Domain: off-label-checkout-test
  * Requires Plugins: woocommerce
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_CHECKOUT_TEST_VERSION', '1.0.1' );
+define( 'OLR_CHECKOUT_TEST_VERSION', '1.0.2' );
 define( 'OLR_CHECKOUT_TEST_FILE', __FILE__ );
 
 register_activation_hook(
@@ -45,6 +45,14 @@ register_deactivation_hook( OLR_CHECKOUT_TEST_FILE, 'flush_rewrite_rules' );
 function olr_checkout_test_is_page() {
 	return ! is_admin() && is_page( 'checkout-test' );
 }
+
+/* Let gateway extensions enqueue the same assets they use on the real checkout. */
+add_filter(
+	'woocommerce_is_checkout',
+	static function ( $is_checkout ) {
+		return $is_checkout || olr_checkout_test_is_page();
+	}
+);
 
 add_filter(
 	'dgs_allowed_inner_shortcodes',
@@ -200,7 +208,7 @@ add_filter(
 add_action(
 	'woocommerce_checkout_create_order',
 	static function ( $order, $data ) {
-		$is_test = ! empty( $_POST['olr_checkout_test'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce validates the checkout nonce.
+		$is_test = isset( $data['payment_method'] ) && 'olr_checkout_test' === $data['payment_method'];
 		if ( ! $is_test || ! $order instanceof WC_Order ) {
 			return;
 		}
@@ -315,7 +323,8 @@ add_filter(
 			return $gateways;
 		}
 
-		return isset( $gateways['olr_checkout_test'] ) ? array( 'olr_checkout_test' => $gateways['olr_checkout_test'] ) : array();
+		/* Keep every gateway WooCommerce considers available on this checkout. */
+		return $gateways;
 	},
 	999
 );

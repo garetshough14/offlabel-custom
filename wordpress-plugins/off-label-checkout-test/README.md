@@ -1,6 +1,6 @@
 # Off Label Checkout Test
 
-An isolated WooCommerce classic-checkout preview for `/checkout-test/`. It does not replace the store's assigned Checkout page and cannot collect a real payment.
+An isolated WooCommerce classic-checkout preview for `/checkout-test/`. It does not replace the store's assigned Checkout page. It displays the store's currently available WooCommerce payment gateways plus a non-charging OLR test option.
 
 ## Install
 
@@ -11,4 +11,4 @@ An isolated WooCommerce classic-checkout preview for `/checkout-test/`. It does 
 5. Do not assign this page under **WooCommerce → Settings → Advanced → Checkout page**. Keep the existing `/checkout/` assignment.
 6. Add a product to the cart and visit `/checkout-test/` directly.
 
-The plugin adds `noindex,nofollow`, removes the page from the WordPress page sitemap, suppresses WooCommerce order emails for its test orders, prevents stock reduction, and exposes only the non-charging **OLR Test Payment** gateway.
+The plugin adds `noindex,nofollow` and removes the page from the WordPress page sitemap. Orders placed with **OLR Test Payment** suppress WooCommerce order emails and stock reduction. Any other active gateway behaves normally and may collect a real payment.
