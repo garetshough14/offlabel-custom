@@ -18,6 +18,46 @@
   color: #111 !important;
 }
 
+.olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-variation-chips {
+  display: flex !important;
+  position: relative !important;
+  width: 100% !important;
+  gap: .55rem !important;
+  margin: 1.25rem 0 1rem !important;
+  border: 1px solid #d4d0c8 !important;
+  padding: 2.35rem .75rem .75rem !important;
+}
+
+.olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-variation-chips::before {
+  content: "Strength / amount" !important;
+  position: absolute !important;
+  top: .75rem !important;
+  left: .75rem !important;
+  font-size: .65rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+}
+
+.olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-variation-chips button {
+  display: flex !important;
+  min-width: 0 !important;
+  min-height: 3rem !important;
+  flex: 1 1 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid #cbc7bf !important;
+  border-radius: 0 !important;
+  padding: .65rem .5rem !important;
+  background: transparent !important;
+  color: #111 !important;
+  font-size: .7rem !important;
+  text-transform: uppercase !important;
+}
+
+.olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-variation-chips button.is-active { border-color: #000 !important; background: #000 !important; color: #fff !important; }
+.olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-view__proof svg { display: block !important; width: 2.1rem !important; height: 2.1rem !important; overflow: visible !important; }
+
 .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-record__inner {
   width: min(100% - 2.5rem, 90rem) !important;
   max-width: 90rem !important;

@@ -83,7 +83,7 @@ add_action(
 				'olr-product-detail',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-product-detail.js',
 				array( 'jquery' ),
-				'1.0.1',
+				'1.0.2',
 				true
 			);
 		}
@@ -526,9 +526,18 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 					<div class="olr-product-view__price"><strong><?php echo wp_kses_post( $price_html ); ?></strong></div>
 				<?php endif; ?>
 				<ul class="olr-product-view__proof" aria-label="Product standards">
-					<li><span aria-hidden="true">99%</span><strong>Purity*</strong></li>
-					<li><span aria-hidden="true">△</span><strong>Third-party<br>tested</strong></li>
-					<li><span aria-hidden="true">▤</span><strong>COA<br>available</strong></li>
+					<li>
+						<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><circle cx="20" cy="20" r="15.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 2"></circle><path d="M8.5 13.5 6.5 17l3.9.7M31.5 26.5l2 3.5-3.9.7" fill="none" stroke="currentColor" stroke-width="1.2"></path><text x="20" y="23" text-anchor="middle" font-size="8" font-weight="700" fill="currentColor">99%</text></svg>
+						<strong>Purity*</strong>
+					</li>
+					<li>
+						<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M16 6h8M18 6v9L10.5 29a3 3 0 0 0 2.7 4.5h13.6a3 3 0 0 0 2.7-4.5L22 15V6" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"></path><path d="M13.5 27h13M16 23h8" fill="none" stroke="currentColor" stroke-width="1.1"></path></svg>
+						<strong>Third-party<br>tested</strong>
+					</li>
+					<li>
+						<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M12 5.5h11l6 6V34.5H12z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path><path d="M23 5.5v6h6M16 20h9M16 24h9M16 28h6" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"></path></svg>
+						<strong>COA<br>available</strong>
+					</li>
 				</ul>
 				<a class="olr-product-view__receipts" href="/coas/">View the receipts <span aria-hidden="true">→</span></a>
 				<?php if ( '' !== $short_description ) : ?>

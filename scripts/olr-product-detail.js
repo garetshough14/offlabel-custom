@@ -22,17 +22,25 @@
       if (select.options.length < 2) return;
       var chips = document.createElement('div');
       chips.className = 'olr-variation-chips';
-      chips.setAttribute('aria-label', select.closest('tr').querySelector('label')?.textContent || 'Product options');
+      var row = select.closest('tr');
+      var label = row && row.querySelector('label') ? row.querySelector('label').textContent.trim() : 'Strength / amount';
+      var unit = /mg|strength|dosage|amount/i.test(label + ' ' + select.name) ? ' MG' : '';
+      chips.setAttribute('role', 'group');
+      chips.setAttribute('aria-label', label);
       Array.from(select.options).filter(function (option) { return option.value; }).forEach(function (option) {
         var button = document.createElement('button');
         button.type = 'button';
-        button.textContent = option.textContent;
+        var optionLabel = option.textContent.trim();
+        button.textContent = unit && /^\d+(?:\.\d+)?$/.test(optionLabel) ? optionLabel + unit : optionLabel;
         button.classList.toggle('is-active', option.selected);
+        button.setAttribute('aria-pressed', option.selected ? 'true' : 'false');
+        button.disabled = option.disabled;
         button.addEventListener('click', function () {
           select.value = option.value;
           select.dispatchEvent(new Event('change', { bubbles: true }));
           chips.querySelectorAll('button').forEach(function (item) {
             item.classList.toggle('is-active', item === button);
+            item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
           });
         });
         chips.appendChild(button);
@@ -40,6 +48,10 @@
       select.hidden = true;
       select.after(chips);
       if (purchase && summary) summary.insertBefore(chips, purchase);
+      if (!select.value) {
+        var firstOption = chips.querySelector('button:not(:disabled)');
+        if (firstOption) firstOption.click();
+      }
     });
     var variationTable = form.querySelector('table.variations');
     if (variationTable && form.querySelector('.olr-variation-chips') === null) variationTable.hidden = true;
@@ -76,8 +88,18 @@
     });
   }
 
+  function syncVariationPrice(form) {
+    if (!window.jQuery) return;
+    window.jQuery(form).on('found_variation', function (_event, variation) {
+      var summary = form.closest('.olr-product-view__summary');
+      var price = summary && summary.querySelector('.olr-product-view__price strong');
+      if (price && variation && variation.price_html) price.innerHTML = variation.price_html;
+    });
+  }
+
   document.querySelectorAll('[data-olr-gallery]').forEach(initGallery);
   document.querySelectorAll('.olr-product-view__purchase form.cart').forEach(initVariationChips);
+  document.querySelectorAll('.olr-product-view__purchase form.variations_form').forEach(syncVariationPrice);
   document.querySelectorAll('.olr-product-view').forEach(initQuantity);
   document.querySelectorAll('.olr-product-view').forEach(placePurchaseLast);
   document.querySelectorAll('.olr-product-information--accordion').forEach(initAccordions);
