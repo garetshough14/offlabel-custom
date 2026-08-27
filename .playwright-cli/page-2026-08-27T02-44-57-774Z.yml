@@ -1,0 +1,127 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e12]:
+          - text: BOGO 50% Off Is Live Buy One, Get One 50% Off Free Shipping On Orders $100+ Extra 5% Off With Zelle Use Code
+          - link "BOGO50" [ref=e17] [cursor=pointer]:
+            - /url: https://offlabelresearch.com/?utm_source=site_banner&utm_medium=homepage&utm_campaign=bogo50_launch
+        - generic [ref=e19]:
+          - link "SHOP NOW" [ref=e22] [cursor=pointer]:
+            - /url: https://offlabelresearch.com/shop/
+          - link [ref=e25] [cursor=pointer]:
+            - /url: https://offlabelresearch.com/
+            - img "Off Label Research" [ref=e27]
+          - list [ref=e29]:
+            - listitem [ref=e30]:
+              - link "" [ref=e31] [cursor=pointer]:
+                - /url: https://www.facebook.com/profile.php?id=61582834451427#
+            - listitem [ref=e32]:
+              - link "" [ref=e33] [cursor=pointer]:
+                - /url: https://www.tiktok.com/@offlabelresearch
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - navigation [ref=e42]:
+              - list [ref=e43]:
+                - listitem [ref=e44]:
+                  - link "Home" [ref=e45] [cursor=pointer]:
+                    - /url: https://offlabelresearch.com/
+                - listitem [ref=e46]:
+                  - link "Shop" [ref=e47] [cursor=pointer]:
+                    - /url: https://offlabelresearch.com/shop/
+                - listitem [ref=e48]:
+                  - link "COAs" [ref=e49] [cursor=pointer]:
+                    - /url: https://offlabelresearch.com/coas/
+                - listitem [ref=e50]:
+                  - link "About" [ref=e51] [cursor=pointer]:
+                    - /url: https://offlabelresearch.com/about/
+                - listitem [ref=e52]:
+                  - link "Research 3" [ref=e53] [cursor=pointer]:
+                    - /url: https://offlabelresearch.com/research-peptides/
+                - listitem [ref=e54]:
+                  - link "Faq" [ref=e55] [cursor=pointer]:
+                    - /url: https://offlabelresearch.com/faq/
+                - listitem [ref=e56]:
+                  - link "Cart" [ref=e57] [cursor=pointer]:
+                    - /url: https://offlabelresearch.com/cart/
+            - text:  U a
+          - text: M
+        - text: 3  U a M
+    - generic [ref=e59]:
+      - article [ref=e61]:
+        - generic [ref=e71]:
+          - paragraph [ref=e72]: Research Access Only
+          - heading "Enter The Lab" [level=1] [ref=e73]
+          - paragraph [ref=e74]: Log in or create an account to access Off Label Research.
+          - generic [ref=e77]:
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - generic [ref=e81]: Username or E-mail
+                - textbox "Username or E-mail" [ref=e83]:
+                  - /placeholder: ""
+              - generic [ref=e84]:
+                - generic [ref=e85]: Password
+                - textbox "Password" [ref=e87]:
+                  - /placeholder: ""
+            - generic [ref=e88]:
+              - generic [ref=e91]:
+                - checkbox " Keep me signed in"
+                - generic [ref=e92]: 
+                - generic [ref=e94]: Keep me signed in
+              - button "Login" [ref=e96] [cursor=pointer]
+              - link "Register" [ref=e98] [cursor=pointer]:
+                - /url: https://offlabelresearch.com/register/
+            - link "Forgot your password?" [ref=e100] [cursor=pointer]:
+              - /url: https://offlabelresearch.com/password-reset/
+      - contentinfo [ref=e101]:
+        - generic [ref=e103]:
+          - link [ref=e107] [cursor=pointer]:
+            - /url: "#"
+            - img "Off Label Research" [ref=e109]
+          - heading [level=4] [ref=e116]:
+            - link "info@offlabelresearch.com" [ref=e117] [cursor=pointer]:
+              - /url: http://demo@divi.express
+          - generic [ref=e119]:
+            - generic [ref=e123]:
+              - navigation [ref=e125]:
+                - list [ref=e126]:
+                  - listitem [ref=e127]:
+                    - link "Home" [ref=e128] [cursor=pointer]:
+                      - /url: https://offlabelresearch.com/
+                  - listitem [ref=e129]:
+                    - link "Shop" [ref=e130] [cursor=pointer]:
+                      - /url: https://offlabelresearch.com/shop/
+                  - listitem [ref=e131]:
+                    - link "COAs" [ref=e132] [cursor=pointer]:
+                      - /url: https://offlabelresearch.com/coas/
+                  - listitem [ref=e133]:
+                    - link "About" [ref=e134] [cursor=pointer]:
+                      - /url: https://offlabelresearch.com/about/
+                  - listitem [ref=e135]:
+                    - link "Research 3" [ref=e136] [cursor=pointer]:
+                      - /url: https://offlabelresearch.com/research-peptides/
+                  - listitem [ref=e137]:
+                    - link "Faq" [ref=e138] [cursor=pointer]:
+                      - /url: https://offlabelresearch.com/faq/
+                  - listitem [ref=e139]:
+                    - link "Cart" [ref=e140] [cursor=pointer]:
+                      - /url: https://offlabelresearch.com/cart/
+              - text: a
+            - list [ref=e142]:
+              - listitem [ref=e143]:
+                - link "" [ref=e144] [cursor=pointer]:
+                  - /url: https://www.facebook.com/profile.php?id=61582834451427#
+              - listitem [ref=e145]:
+                - link "" [ref=e146] [cursor=pointer]:
+                  - /url: https://www.tiktok.com/@offlabelresearch
+            - paragraph [ref=e150]: Copyright © 2026 – Off Label
+          - generic [ref=e152]:
+            - paragraph [ref=e155]:
+              - link "Terms & Conditions" [ref=e156] [cursor=pointer]:
+                - /url: https://offlabelresearch.com/terms-and-conditions/
+              - text: "|"
+              - link "Privacy Policy" [ref=e157] [cursor=pointer]:
+                - /url: https://offlabelresearch.com/privacy-policy
+            - paragraph [ref=e160]: All products sold on this website are intended for research and identification purposes only. These products are not intended for human dosing, injection, or ingestion.
+  - text: 
+  - status [ref=e161]

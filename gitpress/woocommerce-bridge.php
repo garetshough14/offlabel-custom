@@ -38,11 +38,18 @@ add_action(
 		}
 
 		if ( is_page( 'coas' ) || is_page( 'testing' ) ) {
+			wp_enqueue_style(
+				'olr-coa-archive',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
+				array(),
+				'20260827.1'
+			);
+
 			wp_enqueue_script(
 				'olr-coa',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-coa.js',
 				array(),
-				'1.0.0',
+				'1.0.1',
 				true
 			);
 		}
@@ -108,6 +115,8 @@ add_filter(
 			'olr_research_catalog',
 			'olr_journal',
 			'olr_document_archive',
+			'olr_coa_search_controls',
+			'olr_coa_page',
 			'olr_cart_count',
 		);
 
@@ -783,6 +792,7 @@ add_action(
 						}
 
 						$url    = isset( $item['document_url'] ) ? esc_url_raw( (string) $item['document_url'], array( 'http', 'https' ) ) : '';
+						$record_url = isset( $item['record_url'] ) ? esc_url_raw( (string) $item['record_url'], array( 'http', 'https' ) ) : $url;
 						$scheme = strtolower( (string) wp_parse_url( $url, PHP_URL_SCHEME ) );
 						if ( '' === $url || ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
 							continue;
@@ -831,6 +841,7 @@ add_action(
 							'lot'            => isset( $item['lot'] ) ? sanitize_text_field( (string) $item['lot'] ) : '',
 							'test_date'      => isset( $item['test_date'] ) ? sanitize_text_field( (string) $item['test_date'] ) : '',
 							'document_url'   => $url,
+							'record_url'     => $record_url,
 							'document_label' => isset( $item['document_label'] ) ? sanitize_text_field( (string) $item['document_label'] ) : '',
 						);
 					}
@@ -854,10 +865,19 @@ add_action(
 						$output .= '' !== $row['product_url'] ? '<a href="' . esc_url( $row['product_url'] ) . '">' . esc_html( $row['product_name'] ) . '</a>' : esc_html( $row['product_name'] );
 						$output .= '</h3><span>' . esc_html( $strength ) . '</span></div>';
 						$output .= '<div class="olr-coa-row__status"><strong>' . esc_html__( 'Testing available', 'offlabel-research' ) . '</strong><span>' . esc_html__( 'Latest test date', 'offlabel-research' ) . '</span><time>' . esc_html( $test_date ) . '</time></div>';
-						$output .= '<a class="olr-coa-row__link" href="' . esc_url( $row['document_url'] ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $link_label ) . '</a></article>';
+						$output .= '<a class="olr-coa-row__link" href="' . esc_url( $row['record_url'] ) . '">' . esc_html( $link_label ) . '</a></article>';
 					}
 
 					return $output . '</div>';
+				}
+			);
+		}
+
+		if ( ! shortcode_exists( 'olr_coa_search_controls' ) ) {
+			add_shortcode(
+				'olr_coa_search_controls',
+				static function () {
+					return '<form class="olr-coa-search__form" role="search"><label class="screen-reader-text" for="olr-coa-search-input">' . esc_html__( 'Search by product', 'offlabel-research' ) . '</label><input id="olr-coa-search-input" type="search" placeholder="' . esc_attr__( 'Search by product', 'offlabel-research' ) . '" autocomplete="off"><button type="submit" aria-label="' . esc_attr__( 'Search COA records', 'offlabel-research' ) . '"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.75" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="m15.6 15.6 5 5" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg></button></form><nav class="olr-coa-tabs" aria-label="' . esc_attr__( 'Filter COA records', 'offlabel-research' ) . '"><button class="is-active" type="button" data-coa-filter="all" aria-pressed="true">' . esc_html__( 'All research', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="peptides" aria-pressed="false">' . esc_html__( 'Peptides', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="glp" aria-pressed="false">' . esc_html__( 'GLP', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="other" aria-pressed="false">' . esc_html__( 'Other research', 'offlabel-research' ) . '</button></nav>';
 				}
 			);
 		}
@@ -874,8 +894,9 @@ add_filter(
 	static function ( $content ) {
 		$has_product_token = false !== strpos( (string) $content, '[olr_product_page' );
 		$has_catalog_token = false !== strpos( (string) $content, '[olr_research_catalog' );
+		$has_coa_token     = false !== strpos( (string) $content, '[olr_coa_page' );
 
-		if ( ! $has_product_token && ! $has_catalog_token ) {
+		if ( ! $has_product_token && ! $has_catalog_token && ! $has_coa_token ) {
 			return $content;
 		}
 

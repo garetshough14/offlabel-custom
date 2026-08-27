@@ -102,6 +102,18 @@ The updated `gitpress/woocommerce-bridge.php` must be active on WordPress (Code 
 [divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/testing.html" branch="main" format="html" updated_meta="false"]
 ```
 
+Install and activate `wordpress-plugins/off-label-coa-manager` to manage product-linked COA records and populate this archive automatically.
+
+### Singular COA receipt
+
+Plugin activation creates a **Receipt** page. Choose **GitPress Managed** for that page and use:
+
+```text
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/receipt.html" branch="main" format="html" updated_meta="false"]
+```
+
+The public product receipt URLs use `/coas/{product-slug}/`; the newest test date is displayed as the current report and earlier records become previous testing.
+
 ### Journal
 
 ```text
