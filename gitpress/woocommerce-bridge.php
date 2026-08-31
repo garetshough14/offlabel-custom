@@ -71,7 +71,7 @@ add_action(
 				'olr-research-catalog',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'20260830.5'
+				'20260830.6'
 			);
 		}
 
@@ -373,6 +373,14 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 
 		ob_start();
 		?>
+		<style id="olr-catalog-shortcode-font-failsafe">
+		body :is(#olr-catalog-shortcode-type-system, .olr-research-catalog),
+		body :is(#olr-catalog-shortcode-type-system, .olr-research-catalog) :where(*) { font-family: Arial, Helvetica, sans-serif !important; }
+		body :is(#olr-catalog-shortcode-type-system, .olr-research-catalog) :where(*) { letter-spacing: 0 !important; }
+		body :is(#olr-catalog-shortcode-type-system, .olr-research-catalog) :where(h1, h2, h3, h4, h5, h6) { font-weight: 700 !important; letter-spacing: -.015em !important; }
+		body :is(#olr-catalog-shortcode-type-system, .olr-research-catalog) :where(button, .button, summary, nav a, label) { font-weight: 600 !important; }
+		body :is(#olr-catalog-shortcode-type-system, .olr-research-catalog) :where(.olr-label, small) { letter-spacing: .025em !important; }
+		</style>
 		<div class="olr-research-catalog" id="catalog">
 			<nav class="olr-research-tabs" aria-label="Research categories">
 				<div class="olr-research-shell olr-research-tabs__track">
