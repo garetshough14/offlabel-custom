@@ -4486,6 +4486,11 @@ body {
 
 /* 37. Research catalog editorial layout */
 
+/* Compatibility guard: older cached bridge copies may still emit this retired banner. */
+body .olr-gitpress-site.olr-redesign[data-olr-page="research"] .olr-research-feature {
+  display: none !important;
+}
+
 .olr-gitpress-site.olr-redesign .olr-page--research {
   background: var(--olr-bone);
 }

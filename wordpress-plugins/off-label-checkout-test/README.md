@@ -4,7 +4,7 @@ An isolated WooCommerce classic-checkout preview for `/checkout-test/`. It does 
 
 The checkout uses a compact three-stage layout and keeps one OLR research-updates consent field while suppressing duplicate marketing opt-ins on this route. The desktop order summary stays top-aligned beside the information and shipping forms without inheriting their height. Each order-summary line includes minus, plus, and remove controls that update the cart and checkout totals without sending the customer back to Bag. Coupon responses are normalized into clean text notices before totals refresh, including on stores that return escaped notice markup. Success notices use a high-contrast black panel, while errors use a high-contrast red treatment that cannot be washed out by theme notice styles. When the cart is empty, the page shows a clear empty-bag state and up to four visible, in-stock best sellers. Newest products fill any recommendation spaces when sales history is limited.
 
-The checkout footer uses the same canonical WebP logo and Neue Montreal-based type stack as the managed GitPress site. The plugin does not add a second header beneath the site-wide GitPress header.
+The checkout footer uses the same canonical WebP logo and Neue Montreal-based type stack as the managed GitPress site. The isolated route removes the managed site header, announcement, theme header, and logged-in WordPress admin bar so checkout begins flush at the top of the page.
 
 ## Install
 

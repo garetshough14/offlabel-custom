@@ -56,7 +56,15 @@ body.olr-checkout-test-page .olr-gitpress-site[data-olr-page="checkout-test"] {
   margin-right: -50vw !important;
 }
 
-body.olr-checkout-test-page :where(#main-header, #top-header, #et-top-navigation, .et-l--header, .et-l--footer, #main-footer) {
+html:has(body.olr-checkout-test-page) {
+  margin-top: 0 !important;
+}
+
+body.olr-checkout-test-page {
+  padding-top: 0 !important;
+}
+
+body.olr-checkout-test-page :where(#wpadminbar, #main-header, #top-header, #et-top-navigation, .et-l--header, .et-l--footer, #main-footer, .dgs-managed-header, .olr-managed-header, .olr-announcement, .site-header) {
   display: none !important;
 }
 
