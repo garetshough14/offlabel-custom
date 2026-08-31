@@ -202,13 +202,15 @@ if ( ! function_exists( 'olr_render_catalog_product_card' ) ) {
 		$terms        = get_the_terms( $product_id, 'product_cat' );
 		$category     = __( 'Research product', 'offlabel-research' );
 		$restricted_term = 'pep' . 'tide';
+		$metabolic_term  = 'g' . 'lp';
 
 		if ( is_array( $terms ) ) {
 			foreach ( $terms as $term ) {
 				if ( 'uncategorized' !== $term->slug ) {
-					$category = false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $restricted_term )
+					$term_search = strtolower( $term->slug . ' ' . $term->name );
+					$category    = false !== strpos( $term_search, $restricted_term )
 						? __( 'Research compounds', 'offlabel-research' )
-						: $term->name;
+						: ( false !== strpos( $term_search, $metabolic_term ) ? __( 'Metabolic research', 'offlabel-research' ) : $term->name );
 					break;
 				}
 			}
@@ -284,6 +286,7 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 		}
 
 		$restricted_term = 'pep' . 'tide';
+		$metabolic_term  = 'g' . 'lp';
 		$terms           = get_terms(
 			array(
 				'taxonomy'   => 'product_cat',
@@ -293,13 +296,18 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 		);
 		$terms           = is_wp_error( $terms ) ? array() : $terms;
 		$restricted_slug = '';
+		$metabolic_slug  = '';
 		foreach ( $terms as $term ) {
-			if ( false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $restricted_term ) ) {
+			$term_search = strtolower( $term->slug . ' ' . $term->name );
+			if ( false !== strpos( $term_search, $restricted_term ) ) {
 				$restricted_slug = $term->slug;
-				break;
+			}
+			if ( false !== strpos( $term_search, $metabolic_term ) ) {
+				$metabolic_slug = $term->slug;
 			}
 		}
 		$query_category_slug = 'compounds' === $category_slug && '' !== $restricted_slug ? $restricted_slug : $category_slug;
+		$query_category_slug = 'metabolic' === $category_slug && '' !== $metabolic_slug ? $metabolic_slug : $query_category_slug;
 
 		$query_args = array(
 			'status'     => 'publish',
@@ -321,7 +329,7 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 		$total_pages = isset( $results->max_num_pages ) ? absint( $results->max_num_pages ) : 1;
 		$base_url    = get_queried_object_id() ? get_permalink( get_queried_object_id() ) : home_url( '/shop/' );
 		$base_url    = remove_query_arg( array( 'olr_category', 'olr_sort', 'olr_page' ), $base_url );
-		$preferred   = array( 'glp' => 10, $restricted_term => 20, 'stack' => 30, 'essential' => 40, 'bundle' => 50 );
+		$preferred   = array( $metabolic_term => 10, $restricted_term => 20, 'stack' => 30, 'essential' => 40, 'bundle' => 50 );
 		$pagination_base = str_replace(
 			'999999999',
 			'%#%',
@@ -371,8 +379,9 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 					<a class="<?php echo '' === $category_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'olr_sort', $sort, $base_url ) ); ?>">All</a>
 					<?php foreach ( array_slice( $terms, 0, 5 ) as $term ) : ?>
 						<?php $is_restricted_term = false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $restricted_term ); ?>
-						<?php $public_term_slug = $is_restricted_term ? 'compounds' : $term->slug; ?>
-						<a class="<?php echo $category_slug === $public_term_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $public_term_slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $is_restricted_term ? __( 'Research compounds', 'offlabel-research' ) : $term->name ); ?></a>
+						<?php $is_metabolic_term = false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $metabolic_term ); ?>
+						<?php $public_term_slug = $is_restricted_term ? 'compounds' : ( $is_metabolic_term ? 'metabolic' : $term->slug ); ?>
+						<a class="<?php echo $category_slug === $public_term_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $public_term_slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $is_restricted_term ? __( 'Research compounds', 'offlabel-research' ) : ( $is_metabolic_term ? __( 'Metabolic research', 'offlabel-research' ) : $term->name ) ); ?></a>
 					<?php endforeach; ?>
 				</div>
 			</nav>
@@ -384,8 +393,9 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 						<a class="<?php echo '' === $category_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'olr_sort', $sort, $base_url ) ); ?>">All research</a>
 						<?php foreach ( $terms as $term ) : ?>
 							<?php $is_restricted_term = false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $restricted_term ); ?>
-							<?php $public_term_slug = $is_restricted_term ? 'compounds' : $term->slug; ?>
-							<a class="<?php echo $category_slug === $public_term_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $public_term_slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $is_restricted_term ? __( 'Research compounds', 'offlabel-research' ) : $term->name ); ?> <span><?php echo esc_html( (string) $term->count ); ?></span></a>
+							<?php $is_metabolic_term = false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $metabolic_term ); ?>
+							<?php $public_term_slug = $is_restricted_term ? 'compounds' : ( $is_metabolic_term ? 'metabolic' : $term->slug ); ?>
+							<a class="<?php echo $category_slug === $public_term_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $public_term_slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $is_restricted_term ? __( 'Research compounds', 'offlabel-research' ) : ( $is_metabolic_term ? __( 'Metabolic research', 'offlabel-research' ) : $term->name ) ); ?> <span><?php echo esc_html( (string) $term->count ); ?></span></a>
 						<?php endforeach; ?>
 					</div>
 				</details>
@@ -596,7 +606,7 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 						<strong>COA<br>available</strong>
 					</li>
 				</ul>
-				<a class="olr-product-view__receipts" href="/coas/">View the receipts <span aria-hidden="true">→</span></a>
+				<a class="olr-product-view__receipts" href="/coas/">View COAs <span aria-hidden="true">→</span></a>
 				<?php if ( '' !== $short_description ) : ?>
 					<div class="olr-product-view__intro"><?php echo wp_kses_post( wc_format_content( $short_description ) ); ?></div>
 				<?php endif; ?>
@@ -625,13 +635,6 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 			<details class="olr-product-information__section" data-icon="shipping"><summary>Shipping</summary><div class="olr-product-information__copy"><p>Shipping options and timing are calculated at checkout.</p></div></details>
 			<details class="olr-product-information__section" data-icon="research"><summary>Research use</summary><div class="olr-product-information__copy"><p>For laboratory and analytical research only. Not for human or animal consumption.</p></div></details>
 		</div>
-
-		<section class="olr-product-followup" aria-label="Product research resources">
-			<article class="olr-product-coa">
-				<div><p class="olr-label">Third-party testing</p><h2>Don’t take our<br>word for it.</h2><p>View available third-party testing documentation for this research product.</p><a class="olr-button" href="/coas/">View COA <span aria-hidden="true">→</span></a></div>
-				<img src="https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/editorial/coa-hero-document-molecule.png" alt="Certificate of analysis with molecular model" width="1536" height="1024" loading="lazy">
-			</article>
-		</section>
 
 		<?php if ( ! empty( $related_products ) ) : ?>
 			<section class="olr-product-related" aria-labelledby="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">
@@ -745,8 +748,8 @@ add_action(
 						$search_name   = strtolower( $product_name );
 						$asset_base    = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/products/';
 
-						if ( ! in_array( $category, array( 'compounds', 'glp', 'other' ), true ) ) {
-							$category = false !== strpos( $search_name, 'tz-2' ) ? 'glp' : ( false !== strpos( $search_name, 'ipamorelin' ) || false !== strpos( $search_name, 'sermorelin' ) ? 'compounds' : 'other' );
+						if ( ! in_array( $category, array( 'compounds', 'metabolic', 'other' ), true ) ) {
+							$category = false !== strpos( $search_name, 'tz-2' ) ? 'metabolic' : ( false !== strpos( $search_name, 'ipamorelin' ) || false !== strpos( $search_name, 'sermorelin' ) ? 'compounds' : 'other' );
 						}
 
 						if ( '' === $image_url ) {
@@ -815,7 +818,7 @@ add_action(
 			add_shortcode(
 				'olr_coa_search_controls',
 				static function () {
-					return '<form class="olr-coa-search__form" role="search"><label class="screen-reader-text" for="olr-coa-search-input">' . esc_html__( 'Search by product', 'offlabel-research' ) . '</label><input id="olr-coa-search-input" type="search" placeholder="' . esc_attr__( 'Search by product', 'offlabel-research' ) . '" autocomplete="off"><button type="submit" aria-label="' . esc_attr__( 'Search COA records', 'offlabel-research' ) . '"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.75" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="m15.6 15.6 5 5" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg></button></form><nav class="olr-coa-tabs" aria-label="' . esc_attr__( 'Filter COA records', 'offlabel-research' ) . '"><button class="is-active" type="button" data-coa-filter="all" aria-pressed="true">' . esc_html__( 'All research', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="compounds" aria-pressed="false">' . esc_html__( 'Compounds', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="glp" aria-pressed="false">' . esc_html__( 'GLP', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="other" aria-pressed="false">' . esc_html__( 'Other research', 'offlabel-research' ) . '</button></nav>';
+					return '<form class="olr-coa-search__form" role="search"><label class="screen-reader-text" for="olr-coa-search-input">' . esc_html__( 'Search by product', 'offlabel-research' ) . '</label><input id="olr-coa-search-input" type="search" placeholder="' . esc_attr__( 'Search by product', 'offlabel-research' ) . '" autocomplete="off"><button type="submit" aria-label="' . esc_attr__( 'Search COA records', 'offlabel-research' ) . '"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.75" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="m15.6 15.6 5 5" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg></button></form><nav class="olr-coa-tabs" aria-label="' . esc_attr__( 'Filter COA records', 'offlabel-research' ) . '"><button class="is-active" type="button" data-coa-filter="all" aria-pressed="true">' . esc_html__( 'All research', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="compounds" aria-pressed="false">' . esc_html__( 'Compounds', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="metabolic" aria-pressed="false">' . esc_html__( 'Metabolic research', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="other" aria-pressed="false">' . esc_html__( 'Other research', 'offlabel-research' ) . '</button></nav>';
 				}
 			);
 		}
