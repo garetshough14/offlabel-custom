@@ -105,23 +105,6 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
   outline-offset: 3px;
 }
 
-.olr-checkout-test__trust {
-  min-height: 31px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(16px, 2.5vw, 32px);
-  padding: 6px 24px;
-  background: #050505;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-}
-
-.olr-checkout-test__trust i { font-style: normal; }
-
 .olr-checkout-test__steps,
 .olr-checkout-test__main,
 .olr-checkout-test__footer {
@@ -542,7 +525,6 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
 
 @media (max-width: 600px) {
   .olr-checkout-test { font-size: 14px; }
-  .olr-checkout-test__trust { gap: 8px; padding-inline: 10px; font-size: 8px; letter-spacing: .08em; }
   .olr-checkout-test__steps { min-height: 78px; grid-template-columns: auto 1fr auto 1fr auto; gap: 8px; }
   .olr-checkout-test__steps button { font-size: 9px; letter-spacing: .03em; }
   .olr-checkout-test__steps, .olr-checkout-test__main, .olr-checkout-test__footer { width: calc(100% - 28px); }

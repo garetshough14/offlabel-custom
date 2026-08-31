@@ -255,6 +255,30 @@
     }
   }
 
+  function parseCouponResponse(response) {
+    var markup = typeof response === 'string' ? response.trim() : '';
+    var container = document.createElement('div');
+    var source;
+
+    for (var pass = 0; pass < 2; pass += 1) {
+      container.innerHTML = markup;
+      source = container.querySelector('.woocommerce-error, .woocommerce-message, .woocommerce-info');
+      if (source) break;
+      var decoded = container.textContent.trim();
+      if (!decoded || decoded === markup || decoded.indexOf('<') === -1) break;
+      markup = decoded;
+    }
+
+    var message = (source ? source.textContent : container.textContent).replace(/\s+/g, ' ').trim();
+    var success = !!(source && source.classList.contains('woocommerce-message'));
+    var notice = document.createElement('div');
+    notice.className = success ? 'woocommerce-message' : 'woocommerce-error';
+    notice.setAttribute('role', success ? 'status' : 'alert');
+    notice.textContent = message || (success ? 'Coupon code applied.' : 'That coupon could not be applied.');
+
+    return { element: notice, message: notice.textContent, success: success };
+  }
+
   function addPromo() {
     if (!form) return;
     var review = form.querySelector('#order_review');
@@ -266,20 +290,41 @@
     review.insertBefore(promo, payment || null);
     promo.querySelector('button').addEventListener('click', function () {
       var input = promo.querySelector('input');
+      var button = promo.querySelector('button');
+      var billingEmail = form.querySelector('#billing_email');
       var code = input.value.trim();
       if (!code || !window.wc_checkout_params) return;
       promo.setAttribute('aria-busy', 'true');
+      button.disabled = true;
       $.ajax({
         type: 'POST',
         url: wc_checkout_params.wc_ajax_url.toString().replace('%%endpoint%%', 'apply_coupon'),
-        data: { security: wc_checkout_params.apply_coupon_nonce, coupon_code: code },
+        dataType: 'html',
+        data: { security: wc_checkout_params.apply_coupon_nonce, coupon_code: code, billing_email: billingEmail ? billingEmail.value : '' },
         success: function (response) {
-          $('.woocommerce-error, .woocommerce-message').remove();
-          form.before(response);
-          $(document.body).trigger('update_checkout', { update_shipping_method: false });
-          announce('Promo code response updated.');
+          root.querySelectorAll('.woocommerce-error, .woocommerce-message, .woocommerce-info').forEach(function (notice) { notice.remove(); });
+          var result = parseCouponResponse(response);
+          form.before(result.element);
+          announce(result.message);
+          if (result.success) {
+            input.value = '';
+            $(document.body).trigger('applied_coupon_in_checkout', [code]);
+            $(document.body).trigger('update_checkout', { update_shipping_method: false });
+          }
         },
-        complete: function () { promo.removeAttribute('aria-busy'); }
+        error: function () {
+          root.querySelectorAll('.woocommerce-error, .woocommerce-message, .woocommerce-info').forEach(function (notice) { notice.remove(); });
+          var notice = document.createElement('div');
+          notice.className = 'woocommerce-error';
+          notice.setAttribute('role', 'alert');
+          notice.textContent = 'That coupon could not be applied. Please try again.';
+          form.before(notice);
+          announce(notice.textContent);
+        },
+        complete: function () {
+          promo.removeAttribute('aria-busy');
+          button.disabled = false;
+        }
       });
     });
   }

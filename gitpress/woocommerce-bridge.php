@@ -404,27 +404,10 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 				<div class="olr-research-shell olr-catalog-empty"><p class="olr-label">Catalog result</p><h2>No research products found.</h2><a class="olr-button" href="<?php echo esc_url( $base_url ); ?>">View all research</a></div>
 			<?php else : ?>
 				<div class="olr-research-shell olr-research-card-grid">
-					<?php foreach ( array_slice( $products, 0, 8 ) as $product ) : ?>
+					<?php foreach ( $products as $product ) : ?>
 						<?php echo olr_render_catalog_product_card( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					<?php endforeach; ?>
 				</div>
-
-				<section class="olr-research-feature" aria-labelledby="olr-research-feature-title">
-					<div class="olr-research-feature__copy">
-						<p>Featured research</p>
-						<h2 id="olr-research-feature-title">Research<br>without<br>the noise.</h2>
-						<span>We focus on quality, evidence,<br>and doing things differently.</span>
-						<a href="<?php echo esc_url( olr_get_research_product_url( $products[0] ) ); ?>">Explore <b aria-hidden="true">→</b></a>
-					</div>
-				</section>
-
-				<?php if ( count( $products ) > 8 ) : ?>
-					<div class="olr-research-shell olr-research-card-grid olr-research-card-grid--after-feature">
-						<?php foreach ( array_slice( $products, 8, 4 ) as $product ) : ?>
-							<?php echo olr_render_catalog_product_card( $product ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<?php endforeach; ?>
-					</div>
-				<?php endif; ?>
 
 				<?php if ( $total_pages > 1 ) : ?>
 					<nav class="olr-research-shell olr-research-pagination" aria-label="Catalog pages">
