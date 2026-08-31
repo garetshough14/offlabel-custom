@@ -160,18 +160,45 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
 
 .olr-checkout-test__main { padding: 8px 0 44px; }
 .olr-checkout-test__main > .woocommerce { width: 100%; }
-.olr-checkout-test__main .woocommerce-info,
-.olr-checkout-test__main .woocommerce-error,
-.olr-checkout-test__main .woocommerce-message {
-  border: 1px solid var(--olr-checkout-ink);
-  border-top-width: 3px;
-  margin: 0 0 22px;
-  padding: 15px 20px 15px 48px;
-  background: transparent;
-  color: var(--olr-checkout-ink);
+body.olr-checkout-test-page .olr-checkout-test__main .woocommerce-info,
+body.olr-checkout-test-page .olr-checkout-test__main .woocommerce-error,
+body.olr-checkout-test-page .olr-checkout-test__main .woocommerce-message {
+  display: block !important;
+  width: 100% !important;
+  min-height: 54px;
+  margin: 0 0 22px !important;
+  padding: 16px 18px !important;
+  border: 1px solid var(--olr-checkout-ink) !important;
+  border-radius: 0 !important;
+  background: #ece9e3 !important;
+  box-shadow: none !important;
+  color: var(--olr-checkout-ink) !important;
+  font-size: 14px !important;
+  font-weight: 600;
+  line-height: 1.45 !important;
+  list-style: none !important;
 }
 
-.olr-checkout-test__main .woocommerce-error { border-color: var(--olr-checkout-error); color: var(--olr-checkout-error); }
+body.olr-checkout-test-page .olr-checkout-test__main .woocommerce-message {
+  border-color: var(--olr-checkout-ink) !important;
+  background: var(--olr-checkout-ink) !important;
+  color: #fff !important;
+}
+
+body.olr-checkout-test-page .olr-checkout-test__main .woocommerce-error {
+  border-color: var(--olr-checkout-error) !important;
+  background: #f8ece9 !important;
+  color: var(--olr-checkout-error) !important;
+}
+
+body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woocommerce-error, .woocommerce-message)::before {
+  display: none !important;
+  content: none !important;
+}
+
+body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woocommerce-error, .woocommerce-message) :where(a, li) {
+  color: inherit !important;
+}
 .olr-checkout-test__main .woocommerce-form-login-toggle,
 .olr-checkout-test__main .woocommerce-form-coupon-toggle,
 .olr-checkout-test__main form.checkout_coupon { display: none !important; }
@@ -356,6 +383,30 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
 .olr-checkout-enhanced[data-olr-checkout-stage="payment"] form.checkout > #order_review {
   grid-column: 1;
   grid-row: 3;
+}
+
+/*
+ * Keep the desktop order summary at the top of the tall information and
+ * shipping forms. Sharing one grid row prevents the customer-details column
+ * from creating a large empty track between the heading and order table.
+ */
+@media (min-width: 901px) {
+  .olr-checkout-enhanced:not([data-olr-checkout-stage="payment"]) form.checkout > #customer_details,
+  .olr-checkout-enhanced:not([data-olr-checkout-stage="payment"]) form.checkout > #order_review_heading,
+  .olr-checkout-enhanced:not([data-olr-checkout-stage="payment"]) form.checkout > #order_review {
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .olr-checkout-enhanced:not([data-olr-checkout-stage="payment"]) form.checkout > #order_review_heading {
+    position: relative;
+    z-index: 1;
+  }
+
+  .olr-checkout-enhanced:not([data-olr-checkout-stage="payment"]) form.checkout > #order_review {
+    min-height: 0 !important;
+    margin-top: 52px !important;
+  }
 }
 
 .olr-checkout-test #payment { margin-top: 18px; border: 1px solid var(--olr-checkout-ink); border-radius: 0; background: transparent; }
