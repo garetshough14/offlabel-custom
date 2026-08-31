@@ -54,7 +54,13 @@ add_action(
 				'olr-coa-archive',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'20260830.3'
+				'20260830.7'
+			);
+
+			/* Keep the testing typography independent of Divi and CDN cache state. */
+			wp_add_inline_style(
+				'olr-coa-archive',
+				'body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]), body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(*) { font-family: Arial, Helvetica, sans-serif !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(*) { letter-spacing: 0 !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(h1, h2, h3, h4, h5, h6) { font-weight: 700 !important; letter-spacing: -.015em !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(button, .button, summary, nav a, label) { font-weight: 600 !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(.olr-label, .olr-coa-hero__kicker, small) { letter-spacing: .025em !important; }'
 			);
 
 			wp_enqueue_script(

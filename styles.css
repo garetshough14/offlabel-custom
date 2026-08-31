@@ -12586,7 +12586,9 @@ body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate
 
 /* Testing/COA pages must not inherit a display face from the active theme. */
 body .olr-gitpress-site.olr-redesign[data-olr-page="testing"],
-body .olr-gitpress-site.olr-redesign[data-olr-page="testing"] :where(*, button, input, select, textarea) {
+body .olr-gitpress-site.olr-redesign[data-olr-page="testing"] :where(*, button, input, select, textarea),
+body .olr-page--testing,
+body .olr-page--testing :where(*, button, input, select, textarea) {
   --olr-font: Arial, Helvetica, sans-serif;
   --olr-coa-display: Arial, Helvetica, sans-serif;
   font-family: Arial, Helvetica, sans-serif !important;
