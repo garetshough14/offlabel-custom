@@ -1,0 +1,202 @@
+- generic [ref=f4e2]:
+  - generic [ref=f4e3]:
+    - complementary "Important product notice" [ref=f4e4]:
+      - generic [ref=f4e5]:
+        - generic [ref=f4e6]: Research use only
+        - generic [ref=f4e7]: /
+        - generic [ref=f4e8]: Not for human consumption
+        - generic [ref=f4e9]: /
+        - link "Document archive" [ref=f4e10] [cursor=pointer]:
+          - /url: testing.html
+    - generic [ref=f4e12]:
+      - link "Off Label Research home" [ref=f4e13] [cursor=pointer]:
+        - /url: index.html
+        - img "Off Label Research" [ref=f4e14]
+      - navigation "Primary navigation" [ref=f4e15]:
+        - link "Research" [ref=f4e16] [cursor=pointer]:
+          - /url: research.html
+        - link "About" [ref=f4e17] [cursor=pointer]:
+          - /url: about.html
+        - link "Testing" [ref=f4e18] [cursor=pointer]:
+          - /url: testing.html
+        - link "FAQ" [ref=f4e19] [cursor=pointer]:
+          - /url: faq.html
+      - navigation "Shopping and account" [ref=f4e20]:
+        - link "Search" [ref=f4e21] [cursor=pointer]:
+          - /url: research.html
+        - link "Account" [ref=f4e26] [cursor=pointer]:
+          - /url: account.html
+        - link "Bag Cart item count" [ref=f4e31] [cursor=pointer]:
+          - /url: cart.html
+          - generic [ref=f4e32]: Bag
+          - generic "Cart item count" [ref=f4e33]: ( 1 )
+      - text: ( )
+  - main [ref=f4e34]:
+    - generic [ref=f4e35]:
+      - region [ref=f4e36]:
+        - img "Certificate of Analysis document with a clear glass molecular study model" [ref=f4e37]
+        - generic [ref=f4e38]:
+          - paragraph [ref=f4e39]: Third-party testing
+          - heading "The receipts." [level=1] [ref=f4e40]
+          - paragraph [ref=f4e41]: Explore available third-party testing documentation for Off Label Research products.
+      - region "Testing standards" [ref=f4e42]:
+        - generic [ref=f4e43]:
+          - generic [ref=f4e44]:
+            - strong [ref=f4e45]: 99%+
+            - generic [ref=f4e46]: Purity
+          - generic [ref=f4e47]:
+            - strong [ref=f4e48]: Third-party
+            - generic [ref=f4e49]: Tested
+          - generic [ref=f4e50]:
+            - strong [ref=f4e51]: Testing
+            - generic [ref=f4e52]: Documentation
+      - region [ref=f4e53]:
+        - generic [ref=f4e54]:
+          - generic [ref=f4e55]:
+            - paragraph [ref=f4e56]: Find your COA
+            - heading "Search the research." [level=2] [ref=f4e57]
+          - search [ref=f4e58]:
+            - generic [ref=f4e59]: Search by product
+            - searchbox "Search by product" [ref=f4e60]
+            - button "Search COA records" [ref=f4e61] [cursor=pointer]
+          - navigation "Filter COA records" [ref=f4e65]:
+            - button "All research" [pressed] [ref=f4e66] [cursor=pointer]
+            - button "Compounds" [ref=f4e67] [cursor=pointer]
+            - button "Metabolic research" [ref=f4e68] [cursor=pointer]
+            - button "Other research" [ref=f4e69] [cursor=pointer]
+          - generic [ref=f4e71]:
+            - article [ref=f4e72]:
+              - figure [ref=f4e73]:
+                - img "Off Label Research Ipamorelin 10 MG research vial" [ref=f4e74]
+              - generic [ref=f4e75]:
+                - heading "Ipamorelin" [level=3] [ref=f4e76]
+                - generic [ref=f4e77]: 10 MG
+              - generic [ref=f4e78]:
+                - strong [ref=f4e79]: Testing available
+                - generic [ref=f4e80]: Latest test date
+                - time [ref=f4e81]: Sample record
+              - link "View COA →" [ref=f4e82] [cursor=pointer]:
+                - /url: "#preview-document"
+            - article [ref=f4e83]:
+              - figure [ref=f4e84]:
+                - img "Off Label Research Sermorelin 5 MG research vial" [ref=f4e85]
+              - generic [ref=f4e86]:
+                - heading "Sermorelin" [level=3] [ref=f4e87]
+                - generic [ref=f4e88]: 5 MG
+              - generic [ref=f4e89]:
+                - strong [ref=f4e90]: Testing available
+                - generic [ref=f4e91]: Latest test date
+                - time [ref=f4e92]: Sample record
+              - link "View COA →" [ref=f4e93] [cursor=pointer]:
+                - /url: "#preview-document"
+            - article [ref=f4e94]:
+              - figure [ref=f4e95]:
+                - img "Off Label Research RT-3 20 MG research vial" [ref=f4e96]
+              - generic [ref=f4e97]:
+                - heading "RT-3" [level=3] [ref=f4e98]
+                - generic [ref=f4e99]: 20 MG
+              - generic [ref=f4e100]:
+                - strong [ref=f4e101]: Testing available
+                - generic [ref=f4e102]: Latest test date
+                - time [ref=f4e103]: Sample record
+              - link "View COA →" [ref=f4e104] [cursor=pointer]:
+                - /url: "#preview-document"
+            - article [ref=f4e105]:
+              - figure [ref=f4e106]:
+                - img "Off Label Research TZ-2 30 MG research vial" [ref=f4e107]
+              - generic [ref=f4e108]:
+                - heading "TZ-2" [level=3] [ref=f4e109]
+                - generic [ref=f4e110]: 30 MG
+              - generic [ref=f4e111]:
+                - strong [ref=f4e112]: Testing available
+                - generic [ref=f4e113]: Latest test date
+                - time [ref=f4e114]: Sample record
+              - link "View COA →" [ref=f4e115] [cursor=pointer]:
+                - /url: "#preview-document"
+          - link "Browse all products" [ref=f4e116] [cursor=pointer]:
+            - /url: research.html
+      - region [ref=f4e117]:
+        - img "Clear molecular study model on a black field" [ref=f4e118]
+        - generic [ref=f4e120]:
+          - paragraph [ref=f4e121]: Why we test
+          - heading "Trust the data. Not the hype." [level=2] [ref=f4e122]: Trust the data.Not the hype.
+          - paragraph [ref=f4e123]: Third-party testing provides independent analytical information associated with our research products.
+          - link "Learn about our standards →" [ref=f4e124] [cursor=pointer]:
+            - /url: about.html
+      - region [ref=f4e125]:
+        - generic [ref=f4e126]:
+          - paragraph [ref=f4e127]: Understanding the document
+          - heading "Read the report." [level=2] [ref=f4e128]
+          - list [ref=f4e129]:
+            - listitem [ref=f4e130]:
+              - strong [ref=f4e131]: Product
+              - generic [ref=f4e132]: Identifies the product associated with the report.
+            - listitem [ref=f4e133]:
+              - strong [ref=f4e134]: Testing method
+              - generic [ref=f4e135]: Identifies the analytical method reported by the laboratory.
+            - listitem [ref=f4e136]:
+              - strong [ref=f4e137]: Purity / result
+              - generic [ref=f4e138]: Shows the analytical result where applicable.
+            - listitem [ref=f4e139]:
+              - strong [ref=f4e140]: Test date
+              - generic [ref=f4e141]: Shows when the reported analysis was performed.
+          - link "Learn more about COAs →" [ref=f4e142] [cursor=pointer]:
+            - /url: faq.html
+      - region [ref=f4e143]:
+        - generic [ref=f4e144]:
+          - generic [ref=f4e145]:
+            - paragraph [ref=f4e146]: Can't find what you're looking for?
+            - heading "Ask for the receipts." [level=2] [ref=f4e147]
+            - generic [ref=f4e148]: Contact our team for help locating available product documentation.
+            - link "info@offlabelresearch.com" [ref=f4e149] [cursor=pointer]:
+              - /url: mailto:info@offlabelresearch.com
+          - link "Contact us →" [ref=f4e150] [cursor=pointer]:
+            - /url: mailto:info@offlabelresearch.com
+  - generic [ref=f4e152]:
+    - generic [ref=f4e153]:
+      - generic [ref=f4e154]:
+        - link "Off Label Research home" [ref=f4e155] [cursor=pointer]:
+          - /url: index.html
+          - img "Off Label Research" [ref=f4e156]
+        - paragraph [ref=f4e157]: Where sciencegoes off-script.
+      - navigation "Research links" [ref=f4e158]:
+        - heading "Research" [level=2] [ref=f4e159]
+        - link "All research" [ref=f4e160] [cursor=pointer]:
+          - /url: research.html
+        - link "Testing and documents" [ref=f4e161] [cursor=pointer]:
+          - /url: testing.html
+        - link "FAQ" [ref=f4e162] [cursor=pointer]:
+          - /url: faq.html
+      - navigation "Company links" [ref=f4e163]:
+        - heading "Company" [level=2] [ref=f4e164]
+        - link "About" [ref=f4e165] [cursor=pointer]:
+          - /url: about.html
+        - link "Contact" [ref=f4e166] [cursor=pointer]:
+          - /url: about.html
+        - link "Terms" [ref=f4e167] [cursor=pointer]:
+          - /url: faq.html
+        - link "Privacy" [ref=f4e168] [cursor=pointer]:
+          - /url: faq.html
+      - navigation "Account links" [ref=f4e169]:
+        - heading "Account" [level=2] [ref=f4e170]
+        - link "Account" [ref=f4e171] [cursor=pointer]:
+          - /url: account.html
+        - link "Orders" [ref=f4e172] [cursor=pointer]:
+          - /url: account.html
+        - link "Bag" [ref=f4e173] [cursor=pointer]:
+          - /url: cart.html
+        - link "Checkout" [ref=f4e174] [cursor=pointer]:
+          - /url: checkout.html
+      - navigation "Support links" [ref=f4e175]:
+        - heading "Support" [level=2] [ref=f4e176]
+        - link "Shipping" [ref=f4e177] [cursor=pointer]:
+          - /url: faq.html
+        - link "Returns" [ref=f4e178] [cursor=pointer]:
+          - /url: faq.html
+        - link "Terms" [ref=f4e179] [cursor=pointer]:
+          - /url: faq.html
+        - link "Privacy" [ref=f4e180] [cursor=pointer]:
+          - /url: faq.html
+    - generic [ref=f4e182]:
+      - generic [ref=f4e183]: © 2026 Off Label Research. All rights reserved.
+      - generic [ref=f4e184]: Research differently.

@@ -1,0 +1,218 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - complementary "Important product notice" [ref=e4]:
+        - generic [ref=e5]:
+          - generic [ref=e6]: Research use only
+          - generic [ref=e7]: /
+          - generic [ref=e8]: Not for human consumption
+          - generic [ref=e9]: /
+          - link "Document archive" [ref=e10] [cursor=pointer]:
+            - /url: testing.html
+      - generic [ref=e12]:
+        - link "Off Label Research home" [ref=e13] [cursor=pointer]:
+          - /url: index.html
+          - img "Off Label Research" [ref=e14]
+        - navigation "Primary navigation" [ref=e15]:
+          - link "Research" [ref=e16] [cursor=pointer]:
+            - /url: research.html
+          - link "About" [ref=e17] [cursor=pointer]:
+            - /url: about.html
+          - link "Testing" [ref=e18] [cursor=pointer]:
+            - /url: testing.html
+          - link "FAQ" [ref=e19] [cursor=pointer]:
+            - /url: faq.html
+        - navigation "Shopping and account" [ref=e20]:
+          - link "Search" [ref=e21] [cursor=pointer]:
+            - /url: research.html
+          - link "Account" [ref=e26] [cursor=pointer]:
+            - /url: account.html
+          - link "Bag Cart item count" [ref=e31] [cursor=pointer]:
+            - /url: cart.html
+            - generic [ref=e32]: Bag
+            - generic "Cart item count" [ref=e33]: ( 1 )
+        - text: ( )
+    - main [ref=e34]:
+      - generic [ref=e35]:
+        - region [ref=e36]:
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: Off Label Research
+              - heading "Where science goes off-script." [level=1] [ref=e41]:
+                - generic [ref=e42]: Where
+                - generic [ref=e43]: science
+                - generic [ref=e44]: goes
+                - generic [ref=e45]: off-script.
+              - paragraph [ref=e46]: Research differently.
+              - link "Explore research →" [ref=e47] [cursor=pointer]:
+                - /url: research.html
+            - img "Off Label Research Sermorelin 5 MG, KPV 10 MG, and MOTS-C 10 MG research vials" [ref=e49]
+        - region [ref=e50]:
+          - generic [ref=e51]:
+            - heading "The standard is proof." [level=2] [ref=e52]: The standardis proof.
+            - generic [ref=e53]:
+              - generic [ref=e54]:
+                - term [ref=e55]: Compound
+                - definition [ref=e56]: Identification
+              - generic [ref=e57]:
+                - term [ref=e58]: Independent
+                - definition [ref=e59]: Third-party testing
+              - generic [ref=e60]:
+                - term [ref=e61]: Traceable
+                - definition [ref=e62]: Batch documentation
+              - generic [ref=e63]:
+                - term [ref=e64]: Clearly labeled
+                - definition [ref=e65]: Research use only
+        - region [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - heading "Featured research" [level=2] [ref=e69]
+              - link "View all research →" [ref=e70] [cursor=pointer]:
+                - /url: research.html
+            - list [ref=e73]:
+              - listitem [ref=e74]:
+                - link "Off Label Research Ipamorelin 10 MG research vial Ipamorelin 10 MG $99.00" [ref=e75] [cursor=pointer]:
+                  - /url: research.html
+                  - img "Off Label Research Ipamorelin 10 MG research vial" [ref=e77]
+                  - heading "Ipamorelin" [level=2] [ref=e78]
+                  - generic [ref=e79]: 10 MG
+                  - generic [ref=e80]: $99.00
+              - listitem [ref=e82]:
+                - link "Off Label Research Sermorelin 5 MG research vial Sermorelin 5 MG $89.00" [ref=e83] [cursor=pointer]:
+                  - /url: research.html
+                  - img "Off Label Research Sermorelin 5 MG research vial" [ref=e85]
+                  - heading "Sermorelin" [level=2] [ref=e86]
+                  - generic [ref=e87]: 5 MG
+                  - generic [ref=e88]: $89.00
+              - listitem [ref=e90]:
+                - link "Off Label Research TZ-2 30 MG research vial TZ-2 30 MG $119.00" [ref=e91] [cursor=pointer]:
+                  - /url: research.html
+                  - img "Off Label Research TZ-2 30 MG research vial" [ref=e93]
+                  - heading "TZ-2" [level=2] [ref=e94]
+                  - generic [ref=e95]: 30 MG
+                  - generic [ref=e96]: $119.00
+              - listitem [ref=e98]:
+                - link "Off Label Research RT-3 20 MG research vial RT-3 20 MG $109.00" [ref=e99] [cursor=pointer]:
+                  - /url: research.html
+                  - img "Off Label Research RT-3 20 MG research vial" [ref=e101]
+                  - heading "RT-3" [level=2] [ref=e102]
+                  - generic [ref=e103]: 20 MG
+                  - generic [ref=e104]: $109.00
+        - region [ref=e106]:
+          - generic [ref=e107]:
+            - heading "We don't follow the conversation. We research it." [level=2] [ref=e108]:
+              - generic [ref=e109]: We don't
+              - generic [ref=e110]: follow
+              - generic [ref=e111]: the
+              - generic [ref=e112]: conversation.
+              - generic [ref=e113]: We research it.
+            - link "Learn more about our approach →" [ref=e115] [cursor=pointer]:
+              - /url: about.html
+          - img "Research vial and pipette photographed beside an analytical report" [ref=e117]
+        - region [ref=e118]:
+          - figure [ref=e119]:
+            - img "Graduated cylinder, beaker, glass stirring rod, vial, and syringe arranged for laboratory study" [ref=e120]
+          - generic [ref=e121]:
+            - paragraph [ref=e122]: Transparency
+            - heading "Don't take our word for it." [level=2] [ref=e123]:
+              - generic [ref=e124]: Don't take
+              - generic [ref=e125]: our word
+              - generic [ref=e126]: for it.
+            - paragraph [ref=e127]: Every batch. Every time.Third-party tested for purity and accuracy.Because the standard is proof.
+            - link "View testing and documentation →" [ref=e128] [cursor=pointer]:
+              - /url: testing.html
+        - region [ref=e129]:
+          - generic [ref=e130]:
+            - heading "Stay off-script." [level=2] [ref=e131]:
+              - generic [ref=e132]: Stay
+              - generic [ref=e133]: off-script.
+            - generic [ref=e134]:
+              - paragraph [ref=e135]: Explore current compounds, available strengths, and product documentation.
+              - link "Shop now →" [ref=e136] [cursor=pointer]:
+                - /url: research.html
+    - generic [ref=e138]:
+      - generic [ref=e139]:
+        - generic [ref=e140]:
+          - link "Off Label Research home" [ref=e141] [cursor=pointer]:
+            - /url: index.html
+            - img "Off Label Research" [ref=e142]
+          - paragraph [ref=e143]: Where sciencegoes off-script.
+        - navigation "Research links" [ref=e144]:
+          - heading "Research" [level=2] [ref=e145]
+          - link "All research" [ref=e146] [cursor=pointer]:
+            - /url: research.html
+          - link "Testing and documents" [ref=e147] [cursor=pointer]:
+            - /url: testing.html
+          - link "FAQ" [ref=e148] [cursor=pointer]:
+            - /url: faq.html
+        - navigation "Company links" [ref=e149]:
+          - heading "Company" [level=2] [ref=e150]
+          - link "About" [ref=e151] [cursor=pointer]:
+            - /url: about.html
+          - link "Contact" [ref=e152] [cursor=pointer]:
+            - /url: about.html
+          - link "Terms" [ref=e153] [cursor=pointer]:
+            - /url: faq.html
+          - link "Privacy" [ref=e154] [cursor=pointer]:
+            - /url: faq.html
+        - navigation "Account links" [ref=e155]:
+          - heading "Account" [level=2] [ref=e156]
+          - link "Account" [ref=e157] [cursor=pointer]:
+            - /url: account.html
+          - link "Orders" [ref=e158] [cursor=pointer]:
+            - /url: account.html
+          - link "Bag" [ref=e159] [cursor=pointer]:
+            - /url: cart.html
+          - link "Checkout" [ref=e160] [cursor=pointer]:
+            - /url: checkout.html
+        - navigation "Support links" [ref=e161]:
+          - heading "Support" [level=2] [ref=e162]
+          - link "Shipping" [ref=e163] [cursor=pointer]:
+            - /url: faq.html
+          - link "Returns" [ref=e164] [cursor=pointer]:
+            - /url: faq.html
+          - link "Terms" [ref=e165] [cursor=pointer]:
+            - /url: faq.html
+          - link "Privacy" [ref=e166] [cursor=pointer]:
+            - /url: faq.html
+      - generic [ref=e168]:
+        - generic [ref=e169]: © 2026 Off Label Research. All rights reserved.
+        - generic [ref=e170]: Research differently.
+  - dialog [ref=e171]:
+    - generic [ref=e173]:
+      - generic "Off Label Research" [ref=e174]:
+        - img "Off Label Research" [ref=e175]
+      - paragraph [ref=e176]: Research access
+      - heading "Research access only" [level=2] [ref=e177]
+      - generic [ref=e178]:
+        - paragraph [ref=e179]:
+          - strong [ref=e180]: "By entering this site, you confirm that:"
+        - list [ref=e181]:
+          - listitem [ref=e182]: You are 21 years of age or older.
+          - listitem [ref=e183]: You are accessing this site solely for laboratory, analytical, or research purposes.
+          - listitem [ref=e184]: You understand that all products offered by Off Label Research are Research Use Only (RUO).
+          - listitem [ref=e185]: Products are not intended for human or animal consumption or use.
+          - listitem [ref=e186]: Off Label Research does not provide medical advice, dosing guidance, treatment recommendations, or therapeutic recommendations.
+          - listitem [ref=e187]: You will comply with all applicable laws and regulations regarding the purchase, possession, handling, and use of research products.
+          - listitem [ref=e188]: Nothing on this website constitutes medical advice or encourages use outside of lawful research applications.
+          - listitem [ref=e189]:
+            - text: You have read and agree to our
+            - link "Terms & Conditions" [ref=e190] [cursor=pointer]:
+              - /url: https://offlabelresearch.com/terms-conditions/
+            - text: ","
+            - link "Privacy Policy" [ref=e191] [cursor=pointer]:
+              - /url: https://offlabelresearch.com/privacy-policy/
+            - text: ", and"
+            - link "Research Use Policy" [ref=e192] [cursor=pointer]:
+              - /url: https://offlabelresearch.com/research-use-policy/
+            - text: .
+        - paragraph [ref=e193]:
+          - strong [ref=e194]: By selecting ENTER THE LAB, you acknowledge and agree to the statements above.
+      - generic [ref=e195]:
+        - generic [ref=e196] [cursor=pointer]:
+          - checkbox "I confirm that I am 21+ and acknowledge and agree to the statements and policies above." [active] [ref=e197]
+          - generic [ref=e198]: I confirm that I am 21+ and acknowledge and agreeto the statements and policies above.
+        - generic [ref=e199]:
+          - button "Enter the Lab" [ref=e200] [cursor=pointer]
+          - link "Exit site" [ref=e201] [cursor=pointer]:
+            - /url: https://www.google.com/

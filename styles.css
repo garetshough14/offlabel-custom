@@ -31,7 +31,7 @@ body {
   --olr-ink-08: rgb(17 17 17 / 8%);
   --olr-white-72: rgb(255 255 255 / 72%);
   --olr-white-20: rgb(255 255 255 / 20%);
-  --olr-font: "Neue Montreal", "Neue Haas Grotesk Text Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --olr-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
   --olr-max: 96rem;
   --olr-gutter: clamp(1rem, 3.4vw, 3.75rem);
   --olr-section-space: clamp(5rem, 9vw, 9rem);
@@ -5990,7 +5990,7 @@ html.olr-gate-open body {
   border-radius: 0;
   background: rgb(0 0 0 / 92%);
   color: var(--olr-gate-ink);
-  font-family: "Neue Montreal", "Neue Haas Grotesk Text Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--olr-font);
 }
 
 .olr-compliance-gate[open] {
@@ -8754,6 +8754,12 @@ body .olr-compliance-gate__note {
 .olr-product-reading > a img { width: 6rem; aspect-ratio: 1.3; object-fit: cover; filter: grayscale(1); }
 .olr-product-reading small { display: block; margin-bottom: .3rem; font-size: .48rem; letter-spacing: .08em; text-transform: uppercase; }
 .olr-page--product-detail .olr-product-box { margin-top: 0; }
+.olr-gitpress-site.olr-redesign .olr-page--product-detail .olr-product-view__image {
+  display: block;
+  margin: auto;
+  object-position: 50% 50%;
+}
+.olr-gitpress-site.olr-redesign .olr-page--product-detail .olr-product-box__art { display: none !important; }
 
 @media (max-width: 56rem) {
   .olr-gitpress-site.olr-redesign .olr-page--product-detail .olr-product-view { grid-template-columns: 1fr; }
@@ -8832,7 +8838,7 @@ body .olr-compliance-gate {
   border: 0;
   background: rgb(11 11 11 / 76%);
   color: var(--olr-gate-ink);
-  font-family: "Neue Montreal", "Neue Haas Grotesk Text Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--olr-font);
   backdrop-filter: blur(2px);
 }
 
@@ -12556,3 +12562,24 @@ body:has(.olr-gitpress-site.olr-redesign) :where(.site-footer, #colophon) a {
     grid-template-columns: 1fr;
   }
 }
+
+/* 18. Canonical system sans-serif typography */
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate),
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate) :where(button, input, select, textarea) {
+  font-family: var(--olr-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif) !important;
+}
+
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate) :where(*) { letter-spacing: 0 !important; }
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate) :where(p, li, dd, dt, input, select, textarea) { font-weight: 400 !important; }
+
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate) :where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--olr-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.1;
+}
+
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate) :where(strong, b, .price, .amount, .order-total, .olr-research-card__price) { font-weight: 700 !important; }
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate) :where(nav a, label, summary, button, .button, .wp-element-button, [role="button"]) { font-weight: 600 !important; }
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate) :where(.olr-label, .olr-announcement, .olr-product-view__ruo, .olr-research-card__detail, small) { letter-spacing: 0.025em !important; }
+body :is(#olr-type-system, .olr-gitpress-site.olr-redesign, .olr-compliance-gate) :where(.price, .amount, .order-total, .olr-cart-count) { font-variant-numeric: tabular-nums; }

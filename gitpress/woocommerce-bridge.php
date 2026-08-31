@@ -93,9 +93,9 @@ add_action(
 
 			wp_enqueue_style(
 				'olr-product-record',
-				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@25eca99/styles-product.css',
+				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles-product.css',
 				array(),
-				'20260827.4'
+				'20260830.2'
 			);
 
 			wp_enqueue_script(

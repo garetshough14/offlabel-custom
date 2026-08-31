@@ -32,4 +32,4 @@ Drafts and entries without a valid product, ISO-format date, and PDF cannot appe
 
 The interactive PDF viewer uses a pinned PDF.js release from jsDelivr and always exposes direct open/download links if the viewer cannot load.
 
-Public COA pages use the same Neue Montreal-based type stack as the managed GitPress site. The public archive uses the compliance-safe **Compounds** category label.
+Public COA pages use the same system sans-serif type stack as the managed GitPress site. The public archive uses the compliance-safe **Compounds** category label.

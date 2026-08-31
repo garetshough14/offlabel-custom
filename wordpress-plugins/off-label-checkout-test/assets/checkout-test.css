@@ -4,7 +4,7 @@
   --olr-checkout-line: #b9b6b0;
   --olr-checkout-muted: #77736d;
   --olr-checkout-error: #9b1c1c;
-  --olr-checkout-font: "Neue Montreal", "Neue Haas Grotesk Text Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --olr-checkout-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
 body.olr-checkout-test-page {
@@ -614,3 +614,18 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
 @media (prefers-reduced-motion: reduce) {
   .olr-checkout-test *, .olr-checkout-test *::before, .olr-checkout-test *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+/* Canonical checkout typography */
+:is(#olr-checkout-type-system, .olr-checkout-test),
+:is(#olr-checkout-type-system, .olr-checkout-test) :where(button, input, select, textarea) { font-family: var(--olr-checkout-font) !important; }
+:is(#olr-checkout-type-system, .olr-checkout-test) :where(*) { letter-spacing: 0 !important; }
+:is(#olr-checkout-type-system, .olr-checkout-test) :where(p, li, input, select, textarea) { font-weight: 400 !important; }
+:is(#olr-checkout-type-system, .olr-checkout-test) :where(h1, h2, h3, h4, h5, h6) { font-weight: 700 !important; letter-spacing: -.015em !important; line-height: 1.1; }
+:is(#olr-checkout-type-system, .olr-checkout-test) :where(strong, b, .amount, .order-total) { font-weight: 700 !important; }
+:is(#olr-checkout-type-system, .olr-checkout-test) :where(label, summary, button, .button, nav a) { font-weight: 600 !important; }
+:is(#olr-checkout-type-system, .olr-checkout-test) :where(.olr-label, small) { letter-spacing: .025em !important; }
+:is(#olr-checkout-type-system, .olr-checkout-test) :where(.amount, .order-total) { font-variant-numeric: tabular-nums; }
+:is(#olr-checkout-type-system, .olr-checkout-test) .olr-checkout-test__logo strong,
+:is(#olr-checkout-type-system, .olr-checkout-test) .olr-checkout-test__footer-brand > strong { letter-spacing: .08em !important; }
+:is(#olr-checkout-type-system, .olr-checkout-test) .olr-checkout-test__logo span,
+:is(#olr-checkout-type-system, .olr-checkout-test) .olr-checkout-test__footer-brand > span { letter-spacing: .12em !important; }

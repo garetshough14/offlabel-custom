@@ -70,8 +70,10 @@
   width: 100% !important;
   height: 100% !important;
   max-width: none !important;
+  margin: auto !important;
   padding: clamp(2.5rem, 5vw, 4.8rem) !important;
   object-fit: contain !important;
+  object-position: 50% 50% !important;
 }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__thumbs {
   display: grid !important;
@@ -255,7 +257,7 @@
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__offers span { font-size: .54rem !important; letter-spacing: .05em !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__offers strong { margin-top: .2rem !important; font-size: .9rem !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__cta { display: inline-flex !important; position: relative !important; z-index: 3 !important; min-width: 9rem !important; min-height: 2.7rem !important; align-items: center !important; justify-content: center !important; gap: 1rem !important; border: 1px solid #fff !important; background: #fff !important; color: #000 !important; font-size: .62rem !important; font-weight: 700 !important; letter-spacing: .08em !important; text-decoration: none !important; text-transform: uppercase !important; }
-.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__art { position: absolute !important; z-index: 1 !important; right: -7rem !important; bottom: -4.2rem !important; width: 25rem !important; height: 18rem !important; object-fit: contain !important; transform: rotate(8deg) !important; pointer-events: none !important; }
+.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__art { display: none !important; }
 
 @media (max-width: 62rem) {
   .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view { grid-template-columns: minmax(0, 1fr) minmax(21rem, .92fr) !important; gap: 2rem !important; }
@@ -272,7 +274,6 @@
   .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-followup,
   .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__inner { grid-template-columns: minmax(0, 1fr) !important; }
   .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__summary h1 { font-size: clamp(2.5rem, 11vw, 4rem) !important; }
-  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__art { right: -9rem !important; opacity: .55 !important; }
 }
 
 @media (max-width: 35rem) {
@@ -292,3 +293,16 @@
   .olr-gitpress-site[data-olr-page="product-detail"] *::before,
   .olr-gitpress-site[data-olr-page="product-detail"] *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+/* Product page typography is late-loaded, so keep the site-wide hierarchy here too. */
+body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]),
+body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(button, input, select, textarea) {
+  font-family: var(--olr-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif) !important;
+}
+
+body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(*) { letter-spacing: 0 !important; }
+body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(p, li, input, select, textarea) { font-weight: 400 !important; }
+body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(h1, h2, h3, h4, h5, h6) { font-weight: 700 !important; letter-spacing: -.015em !important; }
+body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(strong, b, .price, .amount) { font-weight: 700 !important; }
+body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(label, summary, button, .button, .olr-button, .olr-product-box__cta) { font-weight: 600 !important; }
+body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(.olr-label, .olr-product-view__ruo, small) { letter-spacing: .025em !important; }

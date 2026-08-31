@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.6
+ * Version: 1.0.7
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.6' );
+define( 'OLR_COA_VERSION', '1.0.7' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
