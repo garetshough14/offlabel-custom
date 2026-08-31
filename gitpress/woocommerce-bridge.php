@@ -54,7 +54,7 @@ add_action(
 				'olr-coa-archive',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'20260827.1'
+				'20260830.3'
 			);
 
 			wp_enqueue_script(
@@ -66,12 +66,12 @@ add_action(
 			);
 		}
 
-		if ( is_page( array( 'research', 'shop', 'research-catalog-test' ) ) || ( function_exists( 'is_shop' ) && is_shop() ) ) {
+		if ( is_page( array( 'research', 'shop', 'catalog-test', 'research-catalog-test' ) ) || ( function_exists( 'is_shop' ) && is_shop() ) ) {
 			wp_enqueue_style(
 				'olr-research-catalog',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'20260821.2'
+				'20260830.5'
 			);
 		}
 

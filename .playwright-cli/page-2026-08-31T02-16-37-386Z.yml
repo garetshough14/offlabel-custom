@@ -1,0 +1,241 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - complementary "Important product notice" [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: Research use only
+        - generic [ref=e7]: /
+        - generic [ref=e8]: Not for human consumption
+        - generic [ref=e9]: /
+        - link "Document archive" [ref=e10] [cursor=pointer]:
+          - /url: testing.html
+    - generic [ref=e12]:
+      - link "Off Label Research home" [ref=e13] [cursor=pointer]:
+        - /url: index.html
+        - img "Off Label Research" [ref=e14]
+      - navigation "Primary navigation" [ref=e15]:
+        - link "Research" [ref=e16] [cursor=pointer]:
+          - /url: research.html
+        - link "About" [ref=e17] [cursor=pointer]:
+          - /url: about.html
+        - link "Testing" [ref=e18] [cursor=pointer]:
+          - /url: testing.html
+        - link "FAQ" [ref=e19] [cursor=pointer]:
+          - /url: faq.html
+      - navigation "Shopping and account" [ref=e20]:
+        - link "Search" [ref=e21] [cursor=pointer]:
+          - /url: research.html
+        - link "Account" [ref=e26] [cursor=pointer]:
+          - /url: account.html
+        - link "Bag Cart item count" [ref=e31] [cursor=pointer]:
+          - /url: cart.html
+          - generic [ref=e32]: Bag
+          - generic "Cart item count" [ref=e33]: ( 1 )
+      - text: ( )
+  - main [ref=e34]:
+    - generic [ref=e35]:
+      - region [ref=e36]:
+        - generic [ref=e37]:
+          - paragraph [ref=e38]: Current catalog
+          - heading "RESEARCH." [level=1] [ref=e39]
+          - paragraph [ref=e40]: Browse the established catalog by category, then review the product record before ordering.
+      - complementary "Product use notice" [ref=e41]:
+        - generic [ref=e42]:
+          - strong [ref=e43]: Research use only.
+          - generic [ref=e44]: Products are not for human consumption.
+      - region [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - heading "BROWSE BY CATEGORY" [level=2] [ref=e48]
+            - paragraph [ref=e49]: Use the current catalog structure to narrow the field.
+          - list [ref=e52]:
+            - listitem [ref=e53]:
+              - link "Research area Metabolic research View category" [ref=e54] [cursor=pointer]:
+                - /url: "#catalog"
+                - generic [ref=e55]: Research area
+                - heading "Metabolic research" [level=2] [ref=e56]
+                - generic [ref=e57]: View category
+            - listitem [ref=e58]:
+              - link "Research area Cellular research View category" [ref=e59] [cursor=pointer]:
+                - /url: "#catalog"
+                - generic [ref=e60]: Research area
+                - heading "Cellular research" [level=2] [ref=e61]
+                - generic [ref=e62]: View category
+            - listitem [ref=e63]:
+              - link "Research area Vitality research View category" [ref=e64] [cursor=pointer]:
+                - /url: "#catalog"
+                - generic [ref=e65]: Research area
+                - heading "Vitality research" [level=2] [ref=e66]
+                - generic [ref=e67]: View category
+            - listitem [ref=e68]:
+              - link "Research area Neurological research View category" [ref=e69] [cursor=pointer]:
+                - /url: "#catalog"
+                - generic [ref=e70]: Research area
+                - heading "Neurological research" [level=2] [ref=e71]
+                - generic [ref=e72]: View category
+      - region [ref=e73]:
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - heading "ALL RESEARCH" [level=2] [ref=e76]
+            - paragraph [ref=e77]: Current products, strengths, and availability are supplied by WooCommerce.
+          - list [ref=e80]:
+            - listitem [ref=e81]:
+              - link "Off Label Research Ipamorelin 10 MG research vial Research compound / 10 MG Ipamorelin $99.00" [ref=e82] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research Ipamorelin 10 MG research vial" [ref=e84]
+                - generic [ref=e85]: Research compound / 10 MG
+                - heading "Ipamorelin" [level=2] [ref=e86]
+                - generic [ref=e87]: $99.00
+              - link "View research" [ref=e89] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e90]:
+              - link "Off Label Research Sermorelin 5 MG research vial Research compound / 5 MG Sermorelin $89.00" [ref=e91] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research Sermorelin 5 MG research vial" [ref=e93]
+                - generic [ref=e94]: Research compound / 5 MG
+                - heading "Sermorelin" [level=2] [ref=e95]
+                - generic [ref=e96]: $89.00
+              - link "View research" [ref=e98] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e99]:
+              - link "Off Label Research TZ-2 30 MG research vial Research compound / 30 MG TZ-2 $119.00" [ref=e100] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research TZ-2 30 MG research vial" [ref=e102]
+                - generic [ref=e103]: Research compound / 30 MG
+                - heading "TZ-2" [level=2] [ref=e104]
+                - generic [ref=e105]: $119.00
+              - link "View research" [ref=e107] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e108]:
+              - link "Off Label Research RT-3 20 MG research vial Research compound / 20 MG RT-3 $109.00" [ref=e109] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research RT-3 20 MG research vial" [ref=e111]
+                - generic [ref=e112]: Research compound / 20 MG
+                - heading "RT-3" [level=2] [ref=e113]
+                - generic [ref=e114]: $109.00
+              - link "View research" [ref=e116] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e117]:
+              - link "Off Label Research Ipamorelin 10 MG research vial Research compound / 10 MG Ipamorelin $99.00" [ref=e118] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research Ipamorelin 10 MG research vial" [ref=e120]
+                - generic [ref=e121]: Research compound / 10 MG
+                - heading "Ipamorelin" [level=2] [ref=e122]
+                - generic [ref=e123]: $99.00
+              - link "View research" [ref=e125] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e126]:
+              - link "Off Label Research Sermorelin 5 MG research vial Research compound / 5 MG Sermorelin $89.00" [ref=e127] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research Sermorelin 5 MG research vial" [ref=e129]
+                - generic [ref=e130]: Research compound / 5 MG
+                - heading "Sermorelin" [level=2] [ref=e131]
+                - generic [ref=e132]: $89.00
+              - link "View research" [ref=e134] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e135]:
+              - link "Off Label Research TZ-2 30 MG research vial Research compound / 30 MG TZ-2 $119.00" [ref=e136] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research TZ-2 30 MG research vial" [ref=e138]
+                - generic [ref=e139]: Research compound / 30 MG
+                - heading "TZ-2" [level=2] [ref=e140]
+                - generic [ref=e141]: $119.00
+              - link "View research" [ref=e143] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e144]:
+              - link "Off Label Research RT-3 20 MG research vial Research compound / 20 MG RT-3 $109.00" [ref=e145] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research RT-3 20 MG research vial" [ref=e147]
+                - generic [ref=e148]: Research compound / 20 MG
+                - heading "RT-3" [level=2] [ref=e149]
+                - generic [ref=e150]: $109.00
+              - link "View research" [ref=e152] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e153]:
+              - link "Off Label Research Ipamorelin 10 MG research vial Research compound / 10 MG Ipamorelin $99.00" [ref=e154] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research Ipamorelin 10 MG research vial" [ref=e156]
+                - generic [ref=e157]: Research compound / 10 MG
+                - heading "Ipamorelin" [level=2] [ref=e158]
+                - generic [ref=e159]: $99.00
+              - link "View research" [ref=e161] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e162]:
+              - link "Off Label Research Sermorelin 5 MG research vial Research compound / 5 MG Sermorelin $89.00" [ref=e163] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research Sermorelin 5 MG research vial" [ref=e165]
+                - generic [ref=e166]: Research compound / 5 MG
+                - heading "Sermorelin" [level=2] [ref=e167]
+                - generic [ref=e168]: $89.00
+              - link "View research" [ref=e170] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e171]:
+              - link "Off Label Research TZ-2 30 MG research vial Research compound / 30 MG TZ-2 $119.00" [ref=e172] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research TZ-2 30 MG research vial" [ref=e174]
+                - generic [ref=e175]: Research compound / 30 MG
+                - heading "TZ-2" [level=2] [ref=e176]
+                - generic [ref=e177]: $119.00
+              - link "View research" [ref=e179] [cursor=pointer]:
+                - /url: research.html
+            - listitem [ref=e180]:
+              - link "Off Label Research RT-3 20 MG research vial Research compound / 20 MG RT-3 $109.00" [ref=e181] [cursor=pointer]:
+                - /url: research.html
+                - img "Off Label Research RT-3 20 MG research vial" [ref=e183]
+                - generic [ref=e184]: Research compound / 20 MG
+                - heading "RT-3" [level=2] [ref=e185]
+                - generic [ref=e186]: $109.00
+              - link "View research" [ref=e188] [cursor=pointer]:
+                - /url: research.html
+      - region [ref=e189]:
+        - generic [ref=e190]:
+          - heading "CHECK THE LOT. READ THE RECORD." [level=2] [ref=e191]
+          - link "View documents →" [ref=e192] [cursor=pointer]:
+            - /url: testing.html
+  - generic [ref=e194]:
+    - generic [ref=e195]:
+      - generic [ref=e196]:
+        - link "Off Label Research home" [ref=e197] [cursor=pointer]:
+          - /url: index.html
+          - img "Off Label Research" [ref=e198]
+        - paragraph [ref=e199]: Where sciencegoes off-script.
+      - navigation "Research links" [ref=e200]:
+        - heading "Research" [level=2] [ref=e201]
+        - link "All research" [ref=e202] [cursor=pointer]:
+          - /url: research.html
+        - link "Testing and documents" [ref=e203] [cursor=pointer]:
+          - /url: testing.html
+        - link "FAQ" [ref=e204] [cursor=pointer]:
+          - /url: faq.html
+      - navigation "Company links" [ref=e205]:
+        - heading "Company" [level=2] [ref=e206]
+        - link "About" [ref=e207] [cursor=pointer]:
+          - /url: about.html
+        - link "Contact" [ref=e208] [cursor=pointer]:
+          - /url: about.html
+        - link "Terms" [ref=e209] [cursor=pointer]:
+          - /url: faq.html
+        - link "Privacy" [ref=e210] [cursor=pointer]:
+          - /url: faq.html
+      - navigation "Account links" [ref=e211]:
+        - heading "Account" [level=2] [ref=e212]
+        - link "Account" [ref=e213] [cursor=pointer]:
+          - /url: account.html
+        - link "Orders" [ref=e214] [cursor=pointer]:
+          - /url: account.html
+        - link "Bag" [ref=e215] [cursor=pointer]:
+          - /url: cart.html
+        - link "Checkout" [ref=e216] [cursor=pointer]:
+          - /url: checkout.html
+      - navigation "Support links" [ref=e217]:
+        - heading "Support" [level=2] [ref=e218]
+        - link "Shipping" [ref=e219] [cursor=pointer]:
+          - /url: faq.html
+        - link "Returns" [ref=e220] [cursor=pointer]:
+          - /url: faq.html
+        - link "Terms" [ref=e221] [cursor=pointer]:
+          - /url: faq.html
+        - link "Privacy" [ref=e222] [cursor=pointer]:
+          - /url: faq.html
+    - generic [ref=e224]:
+      - generic [ref=e225]: © 2026 Off Label Research. All rights reserved.
+      - generic [ref=e226]: Research differently.
