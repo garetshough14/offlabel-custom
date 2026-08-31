@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Checkout Test
  * Description: Isolated, branded WooCommerce checkout preview at /checkout-test/ with active store gateways and a non-charging test option.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Off Label Research
  * Text Domain: off-label-checkout-test
  * Requires Plugins: woocommerce
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_CHECKOUT_TEST_VERSION', '1.2.0' );
+define( 'OLR_CHECKOUT_TEST_VERSION', '1.2.1' );
 define( 'OLR_CHECKOUT_TEST_FILE', __FILE__ );
 define( 'OLR_CHECKOUT_TEST_LOGO_URL', 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/branding/off-label-logo-cropped-black.webp' );
 
@@ -542,10 +542,6 @@ add_action(
 				?>
 				<div class="olr-checkout-test woocommerce<?php echo $cart_is_empty ? ' olr-checkout-test--empty' : ''; ?>" data-olr-page="checkout-test" data-olr-cart-state="<?php echo $cart_is_empty ? 'empty' : 'active'; ?>"<?php echo $cart_is_empty ? '' : ' data-olr-checkout-stage="information"'; ?>>
 					<div class="olr-checkout-test__trust" aria-label="Research and shipping standards"><span>99%+ purity</span><i aria-hidden="true">•</i><span>Third-party tested</span><i aria-hidden="true">•</i><span>Fast shipping</span></div>
-					<header class="olr-checkout-test__header">
-						<a class="olr-checkout-test__logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="Off Label Research home"><img src="<?php echo esc_url( OLR_CHECKOUT_TEST_LOGO_URL ); ?>" alt="Off Label Research" width="1199" height="169"></a>
-						<p>Secure checkout <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="1"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg></p>
-					</header>
 					<?php if ( ! $cart_is_empty ) : ?>
 						<nav class="olr-checkout-test__steps" aria-label="Checkout progress">
 							<button type="button" data-olr-stage-target="information" aria-current="step"><b>1.</b> Information</button><span aria-hidden="true"></span>

@@ -122,7 +122,6 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
 
 .olr-checkout-test__trust i { font-style: normal; }
 
-.olr-checkout-test__header,
 .olr-checkout-test__steps,
 .olr-checkout-test__main,
 .olr-checkout-test__footer {
@@ -130,37 +129,9 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
   margin-inline: auto;
 }
 
-.olr-checkout-test__header {
-  min-height: 78px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--olr-checkout-line);
-}
-
-.olr-checkout-test__logo {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-}
-
-.olr-checkout-test__logo img,
 .olr-checkout-test__footer-brand > img { display: block; width: 205px; height: auto; }
 .olr-checkout-test__footer-brand > img { width: 185px; }
 
-.olr-checkout-test__header p {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-
-.olr-checkout-test__header svg,
 .olr-checkout-test__secure svg {
   width: 20px;
   height: 20px;
@@ -557,7 +528,7 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
 .olr-checkout-test__legal { min-height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 max(24px, calc((100% - 1180px) / 2)); background: #050505; color: #fff; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
 
 @media (max-width: 900px) {
-  .olr-checkout-test__header, .olr-checkout-test__steps, .olr-checkout-test__main, .olr-checkout-test__footer { width: min(100% - 40px, 760px); }
+  .olr-checkout-test__steps, .olr-checkout-test__main, .olr-checkout-test__footer { width: min(100% - 40px, 760px); }
   .olr-checkout-test form.checkout { grid-template-columns: 1fr; }
   .olr-checkout-enhanced[data-olr-checkout-stage="payment"] form.checkout { grid-template-columns: minmax(0, 1fr); }
   .olr-checkout-test form.checkout > #customer_details { grid-column: 1; grid-row: 1; padding: 10px 0 25px; border-right: 0; }
@@ -572,12 +543,9 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
 @media (max-width: 600px) {
   .olr-checkout-test { font-size: 14px; }
   .olr-checkout-test__trust { gap: 8px; padding-inline: 10px; font-size: 8px; letter-spacing: .08em; }
-  .olr-checkout-test__header { min-height: 82px; }
-  .olr-checkout-test__logo img { width: 165px; }
-  .olr-checkout-test__header p { font-size: 9px; }
   .olr-checkout-test__steps { min-height: 78px; grid-template-columns: auto 1fr auto 1fr auto; gap: 8px; }
   .olr-checkout-test__steps button { font-size: 9px; letter-spacing: .03em; }
-  .olr-checkout-test__header, .olr-checkout-test__steps, .olr-checkout-test__main, .olr-checkout-test__footer { width: calc(100% - 28px); }
+  .olr-checkout-test__steps, .olr-checkout-test__main, .olr-checkout-test__footer { width: calc(100% - 28px); }
   .olr-checkout-test form .form-row-first, .olr-checkout-test form .form-row-last { float: none !important; width: 100% !important; }
   .olr-checkout-test :where(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper) { grid-template-columns: 1fr; }
   .olr-checkout-test :where(#billing_first_name_field, #billing_city_field, #billing_postcode_field, #shipping_first_name_field, #shipping_city_field, #shipping_postcode_field, #billing_last_name_field, #billing_state_field, #billing_phone_field, #shipping_last_name_field, #shipping_state_field, #shipping_phone_field) { grid-column: 1; }
