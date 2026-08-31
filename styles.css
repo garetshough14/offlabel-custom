@@ -4865,11 +4865,12 @@ body {
 .olr-gitpress-site.olr-redesign .olr-research-documentation__copy > h2 {
   max-width: 100%;
   margin: 0 0 1.35rem;
-  font-size: clamp(2.2rem, 3.55vw, 4.25rem);
+  font-size: clamp(2rem, 3.55vw, 4.25rem);
   font-weight: 400;
   letter-spacing: 0.15em;
   line-height: 1.05;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .olr-gitpress-site.olr-redesign .olr-research-documentation__copy > span {
