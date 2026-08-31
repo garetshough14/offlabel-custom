@@ -16,7 +16,9 @@ Activation creates a published **Receipt** page with the slug `receipt`. In the 
 
 ## Adding a report
 
-Go to **COA Reports → Add COA Report**, select a WooCommerce product, enter the report fields, choose a PDF, and publish. The newest test date becomes that product's current report. Older reports are shown automatically under Previous Testing.
+Go to **COA Reports → Add COA Report**, select a WooCommerce product, enter the test date, choose the original PDF, and publish. The newest test date becomes that product's current report. Older reports are shown automatically under Previous Testing.
+
+Sample or lot ID, purity/result, testing method, and testing laboratory are intentionally not duplicated as WordPress inputs. Those details remain authoritative inside the uploaded laboratory PDF.
 
 Drafts and entries without a valid product, ISO-format date, and PDF cannot appear publicly. The Testing archive receives its rows automatically through `olr_document_archive_items`.
 

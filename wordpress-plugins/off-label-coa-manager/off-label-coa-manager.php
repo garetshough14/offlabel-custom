@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.4' );
+define( 'OLR_COA_VERSION', '1.0.5' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -111,20 +111,13 @@ final class OLR_COA_Manager {
 		$product_id = absint( get_post_meta( $post->ID, '_olr_product_id', true ) );
 		$pdf_id     = absint( get_post_meta( $post->ID, '_olr_pdf_id', true ) );
 		$products   = function_exists( 'wc_get_products' ) ? wc_get_products( array( 'status' => 'publish', 'limit' => -1, 'orderby' => 'name', 'order' => 'ASC', 'return' => 'objects' ) ) : array();
-		$fields     = array(
-			'_olr_test_date' => array( 'Test date', 'date' ),
-			'_olr_lab'       => array( 'Testing laboratory', 'text' ),
-			'_olr_purity'    => array( 'Purity / result', 'text' ),
-			'_olr_sample_id' => array( 'Sample or lot ID', 'text' ),
-			'_olr_method'    => array( 'Testing method', 'text' ),
-		);
 		?>
 		<div class="olr-coa-admin-grid">
 			<p><label for="olr-product-id"><strong><?php esc_html_e( 'WooCommerce product', 'off-label-coa-manager' ); ?></strong></label><select id="olr-product-id" name="olr_product_id" required><option value="">Select a product</option><?php foreach ( $products as $product ) : ?><option value="<?php echo esc_attr( $product->get_id() ); ?>" <?php selected( $product_id, $product->get_id() ); ?>><?php echo esc_html( $product->get_name() ); ?></option><?php endforeach; ?></select></p>
-			<?php foreach ( $fields as $key => $field ) : ?><p><label for="<?php echo esc_attr( $key ); ?>"><strong><?php echo esc_html( $field[0] ); ?></strong></label><input id="<?php echo esc_attr( $key ); ?>" type="<?php echo esc_attr( $field[1] ); ?>" name="<?php echo esc_attr( ltrim( $key, '_' ) ); ?>" value="<?php echo esc_attr( get_post_meta( $post->ID, $key, true ) ); ?>" <?php echo '_olr_test_date' === $key ? 'required' : ''; ?>></p><?php endforeach; ?>
+			<p><label for="olr-test-date"><strong><?php esc_html_e( 'Test date', 'off-label-coa-manager' ); ?></strong></label><input id="olr-test-date" type="date" name="olr_test_date" value="<?php echo esc_attr( get_post_meta( $post->ID, '_olr_test_date', true ) ); ?>" required></p>
 			<p class="olr-coa-admin-pdf"><label><strong><?php esc_html_e( 'Certificate PDF', 'off-label-coa-manager' ); ?></strong></label><input type="hidden" name="olr_pdf_id" id="olr-coa-pdf-id" value="<?php echo esc_attr( $pdf_id ); ?>"><button type="button" class="button" id="olr-coa-pdf-select"><?php esc_html_e( 'Choose PDF', 'off-label-coa-manager' ); ?></button> <button type="button" class="button-link-delete" id="olr-coa-pdf-remove"><?php esc_html_e( 'Remove', 'off-label-coa-manager' ); ?></button><span id="olr-coa-pdf-name"><?php echo esc_html( $pdf_id ? basename( (string) get_attached_file( $pdf_id ) ) : 'No PDF selected' ); ?></span></p>
 		</div>
-		<p class="description">The newest published test date becomes the current report automatically. Older reports appear in testing history.</p>
+		<p class="description">The PDF contains the sample or lot ID, result, testing method, and laboratory. The newest published test date becomes the current report automatically.</p>
 		<?php
 	}
 
@@ -145,6 +138,9 @@ final class OLR_COA_Manager {
 			delete_post_meta( $post_id, '_olr_pdf_id' );
 		}
 		$test_date = isset( $_POST['olr_test_date'] ) ? sanitize_text_field( wp_unslash( $_POST['olr_test_date'] ) ) : '';
+		if ( '' !== $test_date && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $test_date ) ) {
+			$test_date = '';
+		}
 		$is_valid  = $product_id && 'product' === get_post_type( $product_id ) && $pdf_id && 'application/pdf' === get_post_mime_type( $pdf_id ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $test_date );
 		if ( 'publish' === $post->post_status && ! $is_valid ) {
 			remove_action( 'save_post_' . self::POST_TYPE, array( $this, 'save' ), 10 );
@@ -152,13 +148,7 @@ final class OLR_COA_Manager {
 			add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save' ), 10, 2 );
 			set_transient( 'olr_coa_invalid_' . get_current_user_id(), 1, 60 );
 		}
-		foreach ( array( 'test_date', 'lab', 'purity', 'sample_id', 'method' ) as $name ) {
-			$value = isset( $_POST[ 'olr_' . $name ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'olr_' . $name ] ) ) : '';
-			if ( 'test_date' === $name && $value && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
-				$value = '';
-			}
-			update_post_meta( $post_id, '_olr_' . $name, $value );
-		}
+		update_post_meta( $post_id, '_olr_test_date', $test_date );
 		if ( '' === $post->post_title && $product_id ) {
 			wp_update_post( array( 'ID' => $post_id, 'post_title' => get_the_title( $product_id ) . ' — ' . get_post_meta( $post_id, '_olr_test_date', true ) ) );
 		}
@@ -200,7 +190,7 @@ final class OLR_COA_Manager {
 			$category = 'other';
 			$restricted_term = 'pep' . 'tide';
 			if ( is_array( $terms ) ) { foreach ( $terms as $term ) { $haystack = strtolower( $term->slug . ' ' . $term->name ); if ( false !== strpos( $haystack, 'glp' ) ) { $category = 'glp'; break; } if ( false !== strpos( $haystack, $restricted_term ) || false !== strpos( $haystack, 'ipamorelin' ) || false !== strpos( $haystack, 'sermorelin' ) ) { $category = 'compounds'; } } }
-			$items[] = array( 'product_id' => $product_id, 'product_name' => $product->get_name(), 'product_url' => add_query_arg( 'product_id', $product_id, home_url( '/research-item/' ) ), 'product_image_url' => wp_get_attachment_image_url( $product->get_image_id(), 'medium' ), 'category' => $category, 'strength' => function_exists( 'olr_get_catalog_product_detail' ) ? olr_get_catalog_product_detail( $product ) : '', 'lot' => get_post_meta( $report->ID, '_olr_sample_id', true ), 'test_date' => $this->display_date( get_post_meta( $report->ID, '_olr_test_date', true ) ), 'document_url' => wp_get_attachment_url( $pdf_id ), 'record_url' => $this->record_url( $product ), 'document_label' => __( 'View COA', 'off-label-coa-manager' ) );
+			$items[] = array( 'product_id' => $product_id, 'product_name' => $product->get_name(), 'product_url' => add_query_arg( 'product_id', $product_id, home_url( '/research-item/' ) ), 'product_image_url' => wp_get_attachment_image_url( $product->get_image_id(), 'medium' ), 'category' => $category, 'strength' => function_exists( 'olr_get_catalog_product_detail' ) ? olr_get_catalog_product_detail( $product ) : '', 'test_date' => $this->display_date( get_post_meta( $report->ID, '_olr_test_date', true ) ), 'document_url' => wp_get_attachment_url( $pdf_id ), 'record_url' => $this->record_url( $product ), 'document_label' => __( 'View COA', 'off-label-coa-manager' ) );
 		}
 		return $items;
 	}
@@ -233,10 +223,6 @@ final class OLR_COA_Manager {
 		$current = array_shift( $reports );
 		$pdf_id = absint( get_post_meta( $current->ID, '_olr_pdf_id', true ) );
 		$pdf_url = wp_get_attachment_url( $pdf_id );
-		$purity = trim( get_post_meta( $current->ID, '_olr_purity', true ) );
-		$lab = trim( get_post_meta( $current->ID, '_olr_lab', true ) );
-		$method = trim( get_post_meta( $current->ID, '_olr_method', true ) );
-		$purity_display = $purity ? $purity : 'Verified';
 		ob_start();
 		include __DIR__ . '/templates/coa-page.php';
 		return (string) ob_get_clean();
@@ -247,14 +233,12 @@ final class OLR_COA_Manager {
 	}
 
 	public function columns( $columns ) {
-		return array( 'cb' => $columns['cb'], 'title' => __( 'Report', 'off-label-coa-manager' ), 'product' => __( 'Product', 'off-label-coa-manager' ), 'test_date' => __( 'Test date', 'off-label-coa-manager' ), 'lab' => __( 'Laboratory', 'off-label-coa-manager' ), 'purity' => __( 'Result', 'off-label-coa-manager' ), 'pdf' => 'PDF', 'date' => $columns['date'] );
+		return array( 'cb' => $columns['cb'], 'title' => __( 'Report', 'off-label-coa-manager' ), 'product' => __( 'Product', 'off-label-coa-manager' ), 'test_date' => __( 'Test date', 'off-label-coa-manager' ), 'pdf' => 'PDF', 'date' => $columns['date'] );
 	}
 
 	public function column_content( $column, $post_id ) {
 		if ( 'product' === $column ) { echo esc_html( get_the_title( absint( get_post_meta( $post_id, '_olr_product_id', true ) ) ) ); }
 		if ( 'test_date' === $column ) { echo esc_html( $this->display_date( get_post_meta( $post_id, '_olr_test_date', true ) ) ); }
-		if ( 'lab' === $column ) { echo esc_html( get_post_meta( $post_id, '_olr_lab', true ) ); }
-		if ( 'purity' === $column ) { echo esc_html( get_post_meta( $post_id, '_olr_purity', true ) ); }
 		if ( 'pdf' === $column ) { $url = wp_get_attachment_url( absint( get_post_meta( $post_id, '_olr_pdf_id', true ) ) ); echo $url ? '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener">View</a>' : '—'; }
 	}
 
