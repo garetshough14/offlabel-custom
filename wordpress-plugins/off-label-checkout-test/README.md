@@ -2,6 +2,10 @@
 
 An isolated WooCommerce classic-checkout preview for `/checkout-test/`. It does not replace the store's assigned Checkout page. It displays the store's currently available WooCommerce payment gateways plus a non-charging OLR test option.
 
+The checkout uses a compact three-stage layout and keeps one OLR research-updates consent field while suppressing duplicate marketing opt-ins on this route. Each order-summary line includes minus, plus, and remove controls that update the cart and checkout totals without sending the customer back to Bag. When the cart is empty, the page shows a clear empty-bag state and up to four visible, in-stock best sellers. Newest products fill any recommendation spaces when sales history is limited.
+
+The checkout header and footer use the same canonical WebP logo and Neue Montreal-based type stack as the managed GitPress site.
+
 ## Install
 
 1. Zip the `off-label-checkout-test` directory and upload it at **Plugins → Add Plugin → Upload Plugin**.

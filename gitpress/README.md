@@ -12,7 +12,6 @@ index.html
 about.html
 research.html
 testing.html
-journal.html
 faq.html
 cart.html
 checkout.html
@@ -29,7 +28,6 @@ gitpress/
     research.html
     product.html
     testing.html
-    journal.html
     faq.html
     cart.html
     checkout.html
@@ -114,12 +112,6 @@ Plugin activation creates a **Receipt** page. Choose **GitPress Managed** for th
 
 The public product receipt URLs use `/coas/{product-slug}/`; the newest test date is displayed as the current report and earlier records become previous testing.
 
-### Journal
-
-```text
-[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/journal.html" branch="main" format="html" updated_meta="false"]
-```
-
 ### FAQ
 
 ```text
@@ -150,7 +142,9 @@ GitPress Managed renders the global header, the selected page body, and the glob
 
 Install `gitpress/woocommerce-bridge.php` through Code Snippets, a child theme, or `mu-plugins`.
 
-The bridge allowlists the WooCommerce and Off Label Research shortcodes used by these page fragments, including the live research catalog, isolated single-product output, categories, cart, checkout, account, journal, document archive, and cart count output. It does not alter native singular product pages, and it does not add, remove, or configure payment gateways. WooCommerce remains responsible for products, prices, inventory, customers, carts, checkout, orders, shipping, taxes, and the site's existing payment methods.
+The bridge allowlists the WooCommerce and Off Label Research shortcodes used by these page fragments, including the live research catalog, isolated single-product output, categories, cart, checkout, account, document archive, and cart count output. It does not alter native singular product pages, and it does not add, remove, or configure payment gateways. WooCommerce remains responsible for products, prices, inventory, customers, carts, checkout, orders, shipping, taxes, and the site's existing payment methods.
+
+The former `/journal/` route is intentionally retired by the bridge. Remove its WordPress menu item and move the old WordPress page to Trash when deploying these files; the bridge redirects any stale route or cached link to the homepage.
 
 ## Styling behavior
 

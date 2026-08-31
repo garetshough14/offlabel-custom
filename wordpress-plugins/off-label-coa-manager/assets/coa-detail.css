@@ -1,7 +1,7 @@
-:root{--olr-coa-ink:#080808;--olr-coa-paper:#f6f3ed;--olr-coa-line:#cbc7bf;--olr-coa-muted:#67645f;--olr-coa-display:"Arial Narrow",Haettenschweiler,Impact,sans-serif}
+:root{--olr-coa-ink:#080808;--olr-coa-paper:#f6f3ed;--olr-coa-line:#cbc7bf;--olr-coa-muted:#67645f;--olr-coa-font:"Neue Montreal","Neue Haas Grotesk Text Pro","Helvetica Neue",Helvetica,Arial,sans-serif;--olr-coa-display:var(--olr-coa-font)}
 .olr-page--coa-detail{background:var(--olr-coa-paper)!important}
 .olr-coa-detail,.olr-coa-detail *{box-sizing:border-box}
-.olr-coa-detail{width:100%;margin:0;background:var(--olr-coa-paper);color:var(--olr-coa-ink);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.55}
+.olr-coa-detail{width:100%;margin:0;background:var(--olr-coa-paper);color:var(--olr-coa-ink);font-family:var(--olr-coa-font);font-size:16px;line-height:1.55}
 .olr-coa-detail a{color:inherit!important;text-decoration:none!important}
 .olr-coa-detail button,.olr-coa-detail input{font:inherit}
 .olr-coa-detail__hero,.olr-pdf-viewer,.olr-coa-detail__information,.olr-coa-detail__navigation{width:min(1160px,calc(100% - 72px));margin-inline:auto}

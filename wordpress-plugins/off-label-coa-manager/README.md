@@ -29,3 +29,5 @@ Drafts and entries without a valid product, ISO-format date, and PDF cannot appe
 - `[olr_coa_page product_id="123"]` — explicit diagnostic shortcode interface.
 
 The interactive PDF viewer uses a pinned PDF.js release from jsDelivr and always exposes direct open/download links if the viewer cannot load.
+
+Public COA pages use the same Neue Montreal-based type stack as the managed GitPress site. The public archive uses the compliance-safe **Compounds** category label.

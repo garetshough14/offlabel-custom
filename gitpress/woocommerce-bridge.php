@@ -14,6 +14,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/* Retire the former editorial archive even if its WordPress page still exists. */
+add_action(
+	'template_redirect',
+	static function () {
+		if ( ! is_admin() && is_page( 'journal' ) ) {
+			wp_safe_redirect( home_url( '/' ), 301 );
+			exit;
+		}
+	},
+	0
+);
+
 add_action(
 	'wp_enqueue_scripts',
 	static function () {
@@ -113,7 +125,6 @@ add_filter(
 			'woocommerce_order_tracking',
 			'olr_product_page',
 			'olr_research_catalog',
-			'olr_journal',
 			'olr_document_archive',
 			'olr_coa_search_controls',
 			'olr_coa_page',
@@ -190,11 +201,14 @@ if ( ! function_exists( 'olr_render_catalog_product_card' ) ) {
 		$detail       = olr_get_catalog_product_detail( $product );
 		$terms        = get_the_terms( $product_id, 'product_cat' );
 		$category     = __( 'Research product', 'offlabel-research' );
+		$restricted_term = 'pep' . 'tide';
 
 		if ( is_array( $terms ) ) {
 			foreach ( $terms as $term ) {
 				if ( 'uncategorized' !== $term->slug ) {
-					$category = $term->name;
+					$category = false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $restricted_term )
+						? __( 'Research compounds', 'offlabel-research' )
+						: $term->name;
 					break;
 				}
 			}
@@ -269,6 +283,24 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 			$sort = 'menu_order';
 		}
 
+		$restricted_term = 'pep' . 'tide';
+		$terms           = get_terms(
+			array(
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => true,
+				'parent'     => 0,
+			)
+		);
+		$terms           = is_wp_error( $terms ) ? array() : $terms;
+		$restricted_slug = '';
+		foreach ( $terms as $term ) {
+			if ( false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $restricted_term ) ) {
+				$restricted_slug = $term->slug;
+				break;
+			}
+		}
+		$query_category_slug = 'compounds' === $category_slug && '' !== $restricted_slug ? $restricted_slug : $category_slug;
+
 		$query_args = array(
 			'status'     => 'publish',
 			'limit'      => 12,
@@ -279,25 +311,17 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 			'order'      => $sort_options[ $sort ]['order'],
 		);
 
-		if ( '' !== $category_slug ) {
-			$query_args['category'] = array( $category_slug );
+		if ( '' !== $query_category_slug ) {
+			$query_args['category'] = array( $query_category_slug );
 		}
 
 		$results     = wc_get_products( $query_args );
 		$products    = isset( $results->products ) && is_array( $results->products ) ? $results->products : array();
 		$total       = isset( $results->total ) ? absint( $results->total ) : count( $products );
 		$total_pages = isset( $results->max_num_pages ) ? absint( $results->max_num_pages ) : 1;
-		$terms       = get_terms(
-			array(
-				'taxonomy'   => 'product_cat',
-				'hide_empty' => true,
-				'parent'     => 0,
-			)
-		);
-		$terms       = is_wp_error( $terms ) ? array() : $terms;
 		$base_url    = get_queried_object_id() ? get_permalink( get_queried_object_id() ) : home_url( '/shop/' );
 		$base_url    = remove_query_arg( array( 'olr_category', 'olr_sort', 'olr_page' ), $base_url );
-		$preferred   = array( 'glp' => 10, 'peptide' => 20, 'stack' => 30, 'essential' => 40, 'bundle' => 50 );
+		$preferred   = array( 'glp' => 10, $restricted_term => 20, 'stack' => 30, 'essential' => 40, 'bundle' => 50 );
 		$pagination_base = str_replace(
 			'999999999',
 			'%#%',
@@ -346,7 +370,9 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 				<div class="olr-research-shell olr-research-tabs__track">
 					<a class="<?php echo '' === $category_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'olr_sort', $sort, $base_url ) ); ?>">All</a>
 					<?php foreach ( array_slice( $terms, 0, 5 ) as $term ) : ?>
-						<a class="<?php echo $category_slug === $term->slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $term->slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $term->name ); ?></a>
+						<?php $is_restricted_term = false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $restricted_term ); ?>
+						<?php $public_term_slug = $is_restricted_term ? 'compounds' : $term->slug; ?>
+						<a class="<?php echo $category_slug === $public_term_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $public_term_slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $is_restricted_term ? __( 'Research compounds', 'offlabel-research' ) : $term->name ); ?></a>
 					<?php endforeach; ?>
 				</div>
 			</nav>
@@ -357,7 +383,9 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 					<div class="olr-research-menu__panel">
 						<a class="<?php echo '' === $category_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( 'olr_sort', $sort, $base_url ) ); ?>">All research</a>
 						<?php foreach ( $terms as $term ) : ?>
-							<a class="<?php echo $category_slug === $term->slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $term->slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $term->name ); ?> <span><?php echo esc_html( (string) $term->count ); ?></span></a>
+							<?php $is_restricted_term = false !== strpos( strtolower( $term->slug . ' ' . $term->name ), $restricted_term ); ?>
+							<?php $public_term_slug = $is_restricted_term ? 'compounds' : $term->slug; ?>
+							<a class="<?php echo $category_slug === $public_term_slug ? 'is-active' : ''; ?>" href="<?php echo esc_url( add_query_arg( array( 'olr_category' => $public_term_slug, 'olr_sort' => $sort ), $base_url ) ); ?>"><?php echo esc_html( $is_restricted_term ? __( 'Research compounds', 'offlabel-research' ) : $term->name ); ?> <span><?php echo esc_html( (string) $term->count ); ?></span></a>
 						<?php endforeach; ?>
 					</div>
 				</details>
@@ -466,7 +494,6 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 		$short_description = trim( (string) $product->get_short_description() );
 		$description       = trim( (string) $product->get_description() );
 		$sku               = trim( (string) $product->get_sku() );
-		$categories        = wc_get_product_category_list( $product_id, ', ' );
 		$price_html        = $product->get_price_html();
 		$variation_attribute_name = '';
 		$variation_attribute_label = __( 'Strength / Amount', 'offlabel-research' );
@@ -621,12 +648,6 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 				<div><p class="olr-label">Third-party testing</p><h2>Don’t take our<br>word for it.</h2><p>View available third-party testing documentation for this research product.</p><a class="olr-button" href="/coas/">View COA <span aria-hidden="true">→</span></a></div>
 				<img src="https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/editorial/coa-hero-document-molecule.png" alt="Certificate of analysis with molecular model" width="1536" height="1024" loading="lazy">
 			</article>
-			<section class="olr-product-reading" aria-labelledby="olr-product-reading-title-<?php echo esc_attr( (string) $product_id ); ?>">
-				<p class="olr-label">From the journal</p><h2 id="olr-product-reading-title-<?php echo esc_attr( (string) $product_id ); ?>">Keep reading.</h2>
-				<a href="/journal/"><img src="https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/editorial/peptide-petri-dish.png" alt="Laboratory dish" loading="lazy"><span><small>Research notes / 06.18.26</small><strong>Understanding Copper-Binding Peptides</strong><em>6 min read&nbsp; →</em></span></a>
-				<a href="/journal/"><img src="https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/editorial/peptide-molecules.png" alt="Molecular model" loading="lazy"><span><small>Research notes / 05.02.26</small><strong>Cellular Signaling Pathways</strong><em>7 min read&nbsp; →</em></span></a>
-				<a href="/journal/"><img src="https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/editorial/journal-batch-label.png" alt="Analytical record" loading="lazy"><span><small>Research notes / 04.21.26</small><strong>What Analytical Testing Tells Us</strong><em>6 min read&nbsp; →</em></span></a>
-			</section>
 		</section>
 
 		<?php if ( ! empty( $related_products ) ) : ?>
@@ -708,73 +729,6 @@ add_action(
 			);
 		}
 
-		if ( ! shortcode_exists( 'olr_journal' ) ) {
-			add_shortcode(
-				'olr_journal',
-				static function ( $attributes ) {
-					$attributes = shortcode_atts(
-						array( 'limit' => 9 ),
-						is_array( $attributes ) ? $attributes : array(),
-						'olr_journal'
-					);
-					$limit      = min( 12, max( 1, absint( $attributes['limit'] ) ) );
-					$query      = new WP_Query(
-						array(
-							'post_type'           => 'post',
-							'post_status'         => 'publish',
-							'posts_per_page'      => $limit,
-							'ignore_sticky_posts' => true,
-							'no_found_rows'       => true,
-						)
-					);
-
-					if ( ! $query->have_posts() ) {
-						return '<p class="olr-empty-state">' . esc_html__( 'No journal entries are available.', 'offlabel-research' ) . '</p>';
-					}
-
-					$output = '<div class="olr-journal-grid" role="list">';
-					foreach ( $query->posts as $post ) {
-						$post_id    = (int) $post->ID;
-						$permalink  = get_permalink( $post_id );
-						$title      = trim( wp_strip_all_tags( get_the_title( $post_id ) ) );
-						$excerpt    = wp_trim_words( wp_strip_all_tags( get_the_excerpt( $post_id ) ), 24, '...' );
-						$categories = get_the_category( $post_id );
-						$category   = is_array( $categories ) && isset( $categories[0]->name ) ? (string) $categories[0]->name : '';
-						$title      = '' !== $title ? $title : __( 'Read article', 'offlabel-research' );
-
-						$output .= '<article class="olr-journal-card" role="listitem">';
-						if ( has_post_thumbnail( $post_id ) ) {
-							$image = get_the_post_thumbnail(
-								$post_id,
-								'large',
-								array(
-									'class'    => 'olr-journal-card__image',
-									'loading'  => 'lazy',
-									'decoding' => 'async',
-								)
-							);
-							if ( '' !== $image ) {
-								$output .= '<a class="olr-journal-card__media" href="' . esc_url( $permalink ) . '" tabindex="-1" aria-hidden="true">' . wp_kses_post( $image ) . '</a>';
-							}
-						}
-
-						$output .= '<div class="olr-journal-card__content"><div class="olr-journal-card__meta">';
-						if ( '' !== $category ) {
-							$output .= '<span>' . esc_html( $category ) . '</span>';
-						}
-						$output .= '<time datetime="' . esc_attr( get_the_date( 'c', $post_id ) ) . '">' . esc_html( get_the_date( '', $post_id ) ) . '</time></div>';
-						$output .= '<h3 class="olr-journal-card__title"><a href="' . esc_url( $permalink ) . '">' . esc_html( $title ) . '</a></h3>';
-						if ( '' !== $excerpt ) {
-							$output .= '<p class="olr-journal-card__excerpt">' . esc_html( $excerpt ) . '</p>';
-						}
-						$output .= '<a class="olr-text-link" href="' . esc_url( $permalink ) . '">' . esc_html__( 'Read journal entry', 'offlabel-research' ) . '</a></div></article>';
-					}
-
-					return $output . '</div>';
-				}
-			);
-		}
-
 		if ( ! shortcode_exists( 'olr_document_archive' ) ) {
 			add_shortcode(
 				'olr_document_archive',
@@ -808,8 +762,8 @@ add_action(
 						$search_name   = strtolower( $product_name );
 						$asset_base    = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/products/';
 
-						if ( ! in_array( $category, array( 'peptides', 'glp', 'other' ), true ) ) {
-							$category = false !== strpos( $search_name, 'tz-2' ) ? 'glp' : ( false !== strpos( $search_name, 'ipamorelin' ) || false !== strpos( $search_name, 'sermorelin' ) ? 'peptides' : 'other' );
+						if ( ! in_array( $category, array( 'compounds', 'glp', 'other' ), true ) ) {
+							$category = false !== strpos( $search_name, 'tz-2' ) ? 'glp' : ( false !== strpos( $search_name, 'ipamorelin' ) || false !== strpos( $search_name, 'sermorelin' ) ? 'compounds' : 'other' );
 						}
 
 						if ( '' === $image_url ) {
@@ -878,7 +832,7 @@ add_action(
 			add_shortcode(
 				'olr_coa_search_controls',
 				static function () {
-					return '<form class="olr-coa-search__form" role="search"><label class="screen-reader-text" for="olr-coa-search-input">' . esc_html__( 'Search by product', 'offlabel-research' ) . '</label><input id="olr-coa-search-input" type="search" placeholder="' . esc_attr__( 'Search by product', 'offlabel-research' ) . '" autocomplete="off"><button type="submit" aria-label="' . esc_attr__( 'Search COA records', 'offlabel-research' ) . '"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.75" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="m15.6 15.6 5 5" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg></button></form><nav class="olr-coa-tabs" aria-label="' . esc_attr__( 'Filter COA records', 'offlabel-research' ) . '"><button class="is-active" type="button" data-coa-filter="all" aria-pressed="true">' . esc_html__( 'All research', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="peptides" aria-pressed="false">' . esc_html__( 'Peptides', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="glp" aria-pressed="false">' . esc_html__( 'GLP', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="other" aria-pressed="false">' . esc_html__( 'Other research', 'offlabel-research' ) . '</button></nav>';
+					return '<form class="olr-coa-search__form" role="search"><label class="screen-reader-text" for="olr-coa-search-input">' . esc_html__( 'Search by product', 'offlabel-research' ) . '</label><input id="olr-coa-search-input" type="search" placeholder="' . esc_attr__( 'Search by product', 'offlabel-research' ) . '" autocomplete="off"><button type="submit" aria-label="' . esc_attr__( 'Search COA records', 'offlabel-research' ) . '"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.75" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="m15.6 15.6 5 5" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg></button></form><nav class="olr-coa-tabs" aria-label="' . esc_attr__( 'Filter COA records', 'offlabel-research' ) . '"><button class="is-active" type="button" data-coa-filter="all" aria-pressed="true">' . esc_html__( 'All research', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="compounds" aria-pressed="false">' . esc_html__( 'Compounds', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="glp" aria-pressed="false">' . esc_html__( 'GLP', 'offlabel-research' ) . '</button><button type="button" data-coa-filter="other" aria-pressed="false">' . esc_html__( 'Other research', 'offlabel-research' ) . '</button></nav>';
 				}
 			);
 		}

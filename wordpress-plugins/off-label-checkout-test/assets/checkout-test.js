@@ -149,11 +149,81 @@
 
   function normalizeThirdPartyOptIns() {
     if (!form) return;
+    var marketingPhrases = [
+      'newsletter',
+      'exclusive email',
+      'discounts and product information',
+      'marketing email',
+      'promotional email',
+      'offers by email'
+    ];
     form.querySelectorAll('label').forEach(function (label) {
       var copy = label.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
-      if (copy.indexOf('exclusive emails') === -1 && copy.indexOf('discounts and product information') === -1) return;
+      var isMarketingOptIn = marketingPhrases.some(function (phrase) {
+        return copy.indexOf(phrase) !== -1;
+      });
+      if (!isMarketingOptIn) return;
       var row = label.closest('.form-row') || label.closest('p');
-      if (row && !row.classList.contains('olr-research-updates-field')) row.style.display = 'none';
+      if (row && !row.classList.contains('olr-research-updates-field')) row.classList.add('olr-checkout-hidden-optin');
+    });
+  }
+
+  function setCartCount(count) {
+    document.querySelectorAll('.olr-cart-count').forEach(function (counter) {
+      counter.textContent = String(count);
+      counter.setAttribute('aria-label', count + (count === 1 ? ' item in bag' : ' items in bag'));
+    });
+  }
+
+  function updateCartItem(cartItemKey, quantity, control) {
+    if (!window.olrCheckoutTest || !olrCheckoutTest.ajaxUrl || !olrCheckoutTest.cartNonce || root.hasAttribute('data-olr-cart-updating')) return;
+
+    root.setAttribute('data-olr-cart-updating', 'true');
+    root.setAttribute('aria-busy', 'true');
+    control.setAttribute('aria-busy', 'true');
+    control.querySelectorAll('button').forEach(function (button) {
+      button.setAttribute('data-olr-was-disabled', button.disabled ? 'true' : 'false');
+      button.disabled = true;
+    });
+    announce(quantity === 0 ? 'Removing product from your bag.' : 'Updating product quantity.');
+
+    $.ajax({
+      type: 'POST',
+      url: olrCheckoutTest.ajaxUrl,
+      dataType: 'json',
+      data: {
+        action: 'olr_checkout_test_update_cart',
+        nonce: olrCheckoutTest.cartNonce,
+        cart_item_key: cartItemKey,
+        quantity: quantity
+      }
+    }).done(function (response) {
+      if (!response || !response.success || !response.data) {
+        var errorMessage = response && response.data && response.data.message ? response.data.message : olrCheckoutTest.cartUpdateError;
+        announce(errorMessage || 'Your bag could not be updated. Please try again.');
+        return;
+      }
+
+      setCartCount(Number(response.data.cartCount) || 0);
+      if (response.data.cartEmpty) {
+        window.location.reload();
+        return;
+      }
+
+      announce('Your bag has been updated.');
+      $(document.body).trigger('update_checkout', { update_shipping_method: false });
+    }).fail(function (xhr) {
+      var response = xhr && xhr.responseJSON;
+      var errorMessage = response && response.data && response.data.message ? response.data.message : olrCheckoutTest.cartUpdateError;
+      announce(errorMessage || 'Your bag could not be updated. Please try again.');
+    }).always(function () {
+      root.removeAttribute('data-olr-cart-updating');
+      root.removeAttribute('aria-busy');
+      control.removeAttribute('aria-busy');
+      control.querySelectorAll('button').forEach(function (button) {
+        button.disabled = button.getAttribute('data-olr-was-disabled') === 'true';
+        button.removeAttribute('data-olr-was-disabled');
+      });
     });
   }
 
@@ -242,6 +312,24 @@
       var nextStage = button.getAttribute('data-olr-stage-target');
       setStage(nextStage, stages.indexOf(nextStage) > stages.indexOf(stage));
     });
+  });
+
+  root.addEventListener('click', function (event) {
+    var quantityButton = event.target.closest('[data-olr-quantity-change]');
+    var removeButton = event.target.closest('[data-olr-remove-item]');
+    var button = quantityButton || removeButton;
+    if (!button || !root.contains(button)) return;
+
+    var control = button.closest('[data-olr-cart-item]') || button.parentElement;
+    var cartItemKey = quantityButton
+      ? control.getAttribute('data-olr-cart-item')
+      : removeButton.getAttribute('data-olr-remove-item');
+    var quantityControl = quantityButton ? control : removeButton.previousElementSibling;
+    var currentQuantity = Number(quantityControl && quantityControl.getAttribute('data-quantity')) || 1;
+    var nextQuantity = removeButton ? 0 : Math.max(0, currentQuantity + Number(quantityButton.getAttribute('data-olr-quantity-change')));
+
+    event.preventDefault();
+    updateCartItem(cartItemKey, nextQuantity, quantityButton ? control.parentElement : removeButton.parentElement);
   });
 
   $(document.body).on('updated_checkout', function () {
