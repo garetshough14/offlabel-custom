@@ -491,6 +491,12 @@ body {
   text-underline-offset: 0.45em;
 }
 
+body:has([data-olr-page="build-your-box"]) .olr-managed-header [data-nav="build-box"] {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+}
+
 .olr-gitpress-site.olr-redesign .olr-nav-shell {
   display: none;
   justify-self: end;

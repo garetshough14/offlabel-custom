@@ -32,6 +32,7 @@ gitpress/
     cart.html
     checkout.html
     account.html
+    build-your-box.html
   partials/
     header.template.html
     header.html
@@ -123,6 +124,16 @@ The public product receipt URLs use `/coas/{product-slug}/`; the newest test dat
 ```text
 [divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/cart.html" branch="main" format="html" updated_meta="false"]
 ```
+
+### Build Your Box
+
+Install and activate `wordpress-plugins/off-label-build-a-box`, then configure the created `/build-your-box/` page in GitPress Managed mode with:
+
+```text
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/build-your-box.html" branch="main" format="html" updated_meta="false"]
+```
+
+The fragment renders `[olr_build_a_box]`. Product editors explicitly enable eligible bottles in **Product data → General**. The plugin uses live WooCommerce images, regular prices, variations, inventory, cart, checkout, orders, and refunds; its fixed 5- and 10-bottle pricing never creates or stacks a coupon.
 
 ### Checkout
 

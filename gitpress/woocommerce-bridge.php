@@ -136,6 +136,7 @@ add_filter(
 			'olr_coa_page',
 			'olr_checkout_test',
 			'olr_cart_count',
+			'olr_build_a_box',
 		);
 
 		return array_values( array_unique( array_merge( $shortcodes, $woocommerce_shortcodes ) ) );
