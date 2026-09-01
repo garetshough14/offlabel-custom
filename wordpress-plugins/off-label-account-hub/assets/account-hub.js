@@ -74,11 +74,19 @@
       toggle.lastElementChild.textContent = open ? "\u2212" : "+";
     });
 
+    var logoutUrl = window.olrAccountHub && olrAccountHub.logoutUrl ? olrAccountHub.logoutUrl : "";
     side.querySelectorAll("a").forEach(function (link) {
       link.addEventListener("click", function (event) {
         account.classList.remove("olr-account-nav-open");
         toggle.setAttribute("aria-expanded", "false");
         toggle.lastElementChild.textContent = "+";
+
+        if (logoutUrl && link.matches('a.um-account-link[data-tab="olr_logout"], a[href*="um_tab=olr_logout"], a[href*="/account/olr_logout/"]')) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          window.location.assign(logoutUrl);
+          return;
+        }
 
         /*
          * UM normally reveals an already-rendered tab in place. Affiliate tabs
@@ -93,18 +101,6 @@
         }
       }, true);
     });
-
-    var logoutUrl = window.olrAccountHub && olrAccountHub.logoutUrl ? olrAccountHub.logoutUrl : "";
-    if (logoutUrl) {
-      hub.querySelectorAll('a[href*="um_tab=olr_logout"], .um-account-link[data-tab="olr_logout"] a').forEach(function (link) {
-        link.href = logoutUrl;
-        link.addEventListener("click", function (event) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          window.location.assign(logoutUrl);
-        });
-      });
-    }
   }
 
   function restyleAffiliateCharts(hub) {
