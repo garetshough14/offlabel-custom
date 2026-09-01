@@ -34,8 +34,11 @@ function get_userdata( $user_id ) {
 	return isset( $olr_test_users[ $user_id ] ) ? $olr_test_users[ $user_id ] : false;
 }
 function is_email( $email ) { return false !== filter_var( $email, FILTER_VALIDATE_EMAIL ); }
+function sanitize_email( $email ) { return filter_var( $email, FILTER_SANITIZE_EMAIL ); }
 function wp_specialchars_decode( $text, $flags = ENT_QUOTES ) { return html_entity_decode( $text, $flags ); }
 function get_bloginfo( $key ) { return 'Off Label Research'; }
+function get_option( $key, $default = false ) { return 'admin_email' === $key ? 'manager@example.test' : $default; }
+function admin_url( $path = '' ) { return 'https://example.test/wp-admin/' . ltrim( $path, '/' ); }
 function wp_mail( $to, $subject, $message ) {
 	global $olr_test_mail;
 	$olr_test_mail[] = compact( 'to', 'subject', 'message' );
@@ -47,6 +50,10 @@ function update_user_meta( $user_id, $key, $value ) {
 	global $olr_test_meta;
 	$olr_test_meta[ $user_id ][ $key ] = $value;
 	return true;
+}
+function get_user_meta( $user_id, $key, $single = false ) {
+	global $olr_test_meta;
+	return isset( $olr_test_meta[ $user_id ][ $key ] ) ? $olr_test_meta[ $user_id ][ $key ] : '';
 }
 function delete_user_meta( $user_id, $key ) {
 	global $olr_test_meta;
@@ -88,19 +95,33 @@ if ( 2 !== count( $olr_test_mail ) || false === strpos( $olr_test_mail[0]['messa
 	exit( 1 );
 }
 
+$admin_email_method = $reflection->getMethod( 'send_application_admin_email' );
+$admin_email_method->setAccessible( true );
+if ( ! $admin_email_method->invoke( $plugin, 7 ) || 3 !== count( $olr_test_mail ) || 'manager@example.test' !== $olr_test_mail[2]['to'] ) {
+	fwrite( STDERR, "Administrator application email test failed.\n" );
+	exit( 1 );
+}
+
+$olr_test_meta[7] = array(
+	'_olr_affiliate_application_status'      => 'approved',
+	'_olr_affiliate_application_url'         => 'https://example.test/profile',
+	'_olr_affiliate_application_plan'        => 'Existing plan',
+	'_olr_affiliate_application_approved_at' => '2026-08-31 12:00:00',
+);
+
 $unlink_method = $reflection->getMethod( 'remove_affiliate_access' );
 $unlink_method->setAccessible( true );
 if ( 1 !== $unlink_method->invoke( $plugin, array( 42 ) ) || array( 7 ) !== $indeed_db->removed || ! isset( $olr_test_users[7] ) ) {
 	fwrite( STDERR, "Safe affiliate unlink test failed.\n" );
 	exit( 1 );
 }
-if ( 'rejected' !== $olr_test_meta[7]['_olr_affiliate_application_status'] ) {
-	fwrite( STDERR, "Application status after unlink test failed.\n" );
+if ( ! empty( $olr_test_meta[7] ) ) {
+	fwrite( STDERR, "Application reset after unlink test failed.\n" );
 	exit( 1 );
 }
 
 $required_hooks = array(
-	array( 'template_redirect', 1 ),
+	array( 'init', 1 ),
 	array( 'wp_ajax_uap_ajax_remove_one_affiliate', -100 ),
 	array( 'wp_ajax_uap_ajax_remove_many_affiliates', -100 ),
 );

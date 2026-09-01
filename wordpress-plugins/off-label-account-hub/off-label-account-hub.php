@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Account Hub
  * Description: Unified Ultimate Member, WooCommerce, and Ultimate Affiliate Pro account experience for Off Label Research.
- * Version: 1.0.9
+ * Version: 1.0.11
  * Author: Off Label Research
  * Text Domain: off-label-account-hub
  * Requires Plugins: ultimate-member, woocommerce
@@ -11,10 +11,11 @@
 defined( 'ABSPATH' ) || exit;
 
 final class OLR_Account_Hub {
-	const VERSION                  = '1.0.9';
+	const VERSION                  = '1.0.11';
 	const ACCOUNT_SLUG             = 'account';
 	const CDN_ASSET_BASE           = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/wordpress-plugins/off-label-account-hub/assets/';
 	const OPTION_TERMS_URL         = 'olr_affiliate_terms_url';
+	const OPTION_NOTIFICATION_EMAIL = 'olr_affiliate_notification_email';
 	const META_STATUS              = '_olr_affiliate_application_status';
 	const META_URL                 = '_olr_affiliate_application_url';
 	const META_PLAN                = '_olr_affiliate_application_plan';
@@ -46,7 +47,7 @@ final class OLR_Account_Hub {
 		add_filter( 'dgs_allowed_inner_shortcodes', array( $this, 'allow_gitpress_shortcodes' ) );
 		add_filter( 'body_class', array( $this, 'body_classes' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_assets' ), 40 );
-		add_action( 'template_redirect', array( $this, 'maybe_submit_frontend_application' ), 1 );
+		add_action( 'init', array( $this, 'maybe_submit_frontend_application' ), 1 );
 		add_action( 'template_redirect', array( $this, 'route_account_requests' ), 5 );
 		add_filter( 'uap_filter_on_load_template', array( $this, 'uap_template_override' ), 100, 2 );
 
@@ -183,18 +184,7 @@ final class OLR_Account_Hub {
 			return $current_tab;
 		}
 
-		$requested_tab = '';
-		if ( isset( $_GET['um_tab'] ) ) {
-			$requested_tab = sanitize_key( wp_unslash( $_GET['um_tab'] ) );
-		}
-
-		if ( ! $requested_tab ) {
-			$request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-			$request_path = $request_uri ? (string) wp_parse_url( $request_uri, PHP_URL_PATH ) : '';
-			if ( $request_path && preg_match( '#/account/([^/]+)/?#i', $request_path, $matches ) ) {
-				$requested_tab = sanitize_key( rawurldecode( $matches[1] ) );
-			}
-		}
+		$requested_tab = $this->requested_account_tab();
 
 		if ( 'account' === $requested_tab ) {
 			$requested_tab = 'general';
@@ -225,6 +215,25 @@ final class OLR_Account_Hub {
 		}
 
 		return $requested_tab;
+	}
+
+	/**
+	 * Read the requested account tab from either query or pretty URL routing.
+	 *
+	 * @return string
+	 */
+	private function requested_account_tab() {
+		if ( isset( $_GET['um_tab'] ) && is_scalar( $_GET['um_tab'] ) ) {
+			return sanitize_key( wp_unslash( (string) $_GET['um_tab'] ) );
+		}
+
+		$request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( (string) $_SERVER['REQUEST_URI'] ) : '';
+		$request_path = $request_uri ? (string) wp_parse_url( $request_uri, PHP_URL_PATH ) : '';
+		if ( $request_path && preg_match( '#/account/([^/]+)/?#i', $request_path, $matches ) ) {
+			return sanitize_key( rawurldecode( $matches[1] ) );
+		}
+
+		return '';
 	}
 
 	/**
@@ -1068,7 +1077,8 @@ final class OLR_Account_Hub {
 			</div>
 
 			<?php if ( 'application_submitted' === $notice ) : ?><div class="olr-account-notice" role="status"><?php esc_html_e( 'Your application was submitted for review.', 'off-label-account-hub' ); ?></div><?php endif; ?>
-			<?php if ( 'application_invalid' === $notice ) : ?><div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Complete every required field and try again.', 'off-label-account-hub' ); ?></div><?php endif; ?>
+			<?php if ( 'application_invalid' === $notice ) : ?><div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Enter a valid website or social URL, describe your plan, and accept the affiliate terms.', 'off-label-account-hub' ); ?></div><?php endif; ?>
+			<?php if ( 'application_session_expired' === $notice ) : ?><div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Your form session expired. Refresh the page and submit the application again.', 'off-label-account-hub' ); ?></div><?php endif; ?>
 			<?php if ( 'application_ineligible' === $notice ) : ?><div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Administrator accounts cannot enroll in the affiliate program. Use a standard member account.', 'off-label-account-hub' ); ?></div><?php endif; ?>
 
 			<?php if ( 'pending' === $status ) : ?>
@@ -1083,16 +1093,16 @@ final class OLR_Account_Hub {
 				<div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Applications will open after the affiliate terms are published.', 'off-label-account-hub' ); ?></div>
 			<?php else : ?>
 				<div class="olr-affiliate-application__intro"><h3><?php esc_html_e( 'APPLY TO WORK WITH OFF LABEL.', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Tell us where you plan to share Off Label Research. Applications are reviewed before affiliate tools become available.', 'off-label-account-hub' ); ?></p></div>
-				<form class="olr-account-form" method="post" action="<?php echo esc_url( $this->account_url() ); ?>">
+				<form class="olr-account-form" method="post" action="<?php echo esc_url( $this->account_tab_url( 'affiliate' ) ); ?>" novalidate>
 					<input type="hidden" name="olr_account_action" value="submit_affiliate_application">
 					<?php wp_nonce_field( 'olr_submit_affiliate_application', 'olr_affiliate_application_nonce' ); ?>
 					<div class="olr-account-form__grid">
 						<p><label><?php esc_html_e( 'Name', 'off-label-account-hub' ); ?><input type="text" value="<?php echo esc_attr( $user->display_name ); ?>" readonly></label></p>
 						<p><label><?php esc_html_e( 'Email', 'off-label-account-hub' ); ?><input type="email" value="<?php echo esc_attr( $user->user_email ); ?>" readonly></label></p>
 					</div>
-					<p><label for="olr-affiliate-url"><?php esc_html_e( 'Website or social URL', 'off-label-account-hub' ); ?> <span aria-hidden="true">*</span></label><input id="olr-affiliate-url" type="url" name="olr_affiliate_url" value="<?php echo esc_attr( get_user_meta( $user->ID, self::META_URL, true ) ); ?>" required></p>
-					<p><label for="olr-affiliate-plan"><?php esc_html_e( 'How do you plan to introduce Off Label Research to your audience?', 'off-label-account-hub' ); ?> <span aria-hidden="true">*</span></label><textarea id="olr-affiliate-plan" name="olr_affiliate_plan" minlength="20" maxlength="1200" rows="6" required><?php echo esc_textarea( get_user_meta( $user->ID, self::META_PLAN, true ) ); ?></textarea></p>
-					<label class="olr-account-checkbox"><input type="checkbox" name="olr_affiliate_terms" value="1" required><span><?php echo wp_kses_post( sprintf( __( 'I have read and agree to the <a href="%s" target="_blank" rel="noopener">affiliate terms</a>.', 'off-label-account-hub' ), esc_url( $terms_url ) ) ); ?></span></label>
+					<p><label for="olr-affiliate-url"><?php esc_html_e( 'Website or social URL', 'off-label-account-hub' ); ?> <span aria-hidden="true">*</span></label><input id="olr-affiliate-url" type="text" inputmode="url" autocomplete="url" name="olr_affiliate_url" value="<?php echo esc_attr( get_user_meta( $user->ID, self::META_URL, true ) ); ?>" aria-required="true"></p>
+					<p><label for="olr-affiliate-plan"><?php esc_html_e( 'How do you plan to introduce Off Label Research to your audience?', 'off-label-account-hub' ); ?> <span aria-hidden="true">*</span></label><textarea id="olr-affiliate-plan" name="olr_affiliate_plan" maxlength="1200" rows="6" aria-required="true"><?php echo esc_textarea( get_user_meta( $user->ID, self::META_PLAN, true ) ); ?></textarea></p>
+					<label class="olr-account-checkbox"><input type="checkbox" name="olr_affiliate_terms" value="1" aria-required="true"><span><?php echo wp_kses_post( sprintf( __( 'I have read and agree to the <a href="%s" target="_blank" rel="noopener">affiliate terms</a>.', 'off-label-account-hub' ), esc_url( $terms_url ) ) ); ?></span></label>
 					<button class="olr-account-button" type="submit"><?php esc_html_e( 'SUBMIT APPLICATION', 'off-label-account-hub' ); ?><span aria-hidden="true">&rarr;</span></button>
 				</form>
 			<?php endif; ?>
@@ -1115,17 +1125,24 @@ final class OLR_Account_Hub {
 		if ( self::is_administrator_account( $user_id ) ) {
 			$this->redirect_to_application( 'application_ineligible' );
 		}
-		if ( ! wp_verify_nonce( $nonce, 'olr_submit_affiliate_application' ) || self::is_active_affiliate( $user_id ) || $this->application_status( $user_id ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'olr_submit_affiliate_application' ) ) {
+			$this->redirect_to_application( 'application_session_expired' );
+		}
+		if ( self::is_active_affiliate( $user_id ) || $this->application_status( $user_id ) ) {
 			$this->redirect_to_application( 'application_invalid' );
 		}
 
 		$terms_url = trim( (string) get_option( self::OPTION_TERMS_URL, '' ) );
-		$url       = isset( $_POST['olr_affiliate_url'] ) ? esc_url_raw( wp_unslash( $_POST['olr_affiliate_url'] ) ) : '';
-		$plan      = isset( $_POST['olr_affiliate_plan'] ) ? sanitize_textarea_field( wp_unslash( $_POST['olr_affiliate_plan'] ) ) : '';
+		$raw_url   = isset( $_POST['olr_affiliate_url'] ) && is_scalar( $_POST['olr_affiliate_url'] ) ? trim( sanitize_text_field( wp_unslash( (string) $_POST['olr_affiliate_url'] ) ) ) : '';
+		if ( $raw_url && ! preg_match( '#^https?://#i', $raw_url ) ) {
+			$raw_url = 'https://' . ltrim( $raw_url, '/' );
+		}
+		$url       = esc_url_raw( $raw_url, array( 'http', 'https' ) );
+		$plan      = isset( $_POST['olr_affiliate_plan'] ) && is_scalar( $_POST['olr_affiliate_plan'] ) ? trim( sanitize_textarea_field( wp_unslash( (string) $_POST['olr_affiliate_plan'] ) ) ) : '';
 		$accepted  = ! empty( $_POST['olr_affiliate_terms'] );
 		$length    = function_exists( 'mb_strlen' ) ? mb_strlen( $plan ) : strlen( $plan );
 
-		if ( ! $terms_url || ! $accepted || ! wp_http_validate_url( $url ) || $length < 20 || $length > 1200 ) {
+		if ( ! $terms_url || ! $accepted || ! $url || ! wp_http_validate_url( $url ) || $length < 1 || $length > 1200 ) {
 			$this->redirect_to_application( 'application_invalid' );
 		}
 
@@ -1139,6 +1156,7 @@ final class OLR_Account_Hub {
 		delete_user_meta( $user_id, self::META_REJECTED );
 		do_action( 'olr_affiliate_application_submitted', $user_id );
 		$this->send_application_email( $user_id, 'submitted' );
+		$this->send_application_admin_email( $user_id );
 
 		$this->redirect_to_application( 'application_submitted' );
 	}
@@ -1211,6 +1229,15 @@ final class OLR_Account_Hub {
 				'default'           => '',
 			)
 		);
+		register_setting(
+			'olr_account_hub',
+			self::OPTION_NOTIFICATION_EMAIL,
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_email',
+				'default'           => '',
+			)
+		);
 	}
 
 	/**
@@ -1244,6 +1271,9 @@ final class OLR_Account_Hub {
 				<p><label for="olr-affiliate-terms-url"><strong><?php esc_html_e( 'Affiliate terms URL', 'off-label-account-hub' ); ?></strong></label></p>
 				<input class="regular-text" id="olr-affiliate-terms-url" type="url" name="<?php echo esc_attr( self::OPTION_TERMS_URL ); ?>" value="<?php echo esc_attr( get_option( self::OPTION_TERMS_URL, '' ) ); ?>" placeholder="https://offlabelresearch.com/affiliate-terms/">
 				<p class="description"><?php esc_html_e( 'Applications remain closed until this points to published terms.', 'off-label-account-hub' ); ?></p>
+				<p><label for="olr-affiliate-notification-email"><strong><?php esc_html_e( 'Application notification email', 'off-label-account-hub' ); ?></strong></label></p>
+				<input class="regular-text" id="olr-affiliate-notification-email" type="email" name="<?php echo esc_attr( self::OPTION_NOTIFICATION_EMAIL ); ?>" value="<?php echo esc_attr( $this->application_notification_email() ); ?>" placeholder="<?php echo esc_attr( get_option( 'admin_email', '' ) ); ?>">
+				<p class="description"><?php esc_html_e( 'New application alerts are sent here. The WordPress administration email is used when this field is empty.', 'off-label-account-hub' ); ?></p>
 				<?php submit_button( __( 'Save application settings', 'off-label-account-hub' ) ); ?>
 			</form>
 
@@ -1365,9 +1395,7 @@ final class OLR_Account_Hub {
 			update_user_meta( $user_id, self::META_REJECTED, current_time( 'mysql' ) );
 			$redirect_args['olr_updated'] = 1;
 		} else {
-			foreach ( array( self::META_STATUS, self::META_URL, self::META_PLAN, self::META_SUBMITTED, self::META_TERMS_URL, self::META_TERMS_ACCEPTED, self::META_REJECTED ) as $meta_key ) {
-				delete_user_meta( $user_id, $meta_key );
-			}
+			$this->reset_application_state( $user_id );
 			$redirect_args['olr_updated'] = 1;
 		}
 
@@ -1471,6 +1499,58 @@ final class OLR_Account_Hub {
 		}
 
 		return (bool) wp_mail( $user->user_email, $subject, $message );
+	}
+
+	/**
+	 * Resolve the administrator address used for new-application alerts.
+	 *
+	 * @return string
+	 */
+	private function application_notification_email() {
+		$email = sanitize_email( (string) get_option( self::OPTION_NOTIFICATION_EMAIL, '' ) );
+		if ( ! is_email( $email ) ) {
+			$email = sanitize_email( (string) get_option( 'admin_email', '' ) );
+		}
+
+		return is_email( $email ) ? $email : '';
+	}
+
+	/**
+	 * Notify the affiliate manager when a new application is submitted.
+	 *
+	 * @param int $user_id Applicant WordPress user ID.
+	 * @return bool
+	 */
+	private function send_application_admin_email( $user_id ) {
+		$user = get_userdata( absint( $user_id ) );
+		$to   = $this->application_notification_email();
+		if ( ! $user instanceof WP_User || ! $to ) {
+			return false;
+		}
+
+		$site_name = wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES );
+		$subject   = sprintf( __( '[%s] New affiliate application', 'off-label-account-hub' ), $site_name );
+		$message   = sprintf(
+			__( "A new affiliate application is ready for review.\n\nApplicant: %1\$s\nEmail: %2\$s\nWebsite or social URL: %3\$s\nPromotion plan:\n%4\$s\n\nReview applications: %5\$s", 'off-label-account-hub' ),
+			$user->display_name ? $user->display_name : $user->user_login,
+			$user->user_email,
+			(string) get_user_meta( $user->ID, self::META_URL, true ),
+			(string) get_user_meta( $user->ID, self::META_PLAN, true ),
+			admin_url( 'admin.php?page=olr-affiliate-applications' )
+		);
+
+		return (bool) wp_mail( $to, $subject, $message );
+	}
+
+	/**
+	 * Clear application history so a member can submit a fresh application.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 */
+	private function reset_application_state( $user_id ) {
+		foreach ( array( self::META_STATUS, self::META_URL, self::META_PLAN, self::META_SUBMITTED, self::META_TERMS_URL, self::META_TERMS_ACCEPTED, self::META_APPROVED, self::META_REJECTED ) as $meta_key ) {
+			delete_user_meta( absint( $user_id ), $meta_key );
+		}
 	}
 
 	/**
@@ -1591,9 +1671,7 @@ final class OLR_Account_Hub {
 			}
 
 			if ( $did_remove ) {
-				update_user_meta( $user_id, self::META_STATUS, 'rejected' );
-				update_user_meta( $user_id, self::META_REJECTED, current_time( 'mysql' ) );
-				delete_user_meta( $user_id, self::META_APPROVED );
+				$this->reset_application_state( $user_id );
 				++$removed;
 			}
 		}
@@ -1763,6 +1841,11 @@ final class OLR_Account_Hub {
 			return;
 		}
 
+		if ( $this->is_account_request() && is_user_logged_in() && in_array( $this->requested_account_tab(), array( 'logout', 'olr_logout' ), true ) ) {
+			wp_safe_redirect( wp_logout_url( home_url( '/' ) ) );
+			exit;
+		}
+
 		if ( $this->is_account_request() && ! is_user_logged_in() ) {
 			wp_safe_redirect( $this->ultimate_member_login_url() );
 			exit;
@@ -1837,11 +1920,11 @@ final class OLR_Account_Hub {
 		if ( 'ultimate_affiliates_pro' === $page && 'affiliates' === $tab ) {
 			if ( ! empty( $_GET['olr_affiliate_unlinked'] ) ) {
 				$count = absint( $_GET['olr_affiliate_unlinked'] );
-				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( _n( 'Affiliate access was removed. The WordPress member account was preserved.', 'Affiliate access was removed for %d users. Their WordPress member accounts were preserved.', $count, 'off-label-account-hub' ), $count ) ) . '</p></div>';
+				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( _n( 'Affiliate access was removed. The member account was preserved and can apply again.', 'Affiliate access was removed for %d users. Their member accounts were preserved and can apply again.', $count, 'off-label-account-hub' ), $count ) ) . '</p></div>';
 			} elseif ( isset( $_GET['olr_affiliate_unlink_error'] ) ) {
 				echo '<div class="notice notice-error"><p>' . esc_html__( 'Affiliate access could not be removed safely. No WordPress member account was deleted.', 'off-label-account-hub' ) . '</p></div>';
 			}
-			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Account protection is active: Delete removes affiliate access and affiliate records while preserving the WordPress member account. Removed users are marked rejected until their application is reset.', 'off-label-account-hub' ) . '</p></div>';
+			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Account protection is active: Delete removes affiliate access and affiliate records, preserves the member account, and opens a fresh application. Use Reject in Affiliate Applications only when reapplication should remain locked.', 'off-label-account-hub' ) . '</p></div>';
 		}
 	}
 

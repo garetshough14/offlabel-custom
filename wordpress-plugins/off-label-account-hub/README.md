@@ -2,7 +2,7 @@
 
 An update-safe account layer that brings Ultimate Member, WooCommerce order history, and Ultimate Affiliate Pro into the existing `/account/` page. It does not edit or bundle any vendor plugin files.
 
-Current build: **1.0.9**. This build keeps application submission on the public account route, sends applicant status emails, resolves GitPress account URLs, and converts UAP dashboard deletions into affiliate-only removals that preserve WordPress member accounts.
+Current build: **1.0.11**. This build sends new-application alerts to a configurable manager address, routes sidebar logout through WordPress's secure logout action, and treats affiliate removal as a clean reset that preserves the member and permits a new application. Intentional administrator rejection remains locked until Reset is selected.
 
 ## Requirements
 
@@ -29,10 +29,11 @@ After installation, the main file must be located at
 `wp-content/plugins/off-label-account-hub/off-label-account-hub.php` with no second
 `off-label-account-hub` directory nested inside it.
 
-The install ZIP also mirrors required assets and account-template overrides at
-its root for managed WordPress hosts that omit nested ZIP directories. The
-plugin falls back to the public repository CDN if a local presentation asset is
-still unavailable.
+The install ZIP contains exactly one top-level `off-label-account-hub` directory.
+If WordPress previously created suffixed directories such as
+`off-label-account-hub-2`, remove those stale directories through the hosting
+File Manager or SFTP before installing this build. The plugin falls back to the
+public repository CDN if a local presentation asset is unavailable.
 
 ## Account behavior
 
@@ -40,9 +41,9 @@ still unavailable.
 - WooCommerce order history and owned order details are rendered through WooCommerce APIs inside the Orders tab. Transactional actions still use their native secure endpoints.
 - Existing approved UAP affiliates see native affiliate statistics and tools in the branded shell.
 - Members without an affiliate record see the Off Label application. Submitting it does not change their WordPress or Ultimate Member role.
-- Submitting an application sends the applicant a received/pending email through WordPress mail. Approval uses UAP's configured approval notification and falls back to a plain account-hub email when that notification is disabled or cannot be sent.
+- Submitting an application sends the applicant a received/pending email and sends a review alert to the configured application notification address. Approval uses UAP's configured approval notification and falls back to a plain account-hub email when that notification is disabled or cannot be sent.
 - Administrators approve or reject applications from the plugin's UAP submenu. Approval creates one UAP affiliate record and assigns UAP's configured default rank.
-- UAP's single and bulk affiliate Delete controls remove affiliate access and affiliate records, mark the application rejected, and preserve the underlying WordPress member account.
+- UAP's single and bulk affiliate Delete controls remove affiliate access and affiliate records, preserve the underlying WordPress member account, and clear the previous application so the member can apply again. The separate Reject application action remains locked until an administrator selects Reset.
 - The previous UAP account page and the safe legacy Woo dashboard/order routes redirect into `/account/`. Saved-payment, address, and other technical Woo endpoints remain untouched.
 
 ## Upgrade safety
