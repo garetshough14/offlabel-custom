@@ -7,8 +7,9 @@
   <title>Account | Off Label Research redesign preview</title>
   <link rel="icon" type="image/svg+xml" href="branding/favicon-32.svg">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="wordpress-plugins/off-label-account-hub/assets/account-hub.css">
 </head>
-<body class="woocommerce-page">
+<body class="um-page">
   <div class="olr-gitpress-site olr-redesign" data-olr-page="account">
 <div class="olr-managed-header">
   <aside class="olr-announcement" aria-label="Important product notice">
@@ -87,21 +88,58 @@
 </div>
 
     <main id="main-content" class="olr-standalone-main">
-<div class="olr-page olr-page--commerce olr-page--account">
-    <section class="olr-page-hero olr-page-hero--compact" aria-labelledby="olr-account-title">
-      <div class="olr-shell olr-page-hero__inner">
-        <p class="olr-page-hero__kicker">Research access</p>
-        <h1 id="olr-account-title">MY ACCOUNT.</h1>
-        <p>Sign in to review orders and manage the account details available to you.</p>
+<div class="olr-page olr-page--account">
+  <h1 class="olr-visually-hidden">Your account</h1>
+  <div class="olr-account-hub" data-olr-account-hub>
+    <div class="um">
+      <div class="um-account">
+        <aside class="um-account-side">
+          <nav class="um-account-nav" aria-label="Account navigation">
+            <ul>
+              <li class="um-account-link current"><a class="current" href="#preview-account">Overview</a></li>
+              <li class="um-account-link"><a href="#preview-orders">Orders</a></li>
+              <li class="um-account-link"><a href="#preview-performance">Performance</a></li>
+              <li class="um-account-link"><a href="#preview-commissions">Commissions</a></li>
+              <li class="um-account-link"><a href="#preview-payouts">Payouts</a></li>
+              <li class="um-account-link"><a href="#preview-creative">Creative</a></li>
+              <li class="um-account-link"><a href="#preview-guidelines">Guidelines</a></li>
+              <li class="um-account-link"><a href="#preview-profile">Account</a></li>
+              <li class="um-account-link"><a href="#preview-logout">Log Out</a></li>
+            </ul>
+          </nav>
+        </aside>
+        <div class="um-account-main" id="preview-account">
+          <div class="uap-user-page-wrapper olr-uap-user-page">
+            <div class="uap-user-page-content-wrapper olr-uap-content-wrapper">
+              <div class="uap-user-page-content olr-uap-content">
+                <header class="olr-affiliate-header">
+                  <div><p class="olr-account-eyebrow">Off Label affiliate</p><h2>WELCOME BACK.</h2></div>
+                  <span class="olr-account-status"><span aria-hidden="true"></span>Active affiliate</span>
+                </header>
+                <div class="olr-affiliate-overview">
+                  <section class="olr-affiliate-link-card">
+                    <div><p class="olr-account-eyebrow">Your referral link</p><div class="olr-copy-field"><input type="text" value="offlabelresearch.com/ref/yourname" readonly><button type="button">COPY LINK <span aria-hidden="true">→</span></button></div></div>
+                    <div class="olr-affiliate-rate"><strong>—</strong><span>Commission rate</span><small>Your configured rank</small></div>
+                  </section>
+                  <section class="olr-account-stat-grid" aria-label="Affiliate totals">
+                    <div class="olr-account-stat"><strong>$0.00</strong><span>Total earnings</span></div>
+                    <div class="olr-account-stat"><strong>0</strong><span>Total referrals</span></div>
+                    <div class="olr-account-stat"><strong>$0.00</strong><span>Paid</span></div>
+                    <div class="olr-account-stat"><strong>$0.00</strong><span>Available for payout</span></div>
+                  </section>
+                  <section class="olr-affiliate-dashboard-grid">
+                    <div class="olr-affiliate-performance-card"><div class="olr-affiliate-card-heading"><div><p class="olr-account-eyebrow">Performance</p><h3>LAST 30 DAYS.</h3></div><a href="#preview-performance">VIEW REPORTS →</a></div><div class="olr-affiliate-chart-empty">Performance data will appear after eligible activity is recorded.</div><div class="olr-affiliate-mini-stats"><div><strong>0</strong><span>Clicks</span></div><div><strong>0%</strong><span>Conversion</span></div><div><strong>0</strong><span>Payouts</span></div></div></div>
+                    <div class="olr-affiliate-earnings-card"><p class="olr-account-eyebrow">Your earnings</p><dl><div><dt>Pending and available</dt><dd>$0.00</dd></div><div><dt>Paid</dt><dd>$0.00</dd></div><div><dt>Referrals this month</dt><dd>0</dd></div></dl><a class="olr-account-text-link" href="#preview-payouts">VIEW PAYOUTS →</a></div>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
-    <section class="olr-section olr-commerce" aria-labelledby="olr-account-content-title">
-      <div class="olr-shell">
-        <h2 class="olr-visually-hidden" id="olr-account-content-title">Account access and details</h2>
-        <div class="woocommerce"><div class="u-columns col2-set"><div class="u-column1 col-1"><h2>Login</h2><form class="woocommerce-form woocommerce-form-login login"><p class="form-row form-row-wide"><label for="username">Email address <span class="required">*</span></label><input id="username" type="email" autocomplete="email"></p><p class="form-row form-row-wide"><label for="password">Password <span class="required">*</span></label><input id="password" type="password" autocomplete="current-password"></p><p class="form-row"><label class="woocommerce-form__label-for-checkbox"><input type="checkbox"> <span>Remember me</span></label><button class="button woocommerce-form-login__submit" type="button">Log in</button></p><p class="woocommerce-LostPassword lost_password"><a href="#preview-account">Lost your password?</a></p></form></div><div class="u-column2 col-2"><h2>Research access</h2><p>Account registration and qualification fields remain controlled by the current WordPress access workflow.</p></div></div></div>
-      </div>
-    </section>
+    </div>
   </div>
+</div>
     </main>
 <div class="olr-managed-footer">
   <div class="site-footer">

@@ -136,6 +136,10 @@ The public product receipt URLs use `/coas/{product-slug}/`; the newest test dat
 [divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/account.html" branch="main" format="html" updated_meta="false"]
 ```
 
+Install and activate `wordpress-plugins/off-label-account-hub` before assigning this fragment. Keep `/account/` configured as Ultimate Member's core Account page. The fragment renders `[olr_account_hub]`, which provides the single branded member experience: Ultimate Member profile controls, HPOS-compatible WooCommerce order history and details, and approved Ultimate Affiliate Pro reporting and resources. Configure the published affiliate-terms URL under **Ultimate Affiliate Pro > Affiliate Applications** before accepting applications.
+
+The global Account links point to `/account/`; the Orders footer link opens its Orders tab. The plugin redirects the retired UAP account page plus the safe legacy Woo dashboard/order URLs into this hub without intercepting WooCommerce payment-method or transactional endpoints.
+
 GitPress Managed renders the global header, the selected page body, and the global footer as one server-rendered document.
 
 ## WooCommerce bridge

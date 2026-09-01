@@ -1,0 +1,1139 @@
+/**
+ * Off Label Account Hub
+ * All selectors are scoped so Ultimate Member, WooCommerce, and UAP retain
+ * their native presentation everywhere outside /account/.
+ */
+
+.olr-account-hub {
+  --olr-account-bone: #f5f4f0;
+  --olr-account-ink: #111;
+  --olr-account-white: #fff;
+  --olr-account-line: #d5d2cb;
+  --olr-account-muted: rgb(17 17 17 / 62%);
+  --olr-account-soft: #eeece6;
+  --olr-account-danger: #8c1d18;
+  width: min(100%, 96rem);
+  margin-inline: auto;
+  padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 3.4vw, 3.75rem);
+  overflow: clip;
+  color: var(--olr-account-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.olr-account-hub,
+.olr-account-hub *,
+.olr-account-hub *::before,
+.olr-account-hub *::after {
+  box-sizing: border-box;
+}
+
+.olr-account-hub :where(button, input, select, textarea) {
+  font: inherit;
+}
+
+.olr-account-hub :where(h1, h2, h3, h4, p, dl, dd, figure) {
+  margin-top: 0;
+}
+
+.olr-account-hub :where(h1, h2, h3, h4) {
+  color: inherit;
+  font-family: inherit;
+  font-weight: 650;
+  letter-spacing: -0.045em;
+}
+
+.olr-account-hub :where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Ultimate Member becomes the single account shell. */
+
+.olr-account-hub .um,
+.olr-account-hub .um-account,
+.olr-account-hub .um-account-main,
+.olr-account-hub .um-account-side {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  color: var(--olr-account-ink);
+  font-family: inherit;
+}
+
+.olr-account-hub .um-account {
+  display: grid;
+  grid-template-columns: minmax(13rem, 16.5rem) minmax(0, 1fr);
+  min-height: 48rem;
+  border: 1px solid var(--olr-account-line);
+  background: var(--olr-account-bone);
+}
+
+.olr-account-hub .um-account-side {
+  position: relative;
+  float: none;
+  padding: clamp(2rem, 3vw, 3.5rem) 1.25rem;
+  border-right: 1px solid var(--olr-account-line);
+  background: transparent;
+}
+
+.olr-account-hub .um-account-main {
+  float: none;
+  min-width: 0;
+  padding: clamp(2rem, 4.2vw, 4.5rem);
+  background: rgb(255 255 255 / 18%);
+}
+
+.olr-account-hub .um-account-nav,
+.olr-account-hub .um-account-nav ul,
+.olr-account-hub .um-account-nav li {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  list-style: none;
+}
+
+.olr-account-hub .um-account-nav a,
+.olr-account-hub .um-account-link,
+.olr-account-hub .um-account-link a {
+  color: var(--olr-account-ink) !important;
+  text-decoration: none !important;
+}
+
+.olr-account-hub .um-account-nav a,
+.olr-account-hub .um-account-link a {
+  position: relative;
+  display: flex !important;
+  align-items: center;
+  min-height: 3.4rem;
+  margin: 0;
+  padding: 0.75rem 0.625rem 0.75rem 1rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--olr-account-ink) !important;
+  font-size: 0.75rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .um-account-nav a::before,
+.olr-account-hub .um-account-link a::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -1.25rem;
+  width: 3px;
+  background: transparent;
+}
+
+.olr-account-hub .um-account-nav a.current,
+.olr-account-hub .um-account-link.current a,
+.olr-account-hub .um-account-link a.current,
+.olr-account-hub .um-account-nav a:hover,
+.olr-account-hub .um-account-link a:hover {
+  background: rgb(17 17 17 / 4%) !important;
+}
+
+.olr-account-hub .um-account-nav a.current::before,
+.olr-account-hub .um-account-link.current a::before,
+.olr-account-hub .um-account-link a.current::before {
+  background: var(--olr-account-ink);
+}
+
+.olr-account-hub .um-account-icon,
+.olr-account-hub .um-account-nav i,
+.olr-account-hub .um-account-link i {
+  width: 1.6rem;
+  margin-right: 0.75rem;
+  color: currentColor !important;
+  font-size: 1.05rem !important;
+  text-align: center;
+}
+
+.olr-account-hub .um-account-heading {
+  margin: 0 0 2rem;
+  padding: 0 0 1rem;
+  border-bottom: 1px solid var(--olr-account-line);
+  color: var(--olr-account-ink);
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .um-account-tab-overview > .um-account-heading,
+.olr-account-hub .um-account-tab-orders > .um-account-heading,
+.olr-account-hub .um-account-tab-affiliate > .um-account-heading,
+.olr-account-hub .um-account-tab-performance > .um-account-heading,
+.olr-account-hub .um-account-tab-commissions > .um-account-heading,
+.olr-account-hub .um-account-tab-payouts > .um-account-heading,
+.olr-account-hub .um-account-tab-creative > .um-account-heading,
+.olr-account-hub .um-account-tab-guidelines > .um-account-heading,
+.olr-account-hub .um-account-tab-olr_logout > .um-account-heading {
+  display: none;
+}
+
+.olr-account-hub .um-field,
+.olr-account-hub .um-col-alt {
+  margin-bottom: 1.25rem;
+}
+
+.olr-account-hub .um-field-label label,
+.olr-account-hub .um-field-label,
+.olr-account-hub .um-account-main label {
+  color: var(--olr-account-ink) !important;
+  font-family: inherit !important;
+  font-size: 0.6875rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .um-form input[type="text"],
+.olr-account-hub .um-form input[type="email"],
+.olr-account-hub .um-form input[type="password"],
+.olr-account-hub .um-form input[type="tel"],
+.olr-account-hub .um-form select,
+.olr-account-hub .um-form textarea,
+.olr-account-hub .um-field-area input,
+.olr-account-hub .um-field-area textarea {
+  min-height: 3.5rem !important;
+  padding: 0.875rem 1rem !important;
+  border: 1px solid var(--olr-account-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--olr-account-ink) !important;
+  font-family: inherit !important;
+}
+
+.olr-account-hub .um-button,
+.olr-account-hub input.um-button,
+.olr-account-hub .um a.um-button {
+  min-height: 3.5rem !important;
+  padding: 0.875rem 1.4rem !important;
+  border: 1px solid var(--olr-account-ink) !important;
+  border-radius: 0 !important;
+  background: var(--olr-account-ink) !important;
+  box-shadow: none !important;
+  color: var(--olr-account-white) !important;
+  font-family: inherit !important;
+  font-size: 0.6875rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase;
+}
+
+/* Shared account components. */
+
+.olr-account-hub .olr-account-panel,
+.olr-account-hub .olr-uap-user-page {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.olr-account-hub .olr-account-panel__header,
+.olr-account-hub .olr-affiliate-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.olr-account-hub .olr-account-panel__header h2,
+.olr-account-hub .olr-affiliate-header h2,
+.olr-account-hub .olr-account-empty h2 {
+  max-width: 14ch;
+  margin-bottom: 0;
+  font-size: clamp(2.4rem, 5.2vw, 5.25rem);
+  letter-spacing: -0.065em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-eyebrow {
+  margin-bottom: 1rem;
+  color: var(--olr-account-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-status {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.55rem;
+  padding-top: 0.35rem;
+  color: var(--olr-account-ink);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-status > span:first-child {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.olr-account-hub .olr-account-status--pending {
+  color: #7b5b00;
+}
+
+.olr-account-hub .olr-account-status--rejected {
+  color: var(--olr-account-danger);
+}
+
+.olr-account-hub .olr-account-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--olr-account-ink);
+}
+
+.olr-account-hub .olr-account-stat-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.olr-account-hub .olr-account-stat {
+  min-width: 0;
+  padding: clamp(1.35rem, 2.5vw, 2.1rem);
+  border-right: 1px solid var(--olr-account-line);
+  color: inherit;
+  text-decoration: none;
+}
+
+.olr-account-hub .olr-account-stat:last-child {
+  border-right: 0;
+}
+
+.olr-account-hub .olr-account-stat strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--olr-account-ink);
+  font-size: clamp(1.7rem, 3.3vw, 3rem);
+  font-weight: 650;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.olr-account-hub .olr-account-stat span {
+  color: var(--olr-account-muted);
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-callout,
+.olr-account-hub .olr-account-empty {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1.25rem;
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+  border: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-account-callout > div,
+.olr-account-hub .olr-account-empty > div {
+  max-width: 42rem;
+}
+
+.olr-account-hub .olr-account-callout h3,
+.olr-account-hub .olr-account-empty h3,
+.olr-account-hub .olr-affiliate-application__intro h3,
+.olr-account-hub .olr-affiliate-card-heading h3 {
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.5rem, 2.8vw, 2.5rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-callout p:last-child,
+.olr-account-hub .olr-account-empty p:last-of-type,
+.olr-account-hub .olr-affiliate-application__intro p {
+  max-width: 42rem;
+  margin-bottom: 0;
+  color: var(--olr-account-muted);
+}
+
+.olr-account-hub .olr-account-button,
+.olr-account-hub button.olr-account-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  min-width: 12rem;
+  min-height: 3.35rem;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid var(--olr-account-ink);
+  border-radius: 0;
+  background: var(--olr-account-ink);
+  color: var(--olr-account-white);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.olr-account-hub .olr-account-button:hover {
+  background: transparent;
+  color: var(--olr-account-ink);
+}
+
+.olr-account-hub .olr-account-text-link,
+.olr-account-hub .olr-account-back,
+.olr-account-hub .olr-affiliate-card-heading a {
+  color: var(--olr-account-ink);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35rem;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-back {
+  display: inline-block;
+  margin-bottom: 2rem;
+}
+
+.olr-account-hub .olr-account-notice,
+.olr-account-hub .uap-warning-box,
+.olr-account-hub .uap-reg-success-msg,
+.olr-account-hub .uap-reg-update-msg {
+  margin: 0 0 1.5rem !important;
+  padding: 1rem 1.2rem !important;
+  border: 1px solid var(--olr-account-ink) !important;
+  border-radius: 0 !important;
+  background: var(--olr-account-ink) !important;
+  color: var(--olr-account-white) !important;
+  font-size: 0.8125rem !important;
+  box-shadow: none !important;
+}
+
+.olr-account-hub .olr-account-notice--error {
+  border-color: var(--olr-account-danger) !important;
+  background: var(--olr-account-danger) !important;
+}
+
+/* Affiliate application. */
+
+.olr-account-hub .olr-affiliate-application__intro {
+  max-width: 48rem;
+  margin-bottom: 2.25rem;
+}
+
+.olr-account-hub .olr-account-form {
+  max-width: 58rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  border: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-account-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.olr-account-hub .olr-account-form p {
+  margin-bottom: 1.25rem;
+}
+
+.olr-account-hub .olr-account-form label:not(.olr-account-checkbox) {
+  display: block;
+  color: var(--olr-account-ink);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-form input[type="text"],
+.olr-account-hub .olr-account-form input[type="email"],
+.olr-account-hub .olr-account-form input[type="url"],
+.olr-account-hub .olr-account-form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--olr-account-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--olr-account-ink);
+  font-size: 0.9375rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.olr-account-hub .olr-account-form input[readonly] {
+  background: rgb(17 17 17 / 3%);
+  color: var(--olr-account-muted);
+}
+
+.olr-account-hub .olr-account-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  color: var(--olr-account-ink);
+  font-size: 0.8125rem;
+}
+
+.olr-account-hub .olr-account-checkbox input {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.1rem;
+  accent-color: var(--olr-account-ink);
+}
+
+/* WooCommerce order output. */
+
+.olr-account-hub .olr-account-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-account-table,
+.olr-account-hub .uap-account-table,
+.olr-account-hub .shop_table {
+  width: 100% !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-collapse: collapse !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--olr-account-ink) !important;
+  font-family: inherit !important;
+  table-layout: auto;
+}
+
+.olr-account-hub :where(.olr-account-table, .uap-account-table, .shop_table) th,
+.olr-account-hub :where(.olr-account-table, .uap-account-table, .shop_table) td {
+  padding: 1rem !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--olr-account-line) !important;
+  background: transparent !important;
+  color: var(--olr-account-ink) !important;
+  font-size: 0.8125rem !important;
+  text-align: left !important;
+  vertical-align: middle;
+}
+
+.olr-account-hub :where(.olr-account-table, .uap-account-table, .shop_table) th {
+  font-size: 0.625rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase;
+}
+
+.olr-account-hub :where(.olr-account-table, .uap-account-table, .shop_table) tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+.olr-account-hub .olr-account-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-pagination a {
+  color: inherit;
+}
+
+.olr-account-hub .olr-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem 1rem;
+}
+
+.olr-account-hub .olr-order-actions--detail {
+  justify-content: flex-start;
+  padding-top: 1rem;
+}
+
+.olr-account-hub .olr-account-native-order .woocommerce-order-details,
+.olr-account-hub .olr-account-native-order .woocommerce-customer-details {
+  margin: 0 0 2rem !important;
+}
+
+.olr-account-hub .olr-account-native-order h2,
+.olr-account-hub .olr-account-native-order h3 {
+  margin: 2rem 0 1rem;
+  font-size: 1.35rem;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-account-native-order address {
+  padding: 1.25rem;
+  border: 1px solid var(--olr-account-line);
+  border-radius: 0;
+  font-style: normal;
+}
+
+/* Branded UAP overview. */
+
+.olr-account-hub .olr-uap-content-wrapper,
+.olr-account-hub .olr-uap-content,
+.olr-account-hub .uap-ap-wrap,
+.olr-account-hub [class*="uap-account-"] {
+  max-width: none;
+  font-family: inherit;
+}
+
+.olr-account-hub .olr-uap-content-wrapper,
+.olr-account-hub .olr-uap-content {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.olr-account-hub .olr-affiliate-link-card {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(10rem, 0.72fr);
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--olr-account-ink);
+}
+
+.olr-account-hub .olr-affiliate-link-card > div {
+  min-width: 0;
+  padding: clamp(1.4rem, 2.8vw, 2.25rem);
+}
+
+.olr-account-hub .olr-affiliate-link-card > div + div {
+  border-left: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-copy-field {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+
+.olr-account-hub .olr-copy-field input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 3.35rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--olr-account-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--olr-account-ink);
+  font-size: 0.875rem;
+}
+
+.olr-account-hub .olr-copy-field button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-width: 9.5rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--olr-account-ink);
+  border-radius: 0;
+  background: var(--olr-account-ink);
+  color: var(--olr-account-white);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.olr-account-hub .olr-affiliate-rate {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.olr-account-hub .olr-affiliate-rate strong {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 650;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
+.olr-account-hub .olr-affiliate-rate span,
+.olr-account-hub .olr-affiliate-rate small {
+  margin-top: 0.45rem;
+  color: var(--olr-account-muted);
+  font-size: 0.625rem;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-affiliate-dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(14rem, 0.8fr);
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.olr-account-hub .olr-affiliate-performance-card,
+.olr-account-hub .olr-affiliate-earnings-card,
+.olr-account-hub .olr-affiliate-recent {
+  min-width: 0;
+  padding: clamp(1.25rem, 2.8vw, 2rem);
+  border: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.olr-account-hub .olr-affiliate-card-heading h3 {
+  margin-bottom: 0;
+}
+
+.olr-account-hub .olr-affiliate-chart {
+  min-height: 18rem;
+  padding: 1rem 0;
+}
+
+.olr-account-hub .olr-affiliate-chart canvas {
+  width: 100% !important;
+  max-width: 100%;
+  min-height: 16rem;
+}
+
+.olr-account-hub .olr-affiliate-chart-empty {
+  display: grid;
+  min-height: 18rem;
+  place-items: center;
+  padding: 2rem;
+  border-block: 1px solid var(--olr-account-line);
+  color: var(--olr-account-muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.olr-account-hub .olr-affiliate-mini-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-mini-stats > div {
+  padding: 1rem;
+  border-right: 1px solid var(--olr-account-line);
+  text-align: center;
+}
+
+.olr-account-hub .olr-affiliate-mini-stats > div:last-child {
+  border-right: 0;
+}
+
+.olr-account-hub .olr-affiliate-mini-stats strong,
+.olr-account-hub .olr-affiliate-mini-stats span {
+  display: block;
+}
+
+.olr-account-hub .olr-affiliate-mini-stats strong {
+  font-size: 1.35rem;
+}
+
+.olr-account-hub .olr-affiliate-mini-stats span {
+  margin-top: 0.25rem;
+  color: var(--olr-account-muted);
+  font-size: 0.575rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-affiliate-earnings-card dl {
+  margin: 0 0 2rem;
+}
+
+.olr-account-hub .olr-affiliate-earnings-card dl > div {
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-earnings-card dt {
+  color: var(--olr-account-muted);
+  font-size: 0.625rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-affiliate-earnings-card dd {
+  margin: 0.4rem 0 0;
+  font-size: 1.7rem;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+}
+
+.olr-account-hub .olr-referral-status {
+  display: inline-block;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid currentColor;
+  font-size: 0.575rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-referral-status--0 {
+  color: var(--olr-account-danger);
+}
+
+.olr-account-hub .olr-referral-status--1 {
+  color: #7b5b00;
+}
+
+/* Native UAP subpages: remove the stock card colors and normalize controls. */
+
+.olr-account-hub .uap-user-page-top-wrapper,
+.olr-account-hub .uap-ap-menu,
+.olr-account-hub .uap-user-page-footer {
+  display: none !important;
+}
+
+.olr-account-hub .uap-ap-wrap,
+.olr-account-hub .uap-account-dashboard-tab,
+.olr-account-hub .uap-account-referrals-tab,
+.olr-account-hub .uap-account-payments-tab,
+.olr-account-hub .uap-account-reports-tab,
+.olr-account-hub .uap-account-visits-tab {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.olr-account-hub .uap-ap-wrap > h3,
+.olr-account-hub .uap-profile-box-title,
+.olr-account-hub .uap-account-title {
+  margin: 0 0 1rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--olr-account-ink) !important;
+  font-family: inherit !important;
+  font-size: 1.35rem !important;
+  font-weight: 650 !important;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .uap-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0 !important;
+}
+
+.olr-account-hub [class*="uapcol-md-"],
+.olr-account-hub [class*="uap-col-"] {
+  float: none !important;
+  min-width: 0;
+  margin: 0 !important;
+}
+
+.olr-account-hub [class*="uapcol-md-"] {
+  flex: 1 1 13rem;
+  width: auto !important;
+}
+
+.olr-account-hub .uap-account-no-box,
+.olr-account-hub .uap-profile-box-wrapper,
+.olr-account-hub .uap-profile-box-content,
+.olr-account-hub .uap-account-summary-month,
+.olr-account-hub .uap-account-detault-message {
+  margin: 0 0 1rem !important;
+  padding: 1.25rem !important;
+  border: 1px solid var(--olr-account-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--olr-account-ink) !important;
+}
+
+.olr-account-hub .uap-account-no-box .uap-count {
+  color: var(--olr-account-ink) !important;
+  font-family: inherit !important;
+  font-size: 2rem !important;
+  font-weight: 650 !important;
+}
+
+.olr-account-hub .uap-account-no-box :where(.uap-detail, .uap-subnote) {
+  color: var(--olr-account-muted) !important;
+  font-family: inherit !important;
+}
+
+.olr-account-hub .uap-account-referrals-filter :where(input, select),
+.olr-account-hub .uap-user-page-content :where(input[type="text"], input[type="email"], input[type="url"], input[type="number"], select, textarea) {
+  min-height: 2.9rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--olr-account-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--olr-account-ink) !important;
+  font-family: inherit !important;
+}
+
+.olr-account-hub .uap-user-page-content :where(button, input[type="submit"], .uap-button, .uap-public-form-button) {
+  min-height: 2.9rem;
+  padding: 0.75rem 1rem !important;
+  border: 1px solid var(--olr-account-ink) !important;
+  border-radius: 0 !important;
+  background: var(--olr-account-ink) !important;
+  box-shadow: none !important;
+  color: var(--olr-account-white) !important;
+  font-family: inherit !important;
+  font-size: 0.625rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .uap-pagination,
+.olr-account-hub .uap-account-pagination {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.olr-account-menu-toggle {
+  display: none;
+}
+
+.olr-account-copy-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 68rem) {
+  .olr-account-hub .um-account {
+    grid-template-columns: 12.5rem minmax(0, 1fr);
+  }
+
+  .olr-account-hub .um-account-main {
+    padding: 2rem;
+  }
+
+  .olr-account-hub .olr-account-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .olr-account-hub .olr-account-stat:nth-child(2) {
+    border-right: 0;
+  }
+
+  .olr-account-hub .olr-account-stat:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--olr-account-line);
+  }
+
+  .olr-account-hub .olr-affiliate-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 50rem) {
+  .olr-account-hub {
+    padding-block: 1.5rem 3rem;
+  }
+
+  .olr-account-hub .um-account {
+    display: block;
+    min-height: 0;
+  }
+
+  .olr-account-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 3.5rem;
+    padding: 0.9rem 1rem;
+    border: 0;
+    border-bottom: 1px solid var(--olr-account-line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--olr-account-ink);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .olr-account-hub .um-account.olr-account-has-toggle .um-account-side {
+    display: none;
+  }
+
+  .olr-account-hub .um-account.olr-account-has-toggle.olr-account-nav-open .um-account-side {
+    display: block;
+  }
+
+  .olr-account-hub .um-account-side {
+    padding: 1.25rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--olr-account-line);
+  }
+
+  .olr-account-hub .um-account-main {
+    padding: 1.5rem;
+  }
+
+  .olr-account-hub .olr-account-panel__header,
+  .olr-account-hub .olr-affiliate-header,
+  .olr-account-hub .olr-account-callout,
+  .olr-account-hub .olr-account-empty {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .olr-account-hub .olr-account-panel__header h2,
+  .olr-account-hub .olr-affiliate-header h2,
+  .olr-account-hub .olr-account-empty h2 {
+    font-size: clamp(2.25rem, 12vw, 4rem);
+  }
+
+  .olr-account-hub .olr-account-form__grid,
+  .olr-account-hub .olr-affiliate-link-card {
+    grid-template-columns: 1fr;
+  }
+
+  .olr-account-hub .olr-affiliate-link-card > div + div {
+    border-top: 1px solid var(--olr-account-line);
+    border-left: 0;
+  }
+
+  .olr-account-hub .olr-copy-field {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .olr-account-hub .olr-copy-field button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 38rem) {
+  .olr-account-hub .um-account-main {
+    padding: 1.15rem;
+  }
+
+  .olr-account-hub .olr-account-stat-grid,
+  .olr-account-hub .olr-account-stat-grid--two,
+  .olr-account-hub .olr-affiliate-mini-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .olr-account-hub .olr-account-stat,
+  .olr-account-hub .olr-account-stat:nth-child(2),
+  .olr-account-hub .olr-affiliate-mini-stats > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--olr-account-line);
+  }
+
+  .olr-account-hub .olr-account-stat:last-child,
+  .olr-account-hub .olr-affiliate-mini-stats > div:last-child {
+    border-bottom: 0;
+  }
+
+  .olr-account-hub .olr-affiliate-card-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .olr-account-hub .olr-account-table-wrap {
+    overflow: visible;
+    border: 0;
+  }
+
+  .olr-account-hub .olr-account-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .olr-account-hub .olr-account-table,
+  .olr-account-hub .olr-account-table tbody,
+  .olr-account-hub .olr-account-table tr,
+  .olr-account-hub .olr-account-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .olr-account-hub .olr-account-table tr {
+    margin-bottom: 1rem;
+    border: 1px solid var(--olr-account-line);
+  }
+
+  .olr-account-hub .olr-account-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: right !important;
+  }
+
+  .olr-account-hub .olr-account-table td::before {
+    content: attr(data-label);
+    color: var(--olr-account-muted);
+    font-size: 0.575rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .olr-account-hub *,
+  .olr-account-hub *::before,
+  .olr-account-hub *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
