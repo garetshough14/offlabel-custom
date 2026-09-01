@@ -53,6 +53,11 @@
       return;
     }
 
+    var brand = hub.querySelector(":scope > .olr-account-brand");
+    if (brand) {
+      side.insertBefore(brand, side.firstChild);
+    }
+
     var toggle = document.createElement("button");
     var label = window.olrAccountHub && olrAccountHub.menuLabel ? olrAccountHub.menuLabel : "Account menu";
     toggle.type = "button";
@@ -65,7 +70,7 @@
     toggle.addEventListener("click", function () {
       var open = account.classList.toggle("olr-account-nav-open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      toggle.lastElementChild.textContent = open ? "−" : "+";
+      toggle.lastElementChild.textContent = open ? "\u2212" : "+";
     });
 
     side.querySelectorAll("a").forEach(function (link) {
@@ -90,6 +95,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-olr-account-hub]").forEach(function (hub) {
+      document.body.classList.add("olr-account-hub-page");
       var status = document.createElement("span");
       status.className = "olr-account-copy-status";
       status.setAttribute("aria-live", "polite");
@@ -99,4 +105,3 @@
     });
   });
 })();
-

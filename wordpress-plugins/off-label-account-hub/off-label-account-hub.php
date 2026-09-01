@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Account Hub
  * Description: Unified Ultimate Member, WooCommerce, and Ultimate Affiliate Pro account experience for Off Label Research.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Off Label Research
  * Text Domain: off-label-account-hub
  * Requires Plugins: ultimate-member, woocommerce
@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 final class OLR_Account_Hub {
-	const VERSION                  = '1.0.1';
+	const VERSION                  = '1.0.2';
 	const ACCOUNT_SLUG             = 'account';
 	const OPTION_TERMS_URL         = 'olr_affiliate_terms_url';
 	const META_STATUS              = '_olr_affiliate_application_status';
@@ -25,6 +25,7 @@ final class OLR_Account_Hub {
 
 	private static $instance;
 	private static $rendering_hub = false;
+	private $late_styles_printed  = false;
 
 	/**
 	 * Return the single plugin instance.
@@ -42,6 +43,7 @@ final class OLR_Account_Hub {
 	private function __construct() {
 		add_shortcode( 'olr_account_hub', array( $this, 'shortcode' ) );
 		add_filter( 'dgs_allowed_inner_shortcodes', array( $this, 'allow_gitpress_shortcodes' ) );
+		add_filter( 'body_class', array( $this, 'body_classes' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_assets' ), 40 );
 		add_action( 'template_redirect', array( $this, 'route_account_requests' ), 5 );
 		add_filter( 'uap_filter_on_load_template', array( $this, 'uap_template_override' ), 100, 2 );
@@ -100,14 +102,84 @@ final class OLR_Account_Hub {
 	 * @return bool
 	 */
 	private function is_account_request() {
-		return ! is_admin() && function_exists( 'is_page' ) && is_page( self::ACCOUNT_SLUG );
+		if ( is_admin() ) {
+			return false;
+		}
+
+		if ( function_exists( 'is_page' ) && is_page( self::ACCOUNT_SLUG ) ) {
+			return true;
+		}
+
+		if ( function_exists( 'um_is_core_page' ) && um_is_core_page( 'account' ) ) {
+			return true;
+		}
+
+		$queried_id = function_exists( 'get_queried_object_id' ) ? absint( get_queried_object_id() ) : 0;
+		if ( $queried_id ) {
+			$post = get_post( $queried_id );
+			if ( $post && function_exists( 'has_shortcode' ) && has_shortcode( (string) $post->post_content, 'olr_account_hub' ) ) {
+				return true;
+			}
+
+			$core_pages = get_option( 'um_core_pages', array() );
+			if ( is_array( $core_pages ) && isset( $core_pages['account'] ) && $queried_id === absint( $core_pages['account'] ) ) {
+				return true;
+			}
+
+			$um_options = get_option( 'um_options', array() );
+			if ( is_array( $um_options ) && isset( $um_options['core_account'] ) && $queried_id === absint( $um_options['core_account'] ) ) {
+				return true;
+			}
+
+			if ( function_exists( 'UM' ) ) {
+				$ultimate_member = UM();
+				if ( is_object( $ultimate_member ) && method_exists( $ultimate_member, 'options' ) ) {
+					$options = $ultimate_member->options();
+					if ( is_object( $options ) && method_exists( $options, 'get' ) && $queried_id === absint( $options->get( 'core_account' ) ) ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		$request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$request_path = $request_uri ? (string) wp_parse_url( $request_uri, PHP_URL_PATH ) : '';
+		$home_path    = (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH );
+		if ( $request_path ) {
+			$request_path = '/' . trim( $request_path, '/' ) . '/';
+			$home_path    = '/' . trim( $home_path, '/' ) . '/';
+			if ( '/' !== $home_path && 0 === strpos( $request_path, $home_path ) ) {
+				$request_path = '/' . ltrim( substr( $request_path, strlen( $home_path ) ), '/' );
+			}
+
+			if ( '/account/' === $request_path || 0 === strpos( $request_path, '/account/' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Add a page-level styling hook to recognized account requests.
+	 *
+	 * @param array $classes Existing body classes.
+	 * @return array
+	 */
+	public function body_classes( $classes ) {
+		$classes = is_array( $classes ) ? $classes : array();
+		if ( $this->is_account_request() ) {
+			$classes[] = 'olr-account-hub-page';
+		}
+
+		return array_values( array_unique( $classes ) );
 	}
 
 	/**
 	 * Load frontend assets only on the account route.
 	 */
-	public function frontend_assets() {
-		if ( ! $this->is_account_request() ) {
+	public function frontend_assets( $force = false ) {
+		if ( ! $force && ! $this->is_account_request() ) {
 			return;
 		}
 
@@ -158,33 +230,74 @@ final class OLR_Account_Hub {
 	}
 
 	/**
+	 * Inline the scoped stylesheet when GitPress discovers the nested shortcode
+	 * after wp_head has already printed. Normal account requests still use the
+	 * enqueued stylesheet from the document head.
+	 *
+	 * @return string
+	 */
+	private function late_style_markup() {
+		if ( $this->late_styles_printed || ! did_action( 'wp_head' ) || wp_style_is( 'olr-account-hub', 'done' ) ) {
+			return '';
+		}
+
+		$stylesheet = plugin_dir_path( __FILE__ ) . 'assets/account-hub.css';
+		if ( ! is_readable( $stylesheet ) ) {
+			return '';
+		}
+
+		$css = file_get_contents( $stylesheet );
+		if ( false === $css ) {
+			return '';
+		}
+
+		$this->late_styles_printed = true;
+		$styles                    = wp_styles();
+		if ( $styles && ! in_array( 'olr-account-hub', $styles->done, true ) ) {
+			$styles->done[] = 'olr-account-hub';
+		}
+
+		return '<style id="olr-account-hub-late-css">' . $css . '</style>';
+	}
+
+	/**
 	 * Render the canonical account shortcode.
 	 *
 	 * @return string
 	 */
 	public function shortcode() {
+		/* The GitPress page body can reveal this shortcode after wp_head. */
+		$this->frontend_assets( true );
+		$late_styles = $this->late_style_markup();
+
 		if ( ! is_user_logged_in() ) {
 			$login_url = $this->ultimate_member_login_url();
-			return $this->notice_panel(
+			$output    = $this->notice_panel(
 				__( 'ACCOUNT ACCESS', 'off-label-account-hub' ),
 				__( 'Sign in to review your account.', 'off-label-account-hub' ),
 				$login_url,
 				__( 'SIGN IN', 'off-label-account-hub' )
 			);
-		}
-
-		if ( ! shortcode_exists( 'ultimatemember_account' ) ) {
-			return $this->notice_panel(
+		} elseif ( ! shortcode_exists( 'ultimatemember_account' ) ) {
+			$output = $this->notice_panel(
 				__( 'ACCOUNT TEMPORARILY UNAVAILABLE', 'off-label-account-hub' ),
 				__( 'The member account service is not active. Please contact support.', 'off-label-account-hub' )
 			);
+		} else {
+			self::$rendering_hub = true;
+			$output              = do_shortcode( '[ultimatemember_account]' );
+			self::$rendering_hub = false;
 		}
 
-		self::$rendering_hub = true;
-		$output              = do_shortcode( '[ultimatemember_account]' );
-		self::$rendering_hub = false;
+		$brand = sprintf(
+			'<a class="olr-account-brand" href="%1$s" aria-label="%2$s"><img src="%3$s" alt="%4$s" width="1199" height="169"></a>',
+			esc_url( home_url( '/' ) ),
+			esc_attr__( 'Off Label Research home', 'off-label-account-hub' ),
+			esc_url( plugins_url( 'assets/off-label-logo-cropped-black.webp', __FILE__ ) ),
+			esc_attr__( 'Off Label Research', 'off-label-account-hub' )
+		);
 
-		return '<div class="olr-account-hub" data-olr-account-hub>' . $output . '</div>';
+		return $late_styles . '<div class="olr-account-hub" data-olr-account-hub>' . $brand . $output . '</div>';
 	}
 
 	/**
