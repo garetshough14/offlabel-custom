@@ -4,6 +4,8 @@
   var roots = document.querySelectorAll('[data-olr-build-box]');
   if (!roots.length) return;
 
+  document.body.classList.add('olr-build-box-page');
+
   roots.forEach(function (root) {
     var config = window.olrBuildBox || {};
     var state = new Map();
@@ -334,4 +336,3 @@
     render();
   });
 })();
-
