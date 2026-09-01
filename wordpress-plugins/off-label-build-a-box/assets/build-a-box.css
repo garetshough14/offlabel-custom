@@ -3,6 +3,33 @@
  * The builder is fully scoped; cart selectors target plugin-owned classes only.
  */
 
+/* Remove theme page/sidebar constraints only on the canonical builder route. */
+body.olr-build-box-page {
+  overflow-x: clip;
+  background: #f5f4f0;
+}
+
+body.olr-build-box-page :is(#main-content, #content.site-content, .site-content),
+body.olr-build-box-page :is(#main-content > .container, .site-content > .container),
+body.olr-build-box-page :is(#primary, #left-area, .content-area, .site-main),
+body.olr-build-box-page :is(article.page, article.type-page, .entry-content, .post-content) {
+  width: 100% !important;
+  max-width: none !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  float: none !important;
+}
+
+body.olr-build-box-page :is(#secondary, #sidebar, .widget-area),
+body.olr-build-box-page #main-content > .container::before,
+body.olr-build-box-page article.page > .entry-header,
+body.olr-build-box-page article.type-page > .entry-header,
+body.olr-build-box-page main > .page-header {
+  display: none !important;
+}
+
 .olr-build-box {
   --olr-box-bone: #f5f4f0;
   --olr-box-ink: #111111;
@@ -11,10 +38,13 @@
   --olr-box-muted: rgb(17 17 17 / 62%);
   --olr-box-green: #36724d;
   --olr-box-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
-  width: 100%;
-  max-width: 96rem;
-  margin: 0 auto;
-  padding: clamp(1rem, 3vw, 3rem);
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  max-width: none;
+  margin: 0 0 0 -50vw;
+  padding-block: clamp(1rem, 3vw, 3rem);
+  padding-inline: max(clamp(1rem, 3vw, 3rem), calc((100vw - 96rem) / 2 + 2rem));
   overflow: clip;
   background: var(--olr-box-bone);
   color: var(--olr-box-ink);
@@ -536,6 +566,36 @@
   text-transform: uppercase;
 }
 
+.olr-build-box--empty .olr-build-box__builder {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.olr-build-box--empty .olr-build-box__builder-header {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.olr-build-box--empty .olr-build-box__progress,
+.olr-build-box--empty .olr-build-box__summary {
+  display: none;
+}
+
+.olr-build-box--empty .olr-build-box__empty {
+  min-height: 18rem;
+  display: grid;
+  align-content: center;
+  background: rgb(255 255 255 / 18%);
+}
+
+.olr-build-box--empty .olr-build-box__empty h3 {
+  max-width: 16ch;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+}
+
+.olr-build-box--empty .olr-build-box__empty p:last-child {
+  max-width: 52rem;
+  margin-bottom: 0;
+}
+
 .olr-build-box__summary {
   position: sticky;
   top: 1rem;
@@ -917,4 +977,3 @@
     transition: none !important;
   }
 }
-

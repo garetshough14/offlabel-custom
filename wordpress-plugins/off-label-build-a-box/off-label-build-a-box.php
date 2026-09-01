@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Build Your Box
  * Description: Branded mix-and-match research box builder backed by native WooCommerce products, carts, and orders.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Off Label Research
  * Text Domain: off-label-build-a-box
  * Requires Plugins: woocommerce
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Build_A_Box {
-	const VERSION             = '1.0.0';
+	const VERSION             = '1.0.1';
 	const PAGE_SLUG           = 'build-your-box';
 	const SHORTCODE           = 'olr_build_a_box';
 	const META_ELIGIBLE       = '_olr_box_eligible';
@@ -22,7 +22,7 @@ final class OLR_Build_A_Box {
 	const CART_BOX_RATE       = 'olr_box_rate';
 	const CART_BOX_LABEL      = 'olr_box_label';
 	const CART_REGULAR_PRICE  = 'olr_box_regular_price';
-	const HERO_IMAGE          = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/editorial/hero-three-vials-transparent-glass.png';
+	const HERO_IMAGE          = 'assets/hero-three-vials-transparent-glass.png';
 
 	/** @var self|null */
 	private static $instance = null;
@@ -60,7 +60,10 @@ final class OLR_Build_A_Box {
 		add_action( 'woocommerce_admin_process_product_object', array( $this, 'save_product_eligibility' ) );
 		add_filter( 'manage_edit-product_columns', array( $this, 'product_columns' ) );
 		add_action( 'manage_product_posts_custom_column', array( $this, 'product_column_value' ), 10, 2 );
+		add_filter( 'bulk_actions-edit-product', array( $this, 'product_bulk_actions' ) );
+		add_filter( 'handle_bulk_actions-edit-product', array( $this, 'handle_product_bulk_action' ), 10, 3 );
 		add_action( 'admin_notices', array( $this, 'dependency_notice' ) );
+		add_action( 'admin_notices', array( $this, 'product_bulk_notice' ) );
 
 		add_action( 'wp_ajax_olr_save_box', array( $this, 'ajax_save_box' ) );
 		add_action( 'wp_ajax_nopriv_olr_save_box', array( $this, 'ajax_save_box' ) );
@@ -240,7 +243,7 @@ final class OLR_Build_A_Box {
 		ob_start();
 		?>
 		<?php echo $late_styles; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-		<div class="olr-build-box" data-olr-build-box data-tier="<?php echo esc_attr( (string) $initial_tier ); ?>" data-edit-box="<?php echo esc_attr( $edit_box_id ); ?>">
+		<div class="olr-build-box<?php echo $products ? '' : ' olr-build-box--empty'; ?>" data-olr-build-box data-tier="<?php echo esc_attr( (string) $initial_tier ); ?>" data-edit-box="<?php echo esc_attr( $edit_box_id ); ?>">
 			<section class="olr-build-box__hero" aria-labelledby="olr-build-box-title">
 				<div class="olr-build-box__hero-copy">
 					<p class="olr-build-box__eyebrow">Mix. Match. Save.</p>
@@ -249,7 +252,7 @@ final class OLR_Build_A_Box {
 					<p>Any bottles. Any combination.<br>Your box, your research.</p>
 				</div>
 				<figure class="olr-build-box__hero-media">
-					<img src="<?php echo esc_url( self::HERO_IMAGE ); ?>" alt="Off Label Research Sermorelin, KPV, and MOTS-C research vials" width="1554" height="1012">
+					<img src="<?php echo esc_url( plugins_url( self::HERO_IMAGE, __FILE__ ) ); ?>" alt="Off Label Research Sermorelin, KPV, and MOTS-C research vials" width="1554" height="1012">
 				</figure>
 				<ul class="olr-build-box__proof" aria-label="Product standards">
 					<li><?php echo $this->proof_icon( 'purity' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span>99%+ purity</span></li>
@@ -289,7 +292,7 @@ final class OLR_Build_A_Box {
 						</div>
 						<?php if ( count( $products ) > 7 ) : ?><button class="olr-build-box__browse" type="button" data-view-all>Browse all bottles <span aria-hidden="true">→</span></button><?php endif; ?>
 					<?php else : ?>
-						<div class="olr-build-box__empty"><p class="olr-build-box__eyebrow">Products unavailable</p><h3>No eligible bottles are available yet.</h3><p>An administrator can enable eligible, in-stock products from the WooCommerce product editor.</p></div>
+						<div class="olr-build-box__empty"><p class="olr-build-box__eyebrow">Collection loading</p><h3>Box selection is being prepared.</h3><p><?php echo current_user_can( 'manage_woocommerce' ) ? esc_html__( 'Select bottle products under Products, choose Enable Build Your Box from Bulk actions, then click Apply.', 'off-label-build-a-box' ) : esc_html__( 'Please check back shortly.', 'off-label-build-a-box' ); ?></p></div>
 					<?php endif; ?>
 				</div>
 
@@ -974,13 +977,99 @@ final class OLR_Build_A_Box {
 	}
 
 	/**
+	 * Add product-list bulk controls for box eligibility.
+	 *
+	 * @param array $actions Existing bulk actions.
+	 * @return array
+	 */
+	public function product_bulk_actions( $actions ) {
+		$actions['olr_box_enable']  = __( 'Enable Build Your Box', 'off-label-build-a-box' );
+		$actions['olr_box_disable'] = __( 'Disable Build Your Box', 'off-label-build-a-box' );
+		return $actions;
+	}
+
+	/**
+	 * Persist the core-nonced product-list bulk action through WooCommerce CRUD.
+	 *
+	 * @param string $redirect_url Redirect URL.
+	 * @param string $action       Selected action.
+	 * @param array  $post_ids     Selected product IDs.
+	 * @return string
+	 */
+	public function handle_product_bulk_action( $redirect_url, $action, $post_ids ) {
+		if ( ! in_array( $action, array( 'olr_box_enable', 'olr_box_disable' ), true ) || ! current_user_can( 'edit_products' ) ) {
+			return $redirect_url;
+		}
+
+		$value = 'olr_box_enable' === $action ? 'yes' : 'no';
+		$count = 0;
+		foreach ( array_map( 'absint', (array) $post_ids ) as $post_id ) {
+			$product = wc_get_product( $post_id );
+			if ( ! $product instanceof WC_Product || ! current_user_can( 'edit_post', $post_id ) ) {
+				continue;
+			}
+			$product->update_meta_data( self::META_ELIGIBLE, $value );
+			$product->save();
+			$count++;
+		}
+
+		return add_query_arg(
+			array(
+				'olr_box_bulk'  => 'yes',
+				'olr_box_state' => $value,
+				'olr_box_count' => $count,
+			),
+			$redirect_url
+		);
+	}
+
+	/**
+	 * Confirm a completed product eligibility bulk action.
+	 */
+	public function product_bulk_notice() {
+		if ( ! current_user_can( 'edit_products' ) || empty( $_GET['olr_box_bulk'] ) ) {
+			return;
+		}
+		$count = isset( $_GET['olr_box_count'] ) ? absint( $_GET['olr_box_count'] ) : 0;
+		$state = isset( $_GET['olr_box_state'] ) && 'yes' === sanitize_text_field( wp_unslash( $_GET['olr_box_state'] ) );
+		$message = sprintf(
+			/* translators: 1: product count, 2: eligibility state. */
+			_n( '%1$d product was %2$s for Build Your Box.', '%1$d products were %2$s for Build Your Box.', $count, 'off-label-build-a-box' ),
+			$count,
+			$state ? __( 'enabled', 'off-label-build-a-box' ) : __( 'disabled', 'off-label-build-a-box' )
+		);
+		echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $message ) . '</p></div>';
+	}
+
+	/**
 	 * Explain a missing WooCommerce dependency without breaking the site.
 	 */
 	public function dependency_notice() {
-		if ( class_exists( 'WooCommerce' ) || ! current_user_can( 'activate_plugins' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
 		}
-		echo '<div class="notice notice-error"><p>' . esc_html__( 'Off Label Build Your Box requires WooCommerce.', 'off-label-build-a-box' ) . '</p></div>';
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Off Label Build Your Box requires WooCommerce.', 'off-label-build-a-box' ) . '</p></div>';
+			return;
+		}
+
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || ! in_array( $screen->id, array( 'edit-product', 'product' ), true ) ) {
+			return;
+		}
+		$enabled = get_posts(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_key'       => self::META_ELIGIBLE,
+				'meta_value'     => 'yes',
+			)
+		);
+		if ( ! $enabled ) {
+			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Build Your Box has no enabled products. Select bottle products, choose Enable Build Your Box from Bulk actions, and click Apply.', 'off-label-build-a-box' ) . '</p></div>';
+		}
 	}
 
 	/**
