@@ -5,6 +5,7 @@ An update-safe WooCommerce companion plugin for the branded `/build-your-box/` e
 ## What it does
 
 - Registers `[olr_build_a_box]` and creates a fallback **Build Your Box** page on activation.
+- Adds a centralized **WooCommerce → Build Your Box** product eligibility manager with search, pagination, readiness checks, and select-all controls.
 - Uses explicitly eligible WooCommerce products, featured images, current regular prices, stock, taxes, shipping, checkout, orders, and refunds.
 - Offers **The Five** at 25% off and **The Ten** at 30% off.
 - Keeps each selected bottle as a native cart and order line under a shared box ID.
@@ -18,8 +19,8 @@ No WooCommerce coupon or custom database table is created.
 
 1. Back up the staging site and WooCommerce settings.
 2. Upload `off-label-build-a-box.zip` from **Plugins → Add Plugin → Upload Plugin** and activate it.
-3. Confirm that WordPress lists version **1.0.1** and that only one `off-label-build-a-box` plugin directory exists.
-4. Go to **Products**, select the approved bottle products, choose **Enable Build Your Box** from **Bulk actions**, and click **Apply**. You can also edit one product and enable **Build Your Box eligible** under **Product data → General**.
+3. Confirm that WordPress lists version **1.0.3** and that only one `off-label-build-a-box` plugin directory exists.
+4. Open **WooCommerce → Build Your Box**, select every approved bottle, and click **Save eligible products**. You do not need to open each product.
 5. Confirm every enabled product has a real featured image, a positive regular price, purchasable stock, and is not on sale.
 6. Open the created **Build Your Box** page and set its slug to `build-your-box` if WordPress changed it.
 7. For the normal GitPress header and footer, select **GitPress Managed** and use:
@@ -42,4 +43,4 @@ No WooCommerce coupon or custom database table is created.
 - Sale, hidden, unsupported, image-less, and out-of-stock products do not appear or validate.
 - Desktop, tablet, and mobile layouts use the canonical Off Label bottle imagery without horizontal overflow.
 
-Version 1.0.1 bundles the approved three-vial hero inside the plugin and removes default theme content/sidebar constraints from the builder route.
+Version 1.0.3 bundles the approved three-vial hero, removes default theme title/content/sidebar constraints from the builder route, and adds centralized product eligibility management.

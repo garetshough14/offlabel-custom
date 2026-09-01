@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Build Your Box
  * Description: Branded mix-and-match research box builder backed by native WooCommerce products, carts, and orders.
- * Version: 1.0.1
+ * Version: 1.0.3
  * Author: Off Label Research
  * Text Domain: off-label-build-a-box
  * Requires Plugins: woocommerce
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Build_A_Box {
-	const VERSION             = '1.0.1';
+	const VERSION             = '1.0.3';
 	const PAGE_SLUG           = 'build-your-box';
 	const SHORTCODE           = 'olr_build_a_box';
 	const META_ELIGIBLE       = '_olr_box_eligible';
@@ -55,6 +55,9 @@ final class OLR_Build_A_Box {
 		add_filter( 'the_content', array( $this, 'render_nested_shortcode' ), 100 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_assets' ), 40 );
 		add_filter( 'body_class', array( $this, 'body_class' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
+		add_action( 'admin_post_olr_save_box_products', array( $this, 'save_admin_products' ) );
 
 		add_action( 'woocommerce_product_options_general_product_data', array( $this, 'product_eligibility_field' ) );
 		add_action( 'woocommerce_admin_process_product_object', array( $this, 'save_product_eligibility' ) );
@@ -137,10 +140,254 @@ final class OLR_Build_A_Box {
 	 * @return array
 	 */
 	public function body_class( $classes ) {
-		if ( ! is_admin() && function_exists( 'is_page' ) && is_page( self::PAGE_SLUG ) ) {
+		if ( $this->is_builder_page_request() ) {
 			$classes[] = 'olr-build-box-page';
 		}
 		return $classes;
+	}
+
+	/**
+	 * Detect the builder whether WordPress or GitPress owns the page content.
+	 *
+	 * @return bool
+	 */
+	private function is_builder_page_request() {
+		if ( is_admin() ) {
+			return false;
+		}
+		if ( function_exists( 'is_page' ) && is_page( self::PAGE_SLUG ) ) {
+			return true;
+		}
+
+		global $post;
+		if ( ! $post instanceof WP_Post ) {
+			return false;
+		}
+		$content = (string) $post->post_content;
+		return self::PAGE_SLUG === $post->post_name
+			|| false !== strpos( $content, '[' . self::SHORTCODE )
+			|| false !== strpos( $content, 'gitpress/pages/build-your-box.html' );
+	}
+
+	/**
+	 * Register a centralized product manager under WooCommerce.
+	 */
+	public function admin_menu() {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			return;
+		}
+		add_submenu_page(
+			'woocommerce',
+			__( 'Build Your Box Products', 'off-label-build-a-box' ),
+			__( 'Build Your Box', 'off-label-build-a-box' ),
+			'manage_woocommerce',
+			'olr-build-a-box',
+			array( $this, 'admin_products_page' )
+		);
+	}
+
+	/**
+	 * Load admin assets only on the centralized product manager.
+	 *
+	 * @param string $hook_suffix Current admin hook.
+	 */
+	public function admin_assets( $hook_suffix ) {
+		if ( 'woocommerce_page_olr-build-a-box' !== $hook_suffix ) {
+			return;
+		}
+		wp_enqueue_style(
+			'olr-build-a-box-admin',
+			plugins_url( 'assets/build-a-box-admin.css', __FILE__ ),
+			array(),
+			self::VERSION
+		);
+		wp_enqueue_script(
+			'olr-build-a-box-admin',
+			plugins_url( 'assets/build-a-box-admin.js', __FILE__ ),
+			array(),
+			self::VERSION,
+			true
+		);
+	}
+
+	/**
+	 * Explain whether one product can currently appear in the builder.
+	 *
+	 * @param WC_Product|false $product Product object.
+	 * @return array
+	 */
+	private function admin_product_readiness( $product ) {
+		$issues = array();
+		if ( ! $product instanceof WC_Product ) {
+			return array( 'ready' => false, 'issues' => array( __( 'Product data unavailable', 'off-label-build-a-box' ) ) );
+		}
+		if ( ! $product->is_type( array( 'simple', 'variable' ) ) ) {
+			$issues[] = __( 'Unsupported product type', 'off-label-build-a-box' );
+		}
+		if ( 'publish' !== $product->get_status() ) {
+			$issues[] = __( 'Not published', 'off-label-build-a-box' );
+		}
+		if ( ! $product->is_visible() ) {
+			$issues[] = __( 'Hidden from the catalog', 'off-label-build-a-box' );
+		}
+		if ( ! $product->is_purchasable() ) {
+			$issues[] = __( 'Not purchasable', 'off-label-build-a-box' );
+		}
+		if ( ! $product->is_in_stock() ) {
+			$issues[] = __( 'Out of stock', 'off-label-build-a-box' );
+		}
+		if ( $product->is_on_sale() ) {
+			$issues[] = __( 'Sale pricing is active', 'off-label-build-a-box' );
+		}
+		if ( ! $product->get_image_id() ) {
+			$issues[] = __( 'Featured image missing', 'off-label-build-a-box' );
+		}
+
+		if ( $product->is_type( 'simple' ) && $this->regular_price( $product ) <= 0 ) {
+			$issues[] = __( 'Regular price missing', 'off-label-build-a-box' );
+		}
+		if ( $product->is_type( 'variable' ) ) {
+			$valid_variation = false;
+			foreach ( $product->get_children() as $variation_id ) {
+				$variation = wc_get_product( $variation_id );
+				if ( $variation instanceof WC_Product_Variation && $variation->is_purchasable() && $variation->is_in_stock() && ! $variation->is_on_sale() && $this->regular_price( $variation ) > 0 ) {
+					$valid_variation = true;
+					break;
+				}
+			}
+			if ( ! $valid_variation ) {
+				$issues[] = __( 'No eligible variation', 'off-label-build-a-box' );
+			}
+		}
+
+		return array( 'ready' => ! $issues, 'issues' => array_values( array_unique( $issues ) ) );
+	}
+
+	/**
+	 * Render the centralized Build Your Box product manager.
+	 */
+	public function admin_products_page() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( esc_html__( 'You do not have permission to manage Build Your Box products.', 'off-label-build-a-box' ) );
+		}
+
+		$paged  = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
+		$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$query  = new WP_Query(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => array( 'publish', 'draft', 'pending', 'private', 'future' ),
+				'posts_per_page' => 30,
+				'paged'          => $paged,
+				's'              => $search,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			)
+		);
+		$enabled_query = new WP_Query(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_key'       => self::META_ELIGIBLE,
+				'meta_value'     => 'yes',
+			)
+		);
+		$enabled_count = absint( $enabled_query->found_posts );
+		?>
+		<div class="wrap olr-box-admin">
+			<header class="olr-box-admin__header">
+				<div><p class="olr-box-admin__eyebrow">Off Label Research</p><h1><?php esc_html_e( 'Build Your Box', 'off-label-build-a-box' ); ?></h1><p><?php esc_html_e( 'Choose every WooCommerce product that customers may add to a research box. Changes are managed here—opening individual products is optional.', 'off-label-build-a-box' ); ?></p></div>
+				<div class="olr-box-admin__stat"><strong><?php echo esc_html( (string) $enabled_count ); ?></strong><span><?php esc_html_e( 'Products enabled', 'off-label-build-a-box' ); ?></span></div>
+			</header>
+
+			<?php if ( isset( $_GET['updated'] ) ) : ?>
+				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf( _n( '%d product setting was saved.', '%d product settings were saved.', absint( $_GET['updated'] ), 'off-label-build-a-box' ), absint( $_GET['updated'] ) ) ); ?></p></div>
+			<?php endif; ?>
+
+			<div class="olr-box-admin__toolbar">
+				<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
+					<input type="hidden" name="page" value="olr-build-a-box">
+					<label class="screen-reader-text" for="olr-box-product-search"><?php esc_html_e( 'Search products', 'off-label-build-a-box' ); ?></label>
+					<input id="olr-box-product-search" type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search products', 'off-label-build-a-box' ); ?>">
+					<button class="button" type="submit"><?php esc_html_e( 'Search', 'off-label-build-a-box' ); ?></button>
+					<?php if ( $search ) : ?><a class="button-link" href="<?php echo esc_url( admin_url( 'admin.php?page=olr-build-a-box' ) ); ?>"><?php esc_html_e( 'Clear', 'off-label-build-a-box' ); ?></a><?php endif; ?>
+				</form>
+				<p><span class="olr-box-admin__dot olr-box-admin__dot--ready" aria-hidden="true"></span><?php esc_html_e( 'Ready products can be enabled immediately.', 'off-label-build-a-box' ); ?></p>
+			</div>
+
+			<form class="olr-box-admin__form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="olr_save_box_products">
+				<input type="hidden" name="return_paged" value="<?php echo esc_attr( (string) $paged ); ?>">
+				<input type="hidden" name="return_search" value="<?php echo esc_attr( $search ); ?>">
+				<?php wp_nonce_field( 'olr_save_box_products', 'olr_box_products_nonce' ); ?>
+				<table class="wp-list-table widefat fixed striped table-view-list products">
+					<thead><tr><td class="manage-column column-cb check-column"><input type="checkbox" data-olr-select-all aria-label="<?php esc_attr_e( 'Select all ready products on this page', 'off-label-build-a-box' ); ?>"></td><th><?php esc_html_e( 'Product', 'off-label-build-a-box' ); ?></th><th><?php esc_html_e( 'SKU', 'off-label-build-a-box' ); ?></th><th><?php esc_html_e( 'Price', 'off-label-build-a-box' ); ?></th><th><?php esc_html_e( 'Builder readiness', 'off-label-build-a-box' ); ?></th></tr></thead>
+					<tbody>
+					<?php if ( $query->posts ) : ?>
+						<?php foreach ( $query->posts as $product_post ) : $product = wc_get_product( $product_post->ID ); $readiness = $this->admin_product_readiness( $product ); $checked = $product instanceof WC_Product && 'yes' === $product->get_meta( self::META_ELIGIBLE, true ); ?>
+							<tr class="<?php echo $readiness['ready'] ? 'is-ready' : 'has-issues'; ?>">
+								<th class="check-column"><input type="hidden" name="product_ids[]" value="<?php echo esc_attr( (string) $product_post->ID ); ?>"><input type="checkbox" name="eligible_ids[]" value="<?php echo esc_attr( (string) $product_post->ID ); ?>" data-olr-product-checkbox<?php checked( $checked ); ?><?php disabled( ! $readiness['ready'] ); ?> aria-label="<?php echo esc_attr( sprintf( __( 'Enable %s for Build Your Box', 'off-label-build-a-box' ), get_the_title( $product_post ) ) ); ?>"></th>
+								<td class="olr-box-admin__product"><span class="olr-box-admin__image"><?php echo $product instanceof WC_Product ? wp_kses_post( $product->get_image( 'thumbnail', array( 'loading' => 'lazy' ) ) ) : ''; ?></span><span><a href="<?php echo esc_url( get_edit_post_link( $product_post->ID ) ); ?>"><strong><?php echo esc_html( get_the_title( $product_post ) ); ?></strong></a><small><?php echo esc_html( $product instanceof WC_Product ? ucfirst( $product->get_type() ) : '' ); ?></small></span></td>
+								<td><?php echo esc_html( $product instanceof WC_Product && $product->get_sku() ? $product->get_sku() : '—' ); ?></td>
+								<td><?php echo $product instanceof WC_Product ? wp_kses_post( $product->get_price_html() ) : '—'; ?></td>
+								<td><?php if ( $readiness['ready'] ) : ?><span class="olr-box-admin__status is-ready"><i aria-hidden="true"></i><?php esc_html_e( 'Ready', 'off-label-build-a-box' ); ?></span><?php else : ?><span class="olr-box-admin__status has-issues"><i aria-hidden="true"></i><?php echo esc_html( implode( ' · ', $readiness['issues'] ) ); ?></span><?php endif; ?></td>
+							</tr>
+						<?php endforeach; ?>
+					<?php else : ?>
+						<tr><td colspan="5" class="olr-box-admin__none"><?php esc_html_e( 'No products match this view.', 'off-label-build-a-box' ); ?></td></tr>
+					<?php endif; ?>
+					</tbody>
+				</table>
+				<div class="olr-box-admin__actions"><button class="button button-primary button-hero" type="submit"<?php disabled( ! $query->posts ); ?>><?php esc_html_e( 'Save eligible products', 'off-label-build-a-box' ); ?></button><p><?php esc_html_e( 'Only products on this page are updated. Products marked with an issue must be corrected before they can be enabled.', 'off-label-build-a-box' ); ?></p></div>
+			</form>
+
+			<?php if ( $query->max_num_pages > 1 ) : ?>
+				<nav class="olr-box-admin__pagination" aria-label="<?php esc_attr_e( 'Product pages', 'off-label-build-a-box' ); ?>"><?php echo wp_kses_post( paginate_links( array( 'base' => add_query_arg( array( 'page' => 'olr-build-a-box', 'paged' => '%#%', 's' => $search ), admin_url( 'admin.php' ) ), 'format' => '', 'current' => $paged, 'total' => absint( $query->max_num_pages ), 'type' => 'list' ) ) ); ?></nav>
+			<?php endif; ?>
+		</div>
+		<?php
+		wp_reset_postdata();
+	}
+
+	/**
+	 * Save one page of centralized product selections.
+	 */
+	public function save_admin_products() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( esc_html__( 'You do not have permission to manage Build Your Box products.', 'off-label-build-a-box' ) );
+		}
+		check_admin_referer( 'olr_save_box_products', 'olr_box_products_nonce' );
+
+		$product_ids  = isset( $_POST['product_ids'] ) ? array_unique( array_map( 'absint', (array) wp_unslash( $_POST['product_ids'] ) ) ) : array();
+		$eligible_ids = isset( $_POST['eligible_ids'] ) ? array_flip( array_map( 'absint', (array) wp_unslash( $_POST['eligible_ids'] ) ) ) : array();
+		$saved        = 0;
+		foreach ( $product_ids as $product_id ) {
+			if ( ! $product_id || ! current_user_can( 'edit_post', $product_id ) ) {
+				continue;
+			}
+			$product = wc_get_product( $product_id );
+			if ( ! $product instanceof WC_Product ) {
+				continue;
+			}
+			$enable = isset( $eligible_ids[ $product_id ] ) && $this->admin_product_readiness( $product )['ready'];
+			$product->update_meta_data( self::META_ELIGIBLE, $enable ? 'yes' : 'no' );
+			$product->save();
+			$saved++;
+		}
+
+		$redirect = add_query_arg(
+			array(
+				'page'    => 'olr-build-a-box',
+				'updated' => $saved,
+				'paged'   => isset( $_POST['return_paged'] ) ? max( 1, absint( $_POST['return_paged'] ) ) : 1,
+				's'       => isset( $_POST['return_search'] ) ? sanitize_text_field( wp_unslash( $_POST['return_search'] ) ) : '',
+			),
+			admin_url( 'admin.php' )
+		);
+		wp_safe_redirect( $redirect );
+		exit;
 	}
 
 	/**
@@ -292,7 +539,7 @@ final class OLR_Build_A_Box {
 						</div>
 						<?php if ( count( $products ) > 7 ) : ?><button class="olr-build-box__browse" type="button" data-view-all>Browse all bottles <span aria-hidden="true">→</span></button><?php endif; ?>
 					<?php else : ?>
-						<div class="olr-build-box__empty"><p class="olr-build-box__eyebrow">Collection loading</p><h3>Box selection is being prepared.</h3><p><?php echo current_user_can( 'manage_woocommerce' ) ? esc_html__( 'Select bottle products under Products, choose Enable Build Your Box from Bulk actions, then click Apply.', 'off-label-build-a-box' ) : esc_html__( 'Please check back shortly.', 'off-label-build-a-box' ); ?></p></div>
+						<div class="olr-build-box__empty"><p class="olr-build-box__eyebrow">Collection loading</p><h3>Box selection is being prepared.</h3><p><?php echo current_user_can( 'manage_woocommerce' ) ? esc_html__( 'Open WooCommerce → Build Your Box to choose the eligible products.', 'off-label-build-a-box' ) : esc_html__( 'Please check back shortly.', 'off-label-build-a-box' ); ?></p></div>
 					<?php endif; ?>
 				</div>
 
@@ -1068,7 +1315,7 @@ final class OLR_Build_A_Box {
 			)
 		);
 		if ( ! $enabled ) {
-			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Build Your Box has no enabled products. Select bottle products, choose Enable Build Your Box from Bulk actions, and click Apply.', 'off-label-build-a-box' ) . '</p></div>';
+			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Build Your Box has no enabled products. Open WooCommerce → Build Your Box to choose them from one screen.', 'off-label-build-a-box' ) . '</p></div>';
 		}
 	}
 
