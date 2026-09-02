@@ -1,3 +1,62 @@
+<style id="olr-affiliate-page-critical">
+body.olr-affiliate-landing-page :where(.dgs-managed-page, .dgs-managed-main, .dgs-content-block, .dgs-content-block__body),
+body:has(.olr-page--affiliate) :where(.dgs-managed-page, .dgs-managed-main, .dgs-content-block, .dgs-content-block__body) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.olr-page--affiliate {
+  width: 100vw !important;
+  max-width: none !important;
+  margin-inline: calc(50% - 50vw) !important;
+  padding: 0 !important;
+  overflow: clip;
+}
+
+.olr-page--affiliate .olr-affiliate-public {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-block: 0 !important;
+}
+
+.olr-page--affiliate .olr-affiliate-landing__hero-copy {
+  padding: clamp(2.5rem, 6vw, 6rem) clamp(2rem, 5vw, 5rem) clamp(2.5rem, 6vw, 6rem) clamp(1rem, 4vw, 4.5rem);
+}
+
+.olr-page--affiliate .olr-affiliate-landing__benefits {
+  padding: 0 clamp(1rem, 4vw, 4.5rem) 0 clamp(1.5rem, 4vw, 3.5rem);
+}
+
+.olr-page--affiliate .olr-affiliate-landing__payout {
+  margin-top: 0;
+  padding-inline: clamp(1rem, 4vw, 4.5rem);
+  border-inline: 0;
+}
+
+.olr-page--affiliate .olr-affiliate-landing__process {
+  padding-inline: clamp(1rem, 4vw, 4.5rem);
+}
+
+.olr-page--affiliate .olr-affiliate-landing__policies {
+  border-inline: 0;
+}
+
+.olr-page--affiliate .olr-affiliate-landing__final {
+  padding-inline: clamp(1rem, 4vw, 4.5rem);
+}
+
+@media (max-width: 50rem) {
+  .olr-page--affiliate .olr-affiliate-landing__hero-copy,
+  .olr-page--affiliate .olr-affiliate-landing__benefits,
+  .olr-page--affiliate .olr-affiliate-landing__process {
+    padding-inline: 1rem;
+  }
+}
+</style>
+
 <main class="olr-page olr-page--affiliate" id="main-content">
   [olr_affiliate_landing]
 </main>

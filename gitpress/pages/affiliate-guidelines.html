@@ -1,3 +1,70 @@
+<style id="olr-affiliate-guidelines-page-critical">
+body.olr-affiliate-guidelines-page :where(.dgs-managed-page, .dgs-managed-main, .dgs-content-block, .dgs-content-block__body),
+body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed-main, .dgs-content-block, .dgs-content-block__body) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.olr-page--affiliate-guidelines {
+  width: 100vw !important;
+  max-width: none !important;
+  margin-inline: calc(50% - 50vw) !important;
+  padding: 0 !important;
+  overflow: clip;
+}
+
+.olr-page--affiliate-guidelines .olr-affiliate-public {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-block: 0 !important;
+}
+
+.olr-page--affiliate-guidelines .olr-affiliate-guidelines__hero {
+  padding: clamp(2.75rem, 5vw, 5rem) clamp(1rem, 4vw, 4.5rem) clamp(2.5rem, 5vw, 4.5rem);
+}
+
+@media (min-width: 68.0625rem) {
+  .olr-page--affiliate-guidelines .olr-affiliate-guidelines__grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card {
+    grid-column: span 3;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(13) { grid-column: span 3; }
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(14) { grid-column: span 4; }
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(15) { grid-column: span 2; border-right: 1px solid var(--olr-affiliate-line); }
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) { grid-column: span 3; }
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(17) { grid-column: span 3; }
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(18) { grid-column: span 2; }
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(19) { grid-column: span 1; border-right: 1px solid var(--olr-affiliate-line); }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card--summary {
+    grid-column: 10 / 13;
+    grid-row: 4 / 6;
+    min-height: 42rem;
+  }
+}
+
+@media (max-width: 50rem) {
+  .olr-page--affiliate-guidelines .olr-affiliate-guidelines__hero {
+    padding-inline: 1rem;
+  }
+}
+
+@media (max-width: 38rem) {
+  .olr-page--affiliate-guidelines .olr-guidelines-card,
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(n) {
+    min-height: 0;
+    border-right: 0;
+  }
+}
+</style>
+
 <main class="olr-page olr-page--affiliate-guidelines" id="main-content">
   [olr_affiliate_guidelines]
 </main>
