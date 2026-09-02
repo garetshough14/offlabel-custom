@@ -26,6 +26,16 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   padding: clamp(2.75rem, 5vw, 5rem) clamp(1rem, 4vw, 4.5rem) clamp(2.5rem, 5vw, 4.5rem);
 }
 
+.olr-page--affiliate-guidelines .olr-affiliate-guidelines__grid {
+  width: calc(100% - 3.5rem);
+  margin-inline: auto;
+  border-left: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-page--affiliate-guidelines .olr-guidelines-card {
+  padding: clamp(1.5rem, 2vw, 2rem);
+}
+
 /* Restore the line-icon language shown throughout the approved mockup. */
 .olr-page--affiliate-guidelines .olr-guidelines-icon-list li {
   grid-template-columns: 2.25rem 4rem minmax(0, 1fr);
@@ -34,7 +44,7 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
 
 .olr-page--affiliate-guidelines .olr-guidelines-icon-list li::before,
 .olr-page--affiliate-guidelines .olr-guidelines-lifetime span::before,
-.olr-page--affiliate-guidelines .olr-guidelines-statuses > div::before,
+.olr-page--affiliate-guidelines .olr-guidelines-statuses div::before,
 .olr-page--affiliate-guidelines .olr-guidelines-summary-metrics span::before {
   content: "";
   display: block;
@@ -49,6 +59,20 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
 .olr-page--affiliate-guidelines .olr-guidelines-icon-list li:nth-child(2)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Crect x='3' y='6' width='26' height='20' rx='1'/%3E%3Cpath d='m4 8 12 10L28 8'/%3E%3C/svg%3E"); }
 .olr-page--affiliate-guidelines .olr-guidelines-icon-list li:nth-child(3)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Crect x='4' y='4' width='24' height='24' rx='6'/%3E%3Ccircle cx='16' cy='16' r='5'/%3E%3Ccircle cx='23' cy='9' r='1' fill='%23111'/%3E%3C/svg%3E"); }
 .olr-page--affiliate-guidelines .olr-guidelines-icon-list li:nth-child(4)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Ccircle cx='16' cy='16' r='13'/%3E%3Cpath d='M3 16h26M16 3c4 4 6 8 6 13s-2 9-6 13c-4-4-6-8-6-13s2-9 6-13z'/%3E%3C/svg%3E"); }
+
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(6) .olr-guidelines-symbol,
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(8) .olr-guidelines-symbol {
+  width: 4rem;
+  border: 0;
+  border-radius: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  font-size: 0;
+}
+
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(6) .olr-guidelines-symbol { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23111' stroke-width='1.2'%3E%3Cpath d='M5 20 20 5h16l7 7v16L28 43z'/%3E%3Ccircle cx='31' cy='14' r='3'/%3E%3C/svg%3E"); }
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(8) .olr-guidelines-symbol { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23111' stroke-width='1.2'%3E%3Ccircle cx='24' cy='24' r='22'/%3E%3Ccircle cx='19' cy='18' r='5'/%3E%3Ccircle cx='31' cy='20' r='4'/%3E%3Cpath d='M9 36v-3a10 10 0 0 1 20 0v3m0-10a8 8 0 0 1 10 8v2'/%3E%3C/svg%3E"); }
 
 .olr-page--affiliate-guidelines .olr-guidelines-lifetime {
   grid-template-columns: minmax(3.5rem, 1fr) auto minmax(3.5rem, 1fr) auto minmax(3.5rem, 1fr) auto minmax(3.5rem, 1fr);
@@ -73,12 +97,12 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
 .olr-page--affiliate-guidelines .olr-guidelines-lifetime span:nth-of-type(3)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23111' stroke-width='1.2'%3E%3Ccircle cx='24' cy='24' r='22'/%3E%3Cpath d='m14 18 10-6 10 6v13l-10 6-10-6zm0 0 10 6 10-6M24 24v13'/%3E%3C/svg%3E"); }
 .olr-page--affiliate-guidelines .olr-guidelines-lifetime span:nth-of-type(4)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23111' stroke-width='1.2'%3E%3Ccircle cx='24' cy='24' r='22'/%3E%3Cpath d='M24 36 13 25c-8-9 5-19 11-9 6-10 19 0 11 9z'/%3E%3C/svg%3E"); }
 
-.olr-page--affiliate-guidelines .olr-guidelines-statuses > div {
+.olr-page--affiliate-guidelines .olr-guidelines-statuses div {
   grid-template-columns: 1.75rem 4.25rem minmax(0, 1fr);
   align-items: center;
 }
 
-.olr-page--affiliate-guidelines .olr-guidelines-statuses > div::before {
+.olr-page--affiliate-guidelines .olr-guidelines-statuses div::before {
   width: 1.35rem;
   height: 1.35rem;
   border: 1px solid currentColor;
@@ -86,10 +110,10 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   background-size: 68%;
 }
 
-.olr-page--affiliate-guidelines .olr-guidelines-statuses > div:nth-child(1)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Cpath d='M10 4v6l4 2'/%3E%3C/svg%3E"); }
-.olr-page--affiliate-guidelines .olr-guidelines-statuses > div:nth-child(2)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Cpath d='m4 10 4 4 8-9'/%3E%3C/svg%3E"); }
-.olr-page--affiliate-guidelines .olr-guidelines-statuses > div:nth-child(3)::before { content: "$"; display: grid; place-items: center; background: none; font-size: .75rem; font-weight: 700; }
-.olr-page--affiliate-guidelines .olr-guidelines-statuses > div:nth-child(4)::before { content: "×"; display: grid; place-items: center; background: none; font-size: 1rem; }
+.olr-page--affiliate-guidelines .olr-guidelines-statuses div:nth-child(1)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Cpath d='M10 4v6l4 2'/%3E%3C/svg%3E"); }
+.olr-page--affiliate-guidelines .olr-guidelines-statuses div:nth-child(2)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Cpath d='m4 10 4 4 8-9'/%3E%3C/svg%3E"); }
+.olr-page--affiliate-guidelines .olr-guidelines-statuses div:nth-child(3)::before { content: "$"; display: grid; place-items: center; background: none; font-size: .75rem; font-weight: 700; }
+.olr-page--affiliate-guidelines .olr-guidelines-statuses div:nth-child(4)::before { content: "×"; display: grid; place-items: center; background: none; font-size: 1rem; }
 
 .olr-page--affiliate-guidelines .olr-guidelines-summary-metrics span::before {
   width: 1.6rem;
@@ -102,6 +126,23 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
 .olr-page--affiliate-guidelines .olr-guidelines-summary-metrics span:nth-child(2)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Ccircle cx='16' cy='16' r='12'/%3E%3Cpath d='M19 11c-2-2-6-1-6 2 0 4 7 2 7 6 0 3-5 4-7 1m3-12v16'/%3E%3C/svg%3E"); }
 .olr-page--affiliate-guidelines .olr-guidelines-summary-metrics span:nth-child(3)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Cpath d='M8 3h16v26H8zM12 8h8M19 14c-2-2-6-1-6 2 0 3 7 2 7 5 0 3-5 3-7 1m3-10v12'/%3E%3C/svg%3E"); }
 .olr-page--affiliate-guidelines .olr-guidelines-summary-metrics span:nth-child(4)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Cpath d='M4 16c4-8 8-8 12 0s8 8 12 0c-4-8-8-8-12 0S8 24 4 16z'/%3E%3C/svg%3E"); }
+
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) .is-checklist li::before {
+  content: "";
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: .55rem;
+  vertical-align: middle;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter: invert(1);
+}
+
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) .is-checklist li:nth-child(1)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Cpath d='M8 3h11l6 6v20H8zM19 3v7h6M12 16h9M12 21h9'/%3E%3C/svg%3E"); }
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) .is-checklist li:nth-child(2)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Ccircle cx='16' cy='16' r='12'/%3E%3Cpath d='M19 11c-2-2-6-1-6 2 0 4 7 2 7 6 0 3-5 4-7 1m3-12v16'/%3E%3C/svg%3E"); }
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) .is-checklist li:nth-child(3)::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23111' stroke-width='1.3'%3E%3Cpath d='M4 7h24v21H4zM4 13h24M10 3v8M22 3v8'/%3E%3C/svg%3E"); }
 
 @media (min-width: 68.0625rem) {
   .olr-page--affiliate-guidelines .olr-affiliate-guidelines__grid {
@@ -131,7 +172,7 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
     padding: clamp(1.5rem, 2.4vw, 2.5rem);
   }
 
-  .olr-page--affiliate-guidelines .olr-guidelines-card--summary > h2 {
+  .olr-page--affiliate-guidelines .olr-guidelines-card--summary h2 {
     font-size: clamp(1.75rem, 2.65vw, 2.8rem);
   }
 }
@@ -140,6 +181,10 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   .olr-page--affiliate-guidelines .olr-affiliate-guidelines__hero {
     padding-inline: 1rem;
   }
+
+  .olr-page--affiliate-guidelines .olr-affiliate-guidelines__grid {
+    width: calc(100% - 2rem);
+  }
 }
 
 @media (max-width: 38rem) {
@@ -147,6 +192,7 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(n) {
     min-height: 0;
     border-right: 0;
+    padding: 1.25rem;
   }
 }
 </style>
