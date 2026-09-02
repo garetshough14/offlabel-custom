@@ -36,6 +36,30 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   padding: clamp(1.5rem, 2vw, 2rem);
 }
 
+/* Sparse cards share rows with denser neighbors; distribute their copy instead of
+   leaving a large accidental void below the final paragraph. */
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2),
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) {
+  display: flex;
+  flex-direction: column;
+}
+
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div,
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div p,
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div p,
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div ul {
+  margin-bottom: 0;
+}
+
 /* Restore the line-icon language shown throughout the approved mockup. */
 .olr-page--affiliate-guidelines .olr-guidelines-icon-list li {
   grid-template-columns: 2.25rem 4rem minmax(0, 1fr);
@@ -163,17 +187,65 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
 
   .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(n + 16):nth-child(-n + 19) {
     min-height: 15rem;
+    padding: 1.25rem;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(n + 16):nth-child(-n + 19) h2 {
+    min-height: 2.5rem;
+    margin-bottom: .8rem;
+    padding-bottom: .65rem;
+    font-size: .88rem;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(n + 16):nth-child(-n + 19) :where(p, li, strong) {
+    font-size: .64rem;
+    line-height: 1.4;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(19) {
+    padding-inline: .85rem;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(19) h2 {
+    font-size: .76rem;
+    letter-spacing: .025em;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(19) :where(p, li) {
+    font-size: .54rem;
+    line-height: 1.32;
   }
 
   .olr-page--affiliate-guidelines .olr-guidelines-card--summary {
+    display: flex;
     grid-column: 10 / 13;
     grid-row: 4 / 6;
     min-height: 36rem;
+    flex-direction: column;
     padding: clamp(1.5rem, 2.4vw, 2.5rem);
   }
 
   .olr-page--affiliate-guidelines .olr-guidelines-card--summary h2 {
-    font-size: clamp(1.75rem, 2.65vw, 2.8rem);
+    margin-bottom: 1.25rem;
+    font-size: clamp(1.65rem, 2.25vw, 2.35rem);
+    line-height: .92;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card--summary .olr-guidelines-summary-metrics {
+    padding-block: 1rem;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card--summary .olr-affiliate-public__actions {
+    margin-top: auto;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card--summary .olr-affiliate-public__button {
+    min-width: 0;
+    min-height: 2.75rem;
+    flex: 1 1 8rem;
+    gap: .65rem;
+    padding-inline: .8rem;
+    font-size: .54rem;
   }
 }
 
@@ -193,6 +265,11 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
     min-height: 0;
     border-right: 0;
     padding: 1.25rem;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div,
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div {
+    display: block;
   }
 }
 </style>
