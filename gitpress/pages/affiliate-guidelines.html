@@ -36,16 +36,13 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   padding: clamp(1.5rem, 2vw, 2rem);
 }
 
-/* Sparse cards share rows with denser neighbors; distribute their copy instead of
-   leaving a large accidental void below the final paragraph. */
-.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2),
-.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) {
+/* Section 2 benefits from a measured disclosure rhythm inside its taller row. */
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) {
   display: flex;
   flex-direction: column;
 }
 
-.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div,
-.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div {
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div {
   display: flex;
   min-height: 0;
   flex: 1;
@@ -54,10 +51,22 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   gap: 1rem;
 }
 
-.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div p,
-.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div p,
-.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div ul {
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div p {
   margin-bottom: 0;
+}
+
+/* Keep section 7 as one readable group; spreading these short statements across
+   the full card height made the relationship between them unclear. */
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div {
+  display: block;
+}
+
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div p {
+  margin-bottom: 1rem;
+}
+
+.olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div ul {
+  margin-top: .75rem;
 }
 
 /* Restore the line-icon language shown throughout the approved mockup. */
@@ -186,8 +195,39 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(19) { grid-column: span 1; border-right: 1px solid var(--olr-affiliate-line); }
 
   .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(n + 16):nth-child(-n + 19) {
+    display: flex;
     min-height: 15rem;
+    flex-direction: column;
     padding: 1.25rem;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) h2 + div,
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(17) h2 + div {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) .is-checklist {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .45rem 1rem;
+    margin: .25rem 0 1rem;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) .is-checklist li {
+    margin: 0;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) h2 + div p,
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(17) h2 + div ul {
+    margin-top: auto;
+    margin-bottom: 0;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(17) h2 + div p {
+    margin-bottom: .8rem;
   }
 
   .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(n + 16):nth-child(-n + 19) h2 {
@@ -222,6 +262,8 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
     grid-row: 4 / 6;
     min-height: 36rem;
     flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
     padding: clamp(1.5rem, 2.4vw, 2.5rem);
   }
 
@@ -236,7 +278,7 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
   }
 
   .olr-page--affiliate-guidelines .olr-guidelines-card--summary .olr-affiliate-public__actions {
-    margin-top: auto;
+    margin-top: 0;
   }
 
   .olr-page--affiliate-guidelines .olr-guidelines-card--summary .olr-affiliate-public__button {
@@ -267,8 +309,11 @@ body:has(.olr-page--affiliate-guidelines) :where(.dgs-managed-page, .dgs-managed
     padding: 1.25rem;
   }
 
-  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div,
-  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(7) h2 + div {
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(2) h2 + div {
+    display: block;
+  }
+
+  .olr-page--affiliate-guidelines .olr-guidelines-card:nth-child(16) .is-checklist {
     display: block;
   }
 }
