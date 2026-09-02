@@ -45,6 +45,7 @@ body:has(.olr-account-hub) :where(#page, #main-content, .site, .site-content, .s
   --olr-account-muted: rgb(17 17 17 / 62%);
   --olr-account-soft: #eeece6;
   --olr-account-danger: #8c1d18;
+  --olr-account-font: var(--olr-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif);
   --uap-primary-text-color: var(--olr-account-ink);
   --uap-second-text-color: var(--olr-account-muted);
   --uap-thrid-text-color: var(--olr-account-muted);
@@ -62,14 +63,14 @@ body:has(.olr-account-hub) :where(#page, #main-content, .site, .site-content, .s
   --uap-blue-second-border-color: var(--olr-account-line);
   --uap-button-green-color: var(--olr-account-ink);
   --uap-button-gray-color: var(--olr-account-muted);
-  --uap-primary-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+  --uap-primary-font: var(--olr-account-font);
   width: min(100%, 96rem);
   margin-inline: auto;
   padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 3.4vw, 3.75rem);
   overflow: clip;
   background: var(--olr-account-bone);
   color: var(--olr-account-ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+  font-family: var(--olr-account-font);
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -1954,5 +1955,1342 @@ body:has(.olr-account-hub) :where(#page, #main-content, .site, .site-content, .s
   .olr-account-hub *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Site-wide responsive hardening: plugin output remains contained at every UM/UAP state. */
+.olr-account-hub,
+.olr-account-hub * {
+  min-width: 0;
+}
+
+.olr-account-hub :where(img, svg, canvas, video, iframe) {
+  max-width: 100% !important;
+}
+
+.olr-account-hub :where(p, li, td, th, a, label, span, small) {
+  overflow-wrap: anywhere;
+}
+
+.olr-account-hub :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.olr-account-hub :where(button, .button, a.olr-account-button, input[type="submit"], input[type="button"]) {
+  min-height: 2.75rem !important;
+}
+
+.olr-account-hub :where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid currentColor !important;
+  outline-offset: 3px !important;
+}
+
+.olr-account-hub :where(.olr-affiliate-chart, .uap-account-table-wrapper, .uap-responsive-table, .uap-user-page-content table) {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.olr-account-hub .olr-affiliate-chart canvas {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 8;
+}
+
+@media (max-width: 50rem) {
+  .olr-account-hub {
+    width: min(100% - 2rem, 86rem);
+    margin-inline: auto;
+    padding-block: 1rem 2.5rem;
+  }
+
+  .olr-account-hub .um-account {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .olr-account-hub .olr-account-menu-toggle {
+    min-height: 3.5rem !important;
+  }
+
+  .olr-account-hub .um-account-side {
+    max-height: min(70dvh, 38rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .olr-account-hub .um-account-main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: clamp(1rem, 4vw, 1.5rem);
+  }
+
+  .olr-account-hub :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    font-size: 1rem !important;
+  }
+
+  .olr-account-hub :where(.olr-account-panel__header, .olr-affiliate-header, .olr-affiliate-card-heading, .olr-account-callout) {
+    gap: 1rem;
+  }
+
+  .olr-account-hub :where(.olr-account-panel__header h2, .olr-affiliate-header h2, .olr-account-empty h2) {
+    max-width: 12ch;
+    font-size: clamp(2rem, 10vw, 3.75rem);
+    overflow-wrap: normal;
+  }
+
+  .olr-account-hub :where(.olr-account-panel__header .olr-account-button, .olr-affiliate-header .olr-account-button, .olr-account-callout .olr-account-button) {
+    width: 100%;
+  }
+
+  .olr-account-hub :where(.uap-account-table-wrapper, .uap-responsive-table, .uap-user-page-content > table, .uap-user-page-content form > table) {
+    display: block !important;
+    overflow-x: auto !important;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+
+  .olr-account-hub .uap-user-page-content table {
+    min-width: 36rem !important;
+  }
+
+  .olr-account-hub .uap-pagination,
+  .olr-account-hub .uap-account-pagination {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 38rem) {
+  .olr-account-hub {
+    width: min(100% - 1rem, 86rem);
+  }
+
+  .olr-account-hub .olr-account-brand {
+    padding-inline: 0.5rem;
+  }
+
+  .olr-account-hub :where(.olr-account-stat, .olr-affiliate-mini-stats > div, .olr-affiliate-performance-card, .olr-affiliate-earnings-card, .olr-affiliate-recent, .uap-profile-box-content) {
+    padding: 1rem !important;
+  }
+
+  .olr-account-hub .olr-affiliate-chart canvas {
+    aspect-ratio: 4 / 3;
+  }
+
+  .olr-account-hub .olr-account-table td {
+    align-items: flex-start;
+    flex-direction: column;
+    text-align: left !important;
+  }
+
+  .olr-account-hub .olr-copy-field input {
+    min-height: 3rem;
+  }
+}
+
+/* 1.1.0 — Affiliate program, guidelines, and complete dashboard. */
+body.olr-affiliate-landing-page,
+body.olr-affiliate-guidelines-page,
+body:has(.olr-affiliate-public) {
+  margin: 0;
+  overflow-x: clip;
+  background: #f5f4f0 !important;
+  color: #111;
+}
+
+body:is(.olr-affiliate-landing-page, .olr-affiliate-guidelines-page) :where(
+  #main-content > .container,
+  #main-content .container,
+  #left-area,
+  article.page,
+  article.page > .entry-content
+) {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  float: none !important;
+}
+
+body:is(.olr-affiliate-landing-page, .olr-affiliate-guidelines-page) :where(
+  #sidebar,
+  #main-content .container::before,
+  .entry-title.main_title,
+  .entry-header,
+  .page-header
+) {
+  display: none !important;
+}
+
+.olr-affiliate-public,
+.olr-affiliate-public * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.olr-affiliate-public {
+  --olr-affiliate-bone: #f5f4f0;
+  --olr-affiliate-paper: #faf9f6;
+  --olr-affiliate-ink: #111;
+  --olr-affiliate-line: #cbc8c1;
+  --olr-affiliate-muted: rgb(17 17 17 / 68%);
+  width: min(100% - clamp(2rem, 7vw, 7.5rem), 92rem);
+  margin-inline: auto;
+  padding-block: clamp(2.75rem, 6vw, 6rem);
+  background: var(--olr-affiliate-bone);
+  color: var(--olr-affiliate-ink);
+  font-family: var(--olr-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.olr-affiliate-public :where(h1, h2, h3, p, ol, ul, blockquote, figure, dl, dd) {
+  margin-top: 0;
+}
+
+.olr-affiliate-public :where(h1, h2, h3, strong, b) {
+  color: inherit;
+  font-family: inherit;
+}
+
+.olr-affiliate-public :where(a, button) {
+  color: inherit;
+  font: inherit;
+}
+
+.olr-affiliate-public :where(a, button, input):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.olr-affiliate-public :where(img, svg, video, iframe, canvas) {
+  max-width: 100%;
+}
+
+.olr-affiliate-public :where(p, li, a, td, th, blockquote) {
+  overflow-wrap: anywhere;
+}
+
+.olr-affiliate-public__eyebrow,
+.olr-guidelines-card__number {
+  margin-bottom: .75rem;
+  font-size: .6875rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-public__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  margin-top: 1.5rem;
+}
+
+.olr-affiliate-public__button {
+  display: inline-flex;
+  min-width: 12rem;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: .75rem 1.15rem;
+  border: 1px solid var(--olr-affiliate-ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--olr-affiliate-ink) !important;
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  line-height: 1.2;
+  text-decoration: none !important;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-public__button.is-primary,
+.olr-affiliate-public__button:hover,
+.olr-affiliate-public__button:focus-visible {
+  background: var(--olr-affiliate-ink);
+  color: #fff !important;
+}
+
+.olr-affiliate-landing__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(22rem, .85fr);
+  min-height: 27rem;
+  border-bottom: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-affiliate-landing__hero-copy {
+  display: flex;
+  max-width: 53rem;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 4rem) clamp(2rem, 5vw, 5rem) clamp(2rem, 5vw, 4rem) 1.5rem;
+}
+
+.olr-affiliate-landing__hero-copy h1,
+.olr-affiliate-guidelines__hero h1 {
+  max-width: 11ch;
+  margin-bottom: 1rem;
+  font-size: clamp(3.25rem, 6.4vw, 7rem);
+  font-weight: 700;
+  letter-spacing: -.055em;
+  line-height: .89;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-landing__hero-copy > p:last-of-type {
+  max-width: 44rem;
+  margin-bottom: 0;
+}
+
+.olr-affiliate-landing__benefits {
+  display: grid;
+  align-content: center;
+  padding-left: clamp(1.5rem, 4vw, 3.5rem);
+  border-left: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-affiliate-landing__benefits > div {
+  display: grid;
+  grid-template-columns: 2.75rem 5.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  min-height: 7.75rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-affiliate-landing__benefits > div:last-child {
+  border-bottom: 0;
+}
+
+.olr-affiliate-landing__benefits svg,
+.olr-affiliate-landing__payout svg,
+.olr-affiliate-landing__process svg {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.35;
+}
+
+.olr-affiliate-landing__benefits strong {
+  font-size: clamp(2.1rem, 3.6vw, 3.4rem);
+  font-weight: 650;
+  letter-spacing: -.05em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-landing__benefits span,
+.olr-affiliate-landing__benefits b {
+  display: block;
+}
+
+.olr-affiliate-landing__benefits span {
+  color: var(--olr-affiliate-muted);
+  font-size: .75rem;
+}
+
+.olr-affiliate-landing__benefits b {
+  margin-bottom: .3rem;
+  color: var(--olr-affiliate-ink);
+  font-size: .6875rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-landing__payout {
+  margin-top: 2rem;
+  padding: clamp(1.75rem, 4vw, 3rem);
+  border: 1px solid var(--olr-affiliate-line);
+  background: rgb(255 255 255 / 25%);
+}
+
+.olr-affiliate-landing__payout > h2,
+.olr-affiliate-landing__process > h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.35rem;
+  letter-spacing: -.025em;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-landing__payout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-block: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-affiliate-landing__payout-grid > div {
+  min-height: 10.5rem;
+  padding: 1.4rem clamp(1rem, 2.5vw, 2.25rem);
+  border-right: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-affiliate-landing__payout-grid > div:last-child {
+  border-right: 0;
+}
+
+.olr-affiliate-landing__payout-grid h3 {
+  margin: .8rem 0 .35rem;
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-landing__payout-grid p,
+.olr-affiliate-landing__payout-note {
+  margin-bottom: 0;
+  color: var(--olr-affiliate-muted);
+  font-size: .75rem;
+}
+
+.olr-affiliate-landing__payout-note {
+  padding-top: 1.25rem;
+  text-align: center;
+}
+
+.olr-affiliate-landing__process {
+  padding: clamp(3rem, 7vw, 6rem) 1.5rem;
+  text-align: center;
+}
+
+.olr-affiliate-landing__process ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.olr-affiliate-landing__process li {
+  position: relative;
+  padding: 0 clamp(.6rem, 2vw, 1.5rem);
+}
+
+.olr-affiliate-landing__process li:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  top: 3.2rem;
+  right: -.5rem;
+  color: var(--olr-affiliate-muted);
+}
+
+.olr-affiliate-landing__process li > span {
+  display: block;
+  margin-bottom: 1.25rem;
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+
+.olr-affiliate-landing__process svg {
+  width: 3.4rem;
+  height: 3.4rem;
+  margin: 0 auto 1rem;
+}
+
+.olr-affiliate-landing__process h3 {
+  margin-bottom: .5rem;
+  font-size: .6875rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-landing__process p {
+  margin-bottom: 0;
+  color: var(--olr-affiliate-muted);
+  font-size: .7rem;
+}
+
+.olr-affiliate-landing__process > .olr-affiliate-public__button {
+  margin-top: 2.25rem;
+}
+
+.olr-affiliate-landing__policies {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-affiliate-landing__policies article {
+  padding: 1.5rem;
+  border-right: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-affiliate-landing__policies article:last-child {
+  border-right: 0;
+}
+
+.olr-affiliate-landing__policies h2 {
+  margin-bottom: .65rem;
+  font-size: .75rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-landing__policies p,
+.olr-affiliate-landing__policies a {
+  font-size: .7rem;
+}
+
+.olr-affiliate-landing__policies a {
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.olr-affiliate-landing__final {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: var(--olr-affiliate-ink);
+  color: #fff;
+}
+
+.olr-affiliate-landing__final h2,
+.olr-affiliate-landing__final p {
+  margin-bottom: 0;
+}
+
+.olr-affiliate-landing__final h2 {
+  font-size: 1.25rem;
+}
+
+.olr-affiliate-landing__final .olr-affiliate-public__button {
+  border-color: #fff;
+  background: #fff;
+  color: #111 !important;
+}
+
+/* Guidelines. */
+.olr-affiliate-guidelines {
+  width: min(100% - clamp(2rem, 5vw, 5rem), 104rem);
+}
+
+.olr-affiliate-guidelines__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(16rem, .65fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  padding: 0 1rem clamp(2.5rem, 5vw, 4.5rem);
+  border-bottom: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-affiliate-guidelines__hero h1 {
+  max-width: 9ch;
+}
+
+.olr-affiliate-guidelines__hero h2 {
+  margin-bottom: .6rem;
+  font-size: 1rem;
+}
+
+.olr-affiliate-guidelines__hero > div:first-child > p:last-of-type {
+  max-width: 48rem;
+}
+
+.olr-affiliate-guidelines__seal {
+  display: flex;
+  width: clamp(13rem, 22vw, 19rem);
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  justify-self: center;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  text-align: center;
+}
+
+.olr-affiliate-guidelines__seal strong {
+  margin-block: .75rem;
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  letter-spacing: -.05em;
+  line-height: .8;
+}
+
+.olr-affiliate-guidelines__seal span {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .28em;
+}
+
+.olr-affiliate-guidelines__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.olr-guidelines-card {
+  min-height: 21rem;
+  padding: 1.5rem;
+  border-right: 1px solid var(--olr-affiliate-line);
+  border-bottom: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-guidelines-card:nth-child(4n) {
+  border-right: 0;
+}
+
+.olr-guidelines-card__number {
+  display: block;
+  margin-bottom: .45rem;
+}
+
+.olr-guidelines-card > h2 {
+  position: relative;
+  min-height: 3.2rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: .85rem;
+  font-size: 1.05rem;
+  letter-spacing: .045em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.olr-guidelines-card > h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 2.1rem;
+  height: 1px;
+  background: currentColor;
+}
+
+.olr-guidelines-card :where(p, li, td, th, small, blockquote) {
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+.olr-guidelines-card ul {
+  margin: .75rem 0 1rem;
+  padding-left: 1.1rem;
+}
+
+.olr-guidelines-card li + li {
+  margin-top: .2rem;
+}
+
+.olr-guidelines-card h3 {
+  margin: 1rem 0 .35rem;
+  font-size: .64rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.olr-guidelines-card blockquote {
+  margin: 1rem 0 0;
+  padding: 1.25rem;
+  border: 1px solid currentColor;
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+.olr-guidelines-copy,
+.olr-guidelines-card__link {
+  display: flex;
+  width: 100%;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: .7rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: #111;
+  color: #fff !important;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-decoration: none !important;
+  text-transform: uppercase;
+}
+
+.olr-guidelines-card__link {
+  margin-top: 1rem;
+  background: transparent;
+  color: inherit !important;
+}
+
+.olr-guidelines-icon-list {
+  padding: 0 !important;
+  list-style: none;
+}
+
+.olr-guidelines-icon-list li {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: .75rem;
+  padding-block: .35rem;
+}
+
+.olr-guidelines-icon-list b {
+  text-transform: uppercase;
+}
+
+.olr-guidelines-card__closing {
+  display: block;
+  margin-top: 1rem;
+  font-size: .72rem;
+  text-transform: uppercase;
+}
+
+.olr-guidelines-ruo {
+  padding: 1.4rem;
+  background: #080808;
+  color: #fff;
+}
+
+.olr-guidelines-ruo :where(small, strong, b) {
+  display: block;
+}
+
+.olr-guidelines-ruo strong {
+  margin-block: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgb(255 255 255 / 35%);
+  font-size: 1.45rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.olr-guidelines-card .is-checklist,
+.olr-guidelines-card .is-prohibited,
+.olr-guidelines-card .is-allowed {
+  padding-left: 0;
+  list-style: none;
+}
+
+.olr-guidelines-card .is-checklist li::before,
+.olr-guidelines-card .is-allowed li::before {
+  content: "✓";
+  margin-right: .5rem;
+}
+
+.olr-guidelines-card .is-prohibited li::before {
+  content: "⊗";
+  margin-right: .5rem;
+}
+
+.olr-guidelines-symbol {
+  display: grid;
+  width: 3.2rem;
+  aspect-ratio: 1;
+  margin: 1.5rem auto;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 1.5rem;
+}
+
+.olr-guidelines-card table {
+  width: 100%;
+  margin-block: 1rem;
+  border: 1px solid currentColor;
+  border-collapse: collapse;
+}
+
+.olr-guidelines-card :where(td, th) {
+  padding: .4rem .55rem;
+  border-bottom: 1px solid currentColor;
+  text-align: left;
+}
+
+.olr-guidelines-rate {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+.olr-guidelines-rate > strong {
+  font-size: 2.5rem;
+}
+
+.olr-guidelines-lifetime {
+  display: grid;
+  grid-template-columns: repeat(7, auto);
+  align-items: center;
+  gap: .35rem;
+  margin-block: 1.25rem;
+  text-align: center;
+}
+
+.olr-guidelines-lifetime span {
+  font-size: .58rem;
+  text-transform: uppercase;
+}
+
+.olr-guidelines-lifetime b {
+  font-size: .9rem;
+}
+
+.olr-guidelines-statuses > div {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: .75rem;
+  padding-block: .4rem;
+  border-bottom: 1px solid var(--olr-affiliate-line);
+}
+
+.olr-guidelines-statuses :where(dt, dd) {
+  margin: 0;
+  font-size: .65rem;
+}
+
+.olr-guidelines-statuses dt {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.olr-guidelines-card--dark,
+.olr-guidelines-card--summary {
+  background: #080808;
+  color: #fff;
+}
+
+.olr-guidelines-card--summary {
+  grid-column: span 2;
+  min-height: 21rem;
+  padding: 2rem;
+}
+
+.olr-guidelines-card--summary > h2 {
+  max-width: 16ch;
+  margin-block: 1rem 2rem;
+  font-size: clamp(1.65rem, 3vw, 3rem);
+  letter-spacing: -.025em;
+  line-height: .95;
+}
+
+.olr-guidelines-summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .75rem;
+  padding-block: 1.25rem;
+  border-block: 1px solid rgb(255 255 255 / 35%);
+}
+
+.olr-guidelines-summary-metrics span,
+.olr-guidelines-summary-metrics b {
+  display: block;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.olr-guidelines-summary-metrics span {
+  font-size: .6rem;
+}
+
+.olr-guidelines-summary-metrics b {
+  font-size: 1rem;
+}
+
+.olr-guidelines-card--summary .olr-affiliate-public__button {
+  border-color: #fff;
+  color: #fff !important;
+}
+
+/* Complete affiliate dashboard. */
+.olr-account-hub {
+  width: min(100%, 105rem);
+}
+
+.olr-account-hub .olr-affiliate-access-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.2fr) minmax(13rem, .7fr);
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--olr-account-ink);
+}
+
+.olr-account-hub .olr-affiliate-access-card > div {
+  display: flex;
+  min-height: 12rem;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border-right: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-access-card > div:last-child {
+  border-right: 0;
+}
+
+.olr-account-hub .olr-affiliate-access-card__value {
+  max-width: 100%;
+  font-size: clamp(1.6rem, 3vw, 2.8rem);
+  letter-spacing: -.04em;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.olr-account-hub .olr-affiliate-access-card__link {
+  width: 100%;
+  margin-block: .35rem 1rem;
+  font-size: clamp(.8rem, 1.35vw, 1.1rem);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.olr-account-hub .olr-affiliate-access-card > div > span {
+  margin-top: .5rem;
+  font-size: .65rem;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-affiliate-access-card button {
+  display: inline-flex;
+  min-width: 8.5rem;
+  min-height: 2.8rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding: .7rem 1rem;
+  border: 1px solid var(--olr-account-ink);
+  border-radius: 0;
+  background: var(--olr-account-ink);
+  color: #fff;
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+
+.olr-account-hub .olr-affiliate-access-card__rate > strong {
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  letter-spacing: -.05em;
+  line-height: 1;
+}
+
+.olr-account-hub .olr-affiliate-access-card__rate p {
+  margin: .7rem 0 0;
+  color: var(--olr-account-muted);
+  font-size: .78rem;
+}
+
+.olr-account-hub .olr-affiliate-dashboard-grid--primary {
+  grid-template-columns: minmax(17rem, .75fr) minmax(0, 1.55fr);
+}
+
+.olr-account-hub .olr-affiliate-earnings-totals,
+.olr-account-hub .olr-affiliate-payout-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.olr-account-hub .olr-affiliate-earnings-totals > div,
+.olr-account-hub .olr-affiliate-payout-summary > div {
+  padding: 1.1rem;
+  border-right: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-earnings-totals > div:last-child,
+.olr-account-hub .olr-affiliate-payout-summary > div:last-child {
+  border-right: 0;
+}
+
+.olr-account-hub .olr-affiliate-earnings-totals strong,
+.olr-account-hub .olr-affiliate-earnings-totals span,
+.olr-account-hub .olr-affiliate-payout-summary :where(span, strong, b, a) {
+  display: block;
+}
+
+.olr-account-hub .olr-affiliate-earnings-totals strong {
+  font-size: clamp(1.15rem, 2vw, 1.75rem);
+}
+
+.olr-account-hub .olr-affiliate-earnings-totals span,
+.olr-account-hub .olr-affiliate-payout-summary span {
+  margin-top: .35rem;
+  color: var(--olr-account-muted);
+  font-size: .58rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-affiliate-payout-summary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-payout-summary strong {
+  margin-top: .35rem;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-affiliate-payout-summary a,
+.olr-account-hub .olr-affiliate-performance-card nav,
+.olr-account-hub .olr-affiliate-performance-card nav a,
+.olr-account-hub .olr-affiliate-performance-card nav span {
+  margin-top: .45rem;
+  color: inherit;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-affiliate-card-note {
+  margin: 1rem 0 0;
+  color: var(--olr-account-muted);
+  font-size: .72rem;
+}
+
+.olr-account-hub .olr-affiliate-performance-card nav {
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+}
+
+.olr-account-hub .olr-affiliate-performance-card nav [aria-current="true"] {
+  padding-bottom: .25rem;
+  border-bottom: 2px solid currentColor;
+}
+
+.olr-account-hub .olr-affiliate-mini-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.olr-account-hub .olr-affiliate-customers {
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-customers > h3,
+.olr-account-hub .olr-affiliate-customers > p {
+  margin: 0;
+  padding: 1.1rem 1.25rem;
+}
+
+.olr-account-hub .olr-affiliate-customers > h3 {
+  font-size: .8rem;
+  letter-spacing: .04em;
+}
+
+.olr-account-hub .olr-affiliate-customers > p {
+  color: var(--olr-account-muted);
+  font-size: .72rem;
+}
+
+.olr-account-hub .olr-affiliate-customer-metrics {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  border-block: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-customer-metrics > div {
+  padding: 1.2rem .8rem;
+  border-right: 1px solid var(--olr-account-line);
+  text-align: center;
+}
+
+.olr-account-hub .olr-affiliate-customer-metrics > div:last-child {
+  border-right: 0;
+}
+
+.olr-account-hub .olr-affiliate-customer-metrics strong,
+.olr-account-hub .olr-affiliate-customer-metrics span {
+  display: block;
+}
+
+.olr-account-hub .olr-affiliate-customer-metrics strong {
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+}
+
+.olr-account-hub .olr-affiliate-customer-metrics span {
+  margin-top: .35rem;
+  font-size: .55rem;
+  font-weight: 650;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.olr-account-hub .olr-affiliate-customers .olr-affiliate-recent {
+  border-width: 1px 0 0;
+}
+
+.olr-account-hub .olr-affiliate-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.olr-account-hub .olr-affiliate-resource-grid > article {
+  min-height: 18rem;
+  padding: 1.25rem;
+  border: 1px solid var(--olr-account-line);
+}
+
+.olr-account-hub .olr-affiliate-resource-grid > article > strong,
+.olr-account-hub .olr-affiliate-resource-grid > article > span {
+  display: block;
+}
+
+.olr-account-hub .olr-affiliate-resource-grid > article > strong {
+  font-size: clamp(1.75rem, 3vw, 2.6rem);
+}
+
+.olr-account-hub .olr-affiliate-resource-grid > article > span,
+.olr-account-hub .olr-affiliate-resource-grid > article > p:not(.olr-account-eyebrow) {
+  color: var(--olr-account-muted);
+  font-size: .7rem;
+}
+
+.olr-account-hub .olr-affiliate-resource-grid ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.olr-account-hub .olr-affiliate-resource-grid li a,
+.olr-account-hub .olr-affiliate-resource-grid > article > a {
+  display: flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--olr-account-line);
+  color: inherit;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-decoration: none;
+}
+
+.olr-account-hub .olr-affiliate-support {
+  margin-top: 1rem;
+  padding: .8rem;
+  background: #111;
+  color: #fff !important;
+}
+
+@media (max-width: 68rem) {
+  .olr-affiliate-guidelines__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .olr-guidelines-card:nth-child(4n) {
+    border-right: 1px solid var(--olr-affiliate-line);
+  }
+
+  .olr-guidelines-card:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .olr-account-hub .olr-affiliate-dashboard-grid--primary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .olr-account-hub .olr-affiliate-customer-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .olr-account-hub .olr-affiliate-customer-metrics > div:nth-child(3n) {
+    border-right: 0;
+  }
+
+  .olr-account-hub .olr-affiliate-customer-metrics > div:nth-child(-n + 3) {
+    border-bottom: 1px solid var(--olr-account-line);
+  }
+}
+
+@media (max-width: 50rem) {
+  .olr-affiliate-public {
+    width: min(100% - 2rem, 92rem);
+    padding-block: 2.5rem;
+  }
+
+  .olr-affiliate-landing__hero,
+  .olr-affiliate-guidelines__hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .olr-affiliate-landing__hero-copy {
+    padding: 1rem 0 2rem;
+  }
+
+  .olr-affiliate-landing__hero-copy h1,
+  .olr-affiliate-guidelines__hero h1 {
+    max-width: 10ch;
+    font-size: clamp(3rem, 13vw, 5.2rem);
+  }
+
+  .olr-affiliate-landing__benefits {
+    padding: 0;
+    border-top: 1px solid var(--olr-affiliate-line);
+    border-left: 0;
+  }
+
+  .olr-affiliate-landing__benefits > div {
+    grid-template-columns: 2.75rem 5rem minmax(0, 1fr);
+  }
+
+  .olr-affiliate-landing__payout-grid,
+  .olr-affiliate-landing__policies,
+  .olr-account-hub .olr-affiliate-access-card,
+  .olr-account-hub .olr-affiliate-resource-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .olr-affiliate-landing__payout-grid > div,
+  .olr-affiliate-landing__policies article,
+  .olr-account-hub .olr-affiliate-access-card > div {
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--olr-affiliate-line);
+  }
+
+  .olr-affiliate-landing__payout-grid > div:last-child,
+  .olr-affiliate-landing__policies article:last-child,
+  .olr-account-hub .olr-affiliate-access-card > div:last-child {
+    border-bottom: 0;
+  }
+
+  .olr-affiliate-landing__process {
+    padding-inline: 0;
+    text-align: left;
+  }
+
+  .olr-affiliate-landing__process ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .olr-affiliate-landing__process li {
+    display: grid;
+    grid-template-columns: 2rem 3.5rem minmax(0, 1fr);
+    grid-template-areas: "number icon title" "number icon copy";
+    align-items: start;
+    gap: .25rem 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--olr-affiliate-line);
+  }
+
+  .olr-affiliate-landing__process li::after {
+    display: none;
+  }
+
+  .olr-affiliate-landing__process li > span {
+    grid-area: number;
+  }
+
+  .olr-affiliate-landing__process li > svg {
+    grid-area: icon;
+    width: 3rem;
+    height: 3rem;
+    margin: 0;
+  }
+
+  .olr-affiliate-landing__process li > h3 {
+    grid-area: title;
+    margin: 0;
+  }
+
+  .olr-affiliate-landing__process li > p {
+    grid-area: copy;
+  }
+
+  .olr-affiliate-guidelines__hero {
+    padding-inline: 0;
+  }
+
+  .olr-affiliate-guidelines__seal {
+    width: min(15rem, 70vw);
+  }
+
+  .olr-account-hub .olr-affiliate-earnings-totals,
+  .olr-account-hub .olr-affiliate-mini-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .olr-account-hub .olr-affiliate-mini-stats > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .olr-account-hub .olr-affiliate-mini-stats > div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--olr-account-line);
+  }
+}
+
+@media (max-width: 38rem) {
+  .olr-affiliate-public {
+    width: min(100% - 1.25rem, 92rem);
+  }
+
+  .olr-affiliate-public__actions,
+  .olr-affiliate-landing__final {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .olr-affiliate-public__button {
+    width: 100%;
+  }
+
+  .olr-affiliate-landing__benefits > div {
+    grid-template-columns: 2.5rem minmax(4.5rem, auto) minmax(0, 1fr);
+    gap: .75rem;
+  }
+
+  .olr-affiliate-landing__payout {
+    padding: 1.25rem;
+  }
+
+  .olr-affiliate-guidelines__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .olr-guidelines-card,
+  .olr-guidelines-card:nth-child(2n),
+  .olr-guidelines-card:nth-child(4n) {
+    min-height: 0;
+    border-right: 0;
+  }
+
+  .olr-guidelines-card--summary {
+    grid-column: auto;
+  }
+
+  .olr-guidelines-summary-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .olr-account-hub .olr-affiliate-earnings-totals,
+  .olr-account-hub .olr-affiliate-payout-summary,
+  .olr-account-hub .olr-affiliate-customer-metrics,
+  .olr-account-hub .olr-affiliate-mini-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .olr-account-hub .olr-affiliate-earnings-totals > div,
+  .olr-account-hub .olr-affiliate-payout-summary > div,
+  .olr-account-hub .olr-affiliate-customer-metrics > div,
+  .olr-account-hub .olr-affiliate-mini-stats > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--olr-account-line);
+    text-align: left;
+  }
+
+  .olr-account-hub .olr-affiliate-earnings-totals > div:last-child,
+  .olr-account-hub .olr-affiliate-payout-summary > div:last-child,
+  .olr-account-hub .olr-affiliate-customer-metrics > div:last-child,
+  .olr-account-hub .olr-affiliate-mini-stats > div:last-child {
+    border-bottom: 0;
+  }
+
+  .olr-account-hub .olr-affiliate-performance-card nav {
+    width: 100%;
+    justify-content: space-between;
   }
 }

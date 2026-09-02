@@ -115,10 +115,10 @@
   }
 
   function navigationMarkup() {
-    var backLabel = stage === 'information' ? 'Return to bag' : 'Back';
+    var backLabel = stage === 'information' ? 'Return to home' : 'Back';
     var nextLabel = stage === 'information' ? 'Continue to shipping' : 'Continue to payment';
     var back = stage === 'information'
-      ? '<a href="' + ((window.olrCheckoutTest && olrCheckoutTest.cartUrl) || '/cart/') + '">← ' + backLabel + '</a>'
+      ? '<a href="' + ((window.olrCheckoutTest && olrCheckoutTest.homeUrl) || '/') + '">← ' + backLabel + '</a>'
       : '<button type="button" class="olr-checkout-back">← ' + backLabel + '</button>';
     var next = stage === 'payment' ? '' : '<button type="button" class="olr-checkout-next">' + nextLabel + ' →</button>';
     return back + next;
@@ -147,24 +147,11 @@
     form.querySelector('#customer_details').insertBefore(benefits, form.querySelector('.olr-checkout-navigation'));
   }
 
-  function normalizeThirdPartyOptIns() {
+  function normalizeConsentRows() {
     if (!form) return;
-    var marketingPhrases = [
-      'newsletter',
-      'exclusive email',
-      'discounts and product information',
-      'marketing email',
-      'promotional email',
-      'offers by email'
-    ];
-    form.querySelectorAll('label').forEach(function (label) {
-      var copy = label.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
-      var isMarketingOptIn = marketingPhrases.some(function (phrase) {
-        return copy.indexOf(phrase) !== -1;
-      });
-      if (!isMarketingOptIn) return;
-      var row = label.closest('.form-row') || label.closest('p');
-      if (row && !row.classList.contains('olr-research-updates-field')) row.classList.add('olr-checkout-hidden-optin');
+    form.querySelectorAll('#customer_details input[type="checkbox"]').forEach(function (input) {
+      var row = input.closest('.form-row') || input.closest('p');
+      if (row) row.classList.add('olr-checkout-consent-field');
     });
   }
 
@@ -345,7 +332,7 @@
     form.setAttribute('data-olr-enhanced', 'true');
     refreshNavigation();
     addBenefits();
-    normalizeThirdPartyOptIns();
+    normalizeConsentRows();
     updateSectionHeading();
     moveShippingMethods();
     addPromo();

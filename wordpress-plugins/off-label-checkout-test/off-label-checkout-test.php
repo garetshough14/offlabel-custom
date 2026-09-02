@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Checkout Test
  * Description: Isolated, branded WooCommerce checkout preview at /checkout-test/ with active store gateways and a non-charging test option.
- * Version: 1.2.7
+ * Version: 1.3.6
  * Author: Off Label Research
  * Text Domain: off-label-checkout-test
  * Requires Plugins: woocommerce
@@ -12,9 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_CHECKOUT_TEST_VERSION', '1.2.7' );
+define( 'OLR_CHECKOUT_TEST_VERSION', '1.3.6' );
 define( 'OLR_CHECKOUT_TEST_FILE', __FILE__ );
-define( 'OLR_CHECKOUT_TEST_LOGO_URL', 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/branding/off-label-logo-cropped-black.webp' );
 
 register_activation_hook(
 	OLR_CHECKOUT_TEST_FILE,
@@ -102,7 +101,7 @@ add_filter(
 	}
 );
 
-/* The isolated checkout intentionally has no site or logged-in admin chrome. */
+/* Keep the customer view free of the logged-in WordPress toolbar. */
 add_filter(
 	'show_admin_bar',
 	static function ( $show ) {
@@ -172,6 +171,7 @@ add_action(
 			array(
 				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
 				'cartUrl'       => wc_get_cart_url(),
+				'homeUrl'       => home_url( '/' ),
 				'cartNonce'     => wp_create_nonce( 'olr_checkout_test_cart' ),
 				'stageLabels'   => array(
 					'information' => __( 'Information', 'off-label-checkout-test' ),
@@ -193,25 +193,13 @@ add_filter(
 			return $fields;
 		}
 
-		/* Keep one intentional consent field on this isolated checkout. */
-		if ( isset( $fields['billing'] ) && is_array( $fields['billing'] ) ) {
-			$marketing_phrases = array(
-				'newsletter',
-				'exclusive email',
-				'discounts and product information',
-				'marketing email',
-				'promotional email',
-				'offers by email',
-			);
-
-			foreach ( $fields['billing'] as $field_key => $field ) {
-				$label = isset( $field['label'] ) ? strtolower( wp_strip_all_tags( (string) $field['label'] ) ) : '';
-				foreach ( $marketing_phrases as $phrase ) {
-					if ( false !== strpos( $label, $phrase ) ) {
-						unset( $fields['billing'][ $field_key ] );
-						break;
-					}
-				}
+		/* Keep both address forms consistent and give the second line a visible label. */
+		foreach ( array( 'billing', 'shipping' ) as $address_group ) {
+			$address_2_key = $address_group . '_address_2';
+			if ( isset( $fields[ $address_group ][ $address_2_key ] ) ) {
+				$fields[ $address_group ][ $address_2_key ]['label']       = __( 'Address line 2', 'off-label-checkout-test' );
+				$fields[ $address_group ][ $address_2_key ]['label_class'] = array();
+				$fields[ $address_group ][ $address_2_key ]['required']    = false;
 			}
 		}
 
@@ -315,6 +303,7 @@ add_filter(
 			return $name;
 		}
 		$image = $cart_item['data']->get_image( 'woocommerce_thumbnail', array( 'class' => 'olr-checkout-test__product-image', 'loading' => 'eager' ) );
+		$image = apply_filters( 'olr_checkout_test_cart_item_image', $image, $cart_item );
 		return '<span class="olr-checkout-test__product">' . wp_kses_post( $image ) . '<span class="olr-checkout-test__product-copy">' . $name . '</span></span>';
 	},
 	10,
@@ -586,14 +575,6 @@ add_action(
 							<?php echo do_shortcode( '[woocommerce_checkout]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 						<?php endif; ?>
 					</main>
-					<footer class="olr-checkout-test__footer">
-						<div class="olr-checkout-test__footer-brand"><img src="<?php echo esc_url( OLR_CHECKOUT_TEST_LOGO_URL ); ?>" alt="Off Label Research" width="1199" height="169" loading="lazy"><p>Where science<br>goes off-script.</p></div>
-						<div><b>Research</b><a href="/shop/">All products</a><a href="/research/">Research</a></div>
-						<div><b>Company</b><a href="/about/">About</a><a href="/testing/">Testing</a><a href="/faq/">FAQ</a><a href="/contact/">Contact</a></div>
-						<div><b>Account</b><a href="/my-account/">Account</a><a href="/my-account/orders/">Orders</a><a href="/cart/">Bag</a></div>
-						<div><b>Support</b><a href="/shipping/">Shipping</a><a href="/returns/">Returns</a><a href="/terms/">Terms</a><a href="/privacy-policy/">Privacy</a></div>
-					</footer>
-					<div class="olr-checkout-test__legal"><span>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Off Label Research. All rights reserved.</span><span>Research differently.</span></div>
 				</div>
 				<?php
 				return (string) ob_get_clean();

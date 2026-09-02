@@ -306,3 +306,138 @@ body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page
 body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(strong, b, .price, .amount) { font-weight: 700 !important; }
 body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(label, summary, button, .button, .olr-button, .olr-product-box__cta) { font-weight: 600 !important; }
 body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(.olr-label, .olr-product-view__ruo, small) { letter-spacing: .025em !important; }
+
+/* Authoritative responsive product-record layer. */
+.olr-gitpress-site[data-olr-page="product-detail"],
+.olr-gitpress-site[data-olr-page="product-detail"] * {
+  min-width: 0 !important;
+}
+
+.olr-gitpress-site[data-olr-page="product-detail"] :where(img, svg, video, iframe, canvas) {
+  max-width: 100% !important;
+}
+
+.olr-gitpress-site[data-olr-page="product-detail"] :where(p, li, td, th, a, label, summary) {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 48rem) {
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-record-head__inner,
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-record__inner,
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__inner {
+    width: min(calc(100% - 2rem), 79rem) !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view,
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-followup,
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__inner {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__gallery {
+    width: 100% !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__main-image {
+    min-height: 0 !important;
+    aspect-ratio: 1 / 1.05 !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__thumbs {
+    display: flex !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__thumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__thumb {
+    min-width: 4.5rem !important;
+    min-height: 4.5rem !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__summary h1 {
+    max-width: 11ch !important;
+    font-size: clamp(2.5rem, 11vw, 4rem) !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__purchase :where(form.cart, .woocommerce-variation-add-to-cart) {
+    width: 100% !important;
+    grid-template-columns: minmax(6rem, auto) minmax(0, 1fr) !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__purchase :where(select, input:not([type="radio"]):not([type="checkbox"]), button, .button) {
+    max-width: 100% !important;
+    min-height: 2.75rem !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-information__section summary {
+    min-height: 3.5rem !important;
+    padding-right: 2.75rem !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-information__copy,
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-information__attributes {
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-information__attributes {
+    overflow-x: auto !important;
+    overscroll-behavior-inline: contain;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__item {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__media {
+    aspect-ratio: 1 / 0.9 !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__copy {
+    padding: 0.75rem !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-coa {
+    min-height: clamp(20rem, 82vw, 27rem) !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__inner {
+    padding-block: 2rem !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__offers {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__cta {
+    width: 100% !important;
+    min-height: 2.75rem !important;
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__purchase :where(form.cart, .woocommerce-variation-add-to-cart),
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-strength-selector > div,
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-volume-pricing > div,
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__grid,
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-box__offers {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-coa > div {
+    width: 88% !important;
+    padding-left: 1rem !important;
+  }
+}

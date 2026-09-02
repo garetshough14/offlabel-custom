@@ -33,6 +33,8 @@ gitpress/
     checkout.html
     account.html
     build-your-box.html
+    affiliate.html
+    affiliate-guidelines.html
   partials/
     header.template.html
     header.html
@@ -40,6 +42,8 @@ gitpress/
 ```
 
 `styles.css` is the canonical shared stylesheet. `styles-product.css` is a small, late-loaded critical layer for the isolated WooCommerce product page so Divi and WooCommerce aggregation cannot override its layout. `gitpress/partials/header.template.html` is the editable header source. The build script copies the canonical shared CSS into that template and writes the deployable `gitpress/partials/header.html`.
+
+The WooCommerce bridge also loads `scripts/olr-site-navigation.js` on the customer-facing site. That script supplies the contained mobile navigation drawer, current-page state, focus handling, Escape/outside closing, and body-scroll locking. Keep the script and the bridge update together when publishing responsive changes.
 
 Do not edit the embedded CSS in `header.html` directly. Edit `styles.css`, then rebuild the header.
 
@@ -133,7 +137,7 @@ Install and activate `wordpress-plugins/off-label-build-a-box`, then configure t
 [divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/build-your-box.html" branch="main" format="html" updated_meta="false"]
 ```
 
-The fragment renders `[olr_build_a_box]`. Product editors explicitly enable eligible bottles in **Product data → General**. The plugin uses live WooCommerce images, regular prices, variations, inventory, cart, checkout, orders, and refunds; its fixed 5- and 10-bottle pricing never creates or stacks a coupon.
+The fragment renders `[olr_build_a_box]`. Administrators manage every eligible bottle from **WooCommerce > Build Your Box** without opening products individually. The plugin uses live WooCommerce images, regular prices, variations, inventory, cart, checkout, orders, and refunds. Box prices never receive a coupon discount, while eligible ordinary cart products may still use coupons.
 
 ### Checkout
 
@@ -151,6 +155,26 @@ Install and activate `wordpress-plugins/off-label-account-hub` before assigning 
 
 The global Account links point to `/account/`; the Orders footer link opens its Orders tab. The plugin redirects the retired UAP account page plus the safe legacy Woo dashboard/order URLs into this hub without intercepting WooCommerce payment-method or transactional endpoints.
 
+### Affiliate Program
+
+Activate `wordpress-plugins/off-label-account-hub`, publish the draft **Affiliate** page created by the plugin, retain the `affiliate` slug, and assign:
+
+```text
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/affiliate.html" branch="main" format="html" updated_meta="false"]
+```
+
+The fragment renders `[olr_affiliate_landing]`. Its actions adapt for logged-out visitors, eligible members, applicants, and active affiliates. The secure application remains inside the Account hub.
+
+### Affiliate Guidelines
+
+Publish the plugin-created **Affiliate Guidelines** draft, retain the `affiliate-guidelines` slug, and assign:
+
+```text
+[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/affiliate-guidelines.html" branch="main" format="html" updated_meta="false"]
+```
+
+The fragment renders `[olr_affiliate_guidelines]`. The page is public, while account reporting, payout details, and application actions remain authenticated.
+
 GitPress Managed renders the global header, the selected page body, and the global footer as one server-rendered document.
 
 ## WooCommerce bridge
@@ -158,6 +182,8 @@ GitPress Managed renders the global header, the selected page body, and the glob
 Install `gitpress/woocommerce-bridge.php` through Code Snippets, a child theme, or `mu-plugins`.
 
 The bridge allowlists the WooCommerce and Off Label Research shortcodes used by these page fragments, including the live research catalog, isolated single-product output, categories, cart, checkout, account, document archive, and cart count output. It does not alter native singular product pages, and it does not add, remove, or configure payment gateways. WooCommerce remains responsible for products, prices, inventory, customers, carts, checkout, orders, shipping, taxes, and the site's existing payment methods.
+
+The bridge adds scoped responsive body classes to the existing Contact, Shipping, Returns, Terms, Privacy, and Research Use Policy pages. Their WordPress content and URLs remain unchanged; the shared stylesheet provides the responsive canvas, typography, forms, tables, and embedded-content constraints.
 
 The former `/journal/` route is intentionally retired by the bridge. Remove its WordPress menu item and move the old WordPress page to Trash when deploying these files; the bridge redirects any stale route or cached link to the homepage.
 
@@ -211,3 +237,5 @@ If the repository becomes private, move the public assets to the WordPress Media
 6. Confirm the managed header, managed footer, and page-level shortcodes in WordPress match this guide.
 7. Purge the changed GitPress cache entries or use the signed GitHub push webhook.
 8. Test navigation, responsive layouts, products, cart, checkout, account access, order flows, and every existing payment method on staging before launch.
+
+For responsive acceptance, test 320, 360, 375, 390, 414, 430, 768, 820, 1024, 1280, and 1440 pixel widths, plus common phone landscape sizes. Confirm that intentional tab rails are the only horizontally scrollable regions, focus remains visible, menus close with Escape, and no customer-facing control is covered by the shared header.

@@ -61,8 +61,11 @@
 
     var toggle = document.createElement("button");
     var label = window.olrAccountHub && olrAccountHub.menuLabel ? olrAccountHub.menuLabel : "Account menu";
+    var sideId = side.id || "olr-account-navigation";
+    side.id = sideId;
     toggle.type = "button";
     toggle.className = "olr-account-menu-toggle";
+    toggle.setAttribute("aria-controls", sideId);
     toggle.setAttribute("aria-expanded", "false");
     toggle.innerHTML = "<span>" + label + "</span><span aria-hidden=\"true\">+</span>";
     account.classList.add("olr-account-has-toggle");
@@ -72,9 +75,27 @@
       var open = account.classList.toggle("olr-account-nav-open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
       toggle.lastElementChild.textContent = open ? "\u2212" : "+";
+      if (open) {
+        var firstLink = side.querySelector("a[href]");
+        if (firstLink) {
+          firstLink.focus({ preventScroll: true });
+        }
+      }
+    });
+
+    account.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape" || !account.classList.contains("olr-account-nav-open")) {
+        return;
+      }
+      event.preventDefault();
+      account.classList.remove("olr-account-nav-open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.lastElementChild.textContent = "+";
+      toggle.focus({ preventScroll: true });
     });
 
     var logoutUrl = window.olrAccountHub && olrAccountHub.logoutUrl ? olrAccountHub.logoutUrl : "";
+    var guidelinesUrl = window.olrAccountHub && olrAccountHub.guidelinesUrl ? olrAccountHub.guidelinesUrl : "";
     side.querySelectorAll("a").forEach(function (link) {
       link.addEventListener("click", function (event) {
         account.classList.remove("olr-account-nav-open");
@@ -85,6 +106,13 @@
           event.preventDefault();
           event.stopImmediatePropagation();
           window.location.assign(logoutUrl);
+          return;
+        }
+
+        if (guidelinesUrl && link.matches('a.um-account-link[data-tab="guidelines"], a[href*="um_tab=guidelines"], a[href*="/account/guidelines/"]')) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          window.location.assign(guidelinesUrl);
           return;
         }
 
@@ -142,15 +170,17 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("[data-olr-account-hub]").forEach(function (hub) {
-      document.body.classList.add("olr-account-hub-page");
+    document.querySelectorAll("[data-olr-account-hub], [data-olr-affiliate-public]").forEach(function (hub) {
       var status = document.createElement("span");
       status.className = "olr-account-copy-status";
       status.setAttribute("aria-live", "polite");
       hub.appendChild(status);
       initializeCopyButtons(hub, status);
-      initializeNavigation(hub);
-      restyleAffiliateCharts(hub);
+      if (hub.matches("[data-olr-account-hub]")) {
+        document.body.classList.add("olr-account-hub-page");
+        initializeNavigation(hub);
+        restyleAffiliateCharts(hub);
+      }
     });
   });
 })();

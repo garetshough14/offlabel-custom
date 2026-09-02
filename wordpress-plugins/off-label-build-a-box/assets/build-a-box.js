@@ -298,9 +298,15 @@
       if (event.target.matches('[data-variation-select]')) {
         var card = event.target.closest('[data-product-card]');
         var option = event.target.options[event.target.selectedIndex];
-        if (card && option && option.dataset.image) {
+        if (card && option) {
           var image = card.querySelector('.olr-build-box__product-media img');
-          if (image) image.src = option.dataset.image;
+          if (image) {
+            image.src = option.dataset.image || card.dataset.productImage || image.src;
+            var responsiveSources = option.dataset.imageSrcset || card.dataset.productImageSrcset || '';
+            if (responsiveSources) image.srcset = responsiveSources;
+            else image.removeAttribute('srcset');
+            image.sizes = '(max-width: 360px) 100vw, (max-width: 768px) 50vw, (max-width: 1100px) 33vw, 25vw';
+          }
         }
         render();
       }

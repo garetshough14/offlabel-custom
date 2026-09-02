@@ -66,14 +66,14 @@
         </a>
       </nav>
 
-      <details class="olr-nav-shell">
-        <summary class="olr-nav-toggle">
-          <span>Menu</span>
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-            <path d="M3 7h18M3 12h18M3 17h18" fill="none" stroke="currentColor" stroke-width="1.5"></path>
-          </svg>
+      <details class="olr-nav-shell" data-olr-nav-drawer>
+        <summary class="olr-nav-toggle" data-olr-nav-toggle aria-controls="olr-mobile-navigation" aria-expanded="false">
+          <span class="screen-reader-text" data-olr-nav-label>Open menu</span>
+          <span class="olr-nav-toggle__icon" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
         </summary>
-        <nav class="olr-primary-nav olr-primary-nav--mobile" aria-label="Mobile primary navigation">
+        <nav class="olr-primary-nav olr-primary-nav--mobile" id="olr-mobile-navigation" data-olr-nav-panel aria-label="Mobile primary navigation" tabindex="-1">
           <a href="research.html" data-nav="shop">Research</a>
           <a href="about.html" data-nav="about">About</a>
           <a href="testing.html" data-nav="coas">Testing</a>
@@ -94,6 +94,7 @@
     <div class="um">
       <div class="um-account">
         <aside class="um-account-side">
+          <a class="olr-account-brand" href="index.html" aria-label="Off Label Research home"><img src="branding/off-label-logo-cropped-black.webp" alt="Off Label Research" width="1199" height="169"></a>
           <nav class="um-account-nav" aria-label="Account navigation">
             <ul>
               <li class="um-account-link current"><a class="current" href="#preview-account">Overview</a></li>
@@ -116,21 +117,24 @@
                   <div><p class="olr-account-eyebrow">Off Label affiliate</p><h2>WELCOME BACK.</h2></div>
                   <span class="olr-account-status"><span aria-hidden="true"></span>Active affiliate</span>
                 </header>
-                <div class="olr-affiliate-overview">
-                  <section class="olr-affiliate-link-card">
-                    <div><p class="olr-account-eyebrow">Your referral link</p><div class="olr-copy-field"><input type="text" value="offlabelresearch.com/ref/yourname" readonly><button type="button">COPY LINK <span aria-hidden="true">→</span></button></div></div>
-                    <div class="olr-affiliate-rate"><strong>—</strong><span>Commission rate</span><small>Your configured rank</small></div>
+                <div class="olr-affiliate-overview olr-affiliate-overview--complete">
+                  <section class="olr-affiliate-access-card">
+                    <div><p class="olr-account-eyebrow">Your code</p><strong class="olr-affiliate-access-card__value">NOT CONFIGURED</strong><span>20% off their first qualifying order</span></div>
+                    <div><p class="olr-account-eyebrow">Your referral link</p><strong class="olr-affiliate-access-card__link">offlabelresearch.com/ref/yourname</strong><button type="button">COPY LINK <span aria-hidden="true">→</span></button></div>
+                    <div class="olr-affiliate-access-card__rate"><strong>10%</strong><span>Lifetime commission</span><p>Earn on qualifying purchases from customers you refer.</p></div>
                   </section>
                   <section class="olr-account-stat-grid" aria-label="Affiliate totals">
-                    <div class="olr-account-stat"><strong>$0.00</strong><span>Total earnings</span></div>
-                    <div class="olr-account-stat"><strong>0</strong><span>Total referrals</span></div>
-                    <div class="olr-account-stat"><strong>$0.00</strong><span>Paid</span></div>
+                    <div class="olr-account-stat"><strong>NOT AVAILABLE YET</strong><span>Sales generated</span></div>
+                    <div class="olr-account-stat"><strong>NOT AVAILABLE YET</strong><span>Customers referred</span></div>
+                    <div class="olr-account-stat"><strong>$0.00</strong><span>Lifetime earnings</span></div>
                     <div class="olr-account-stat"><strong>$0.00</strong><span>Available for payout</span></div>
                   </section>
-                  <section class="olr-affiliate-dashboard-grid">
-                    <div class="olr-affiliate-performance-card"><div class="olr-affiliate-card-heading"><div><p class="olr-account-eyebrow">Performance</p><h3>LAST 30 DAYS.</h3></div><a href="#preview-performance">VIEW REPORTS →</a></div><div class="olr-affiliate-chart-empty">Performance data will appear after eligible activity is recorded.</div><div class="olr-affiliate-mini-stats"><div><strong>0</strong><span>Clicks</span></div><div><strong>0%</strong><span>Conversion</span></div><div><strong>0</strong><span>Payouts</span></div></div></div>
-                    <div class="olr-affiliate-earnings-card"><p class="olr-account-eyebrow">Your earnings</p><dl><div><dt>Pending and available</dt><dd>$0.00</dd></div><div><dt>Paid</dt><dd>$0.00</dd></div><div><dt>Referrals this month</dt><dd>0</dd></div></dl><a class="olr-account-text-link" href="#preview-payouts">VIEW PAYOUTS →</a></div>
+                  <section class="olr-affiliate-dashboard-grid olr-affiliate-dashboard-grid--primary">
+                    <article class="olr-affiliate-earnings-card"><p class="olr-account-eyebrow">Your earnings</p><div class="olr-affiliate-earnings-totals"><div><strong>$0.00</strong><span>Pending</span></div><div><strong>$0.00</strong><span>Available</span></div><div><strong>$0.00</strong><span>Paid</span></div></div><div class="olr-affiliate-payout-summary"><div><span>Next payout</span><strong>Monthly</strong><b>$0.00</b></div><div><span>Payout method</span><strong>Zelle</strong><a href="#preview-payouts">EDIT PAYMENT DETAILS →</a></div></div><p class="olr-affiliate-card-note">Commissions remain pending for 30 days before becoming eligible for payout.</p></article>
+                    <article class="olr-affiliate-performance-card"><div class="olr-affiliate-card-heading"><p class="olr-account-eyebrow">Performance</p><nav><span aria-current="true">30 DAYS</span><a href="#preview-performance">90 DAYS</a><a href="#preview-performance">ALL TIME</a></nav></div><div class="olr-affiliate-chart-empty">Performance data will appear after eligible activity is recorded.</div><div class="olr-affiliate-mini-stats"><div><strong>0</strong><span>Clicks</span></div><div><strong>0</strong><span>Orders</span></div><div><strong>0%</strong><span>Conversion</span></div><div><strong>N/A</strong><span>Avg. order value</span></div></div></article>
                   </section>
+                  <section class="olr-affiliate-customers"><h3>CUSTOMERS YOU'VE BROUGHT OFF LABEL</h3><div class="olr-affiliate-customer-metrics"><div><strong>N/A</strong><span>Total customers referred</span></div><div><strong>N/A</strong><span>Returning customers</span></div><div><strong>N/A</strong><span>First-order only</span></div><div><strong>N/A</strong><span>Repeat customer rate</span></div><div><strong>N/A</strong><span>Repeat customer sales</span></div><div><strong>N/A</strong><span>Commission from repeat orders</span></div></div><p>Qualifying customers remain attributed to you for future eligible purchases.</p></section>
+                  <section class="olr-affiliate-resource-grid"><article><p class="olr-account-eyebrow">Payouts</p><strong>$0.00</strong><span>Available</span><p>Monthly payout / $50 minimum / Zelle</p><a href="#preview-payouts">VIEW PAYOUTS →</a></article><article><p class="olr-account-eyebrow">Creative library</p><ul><li><a href="#preview-creative">CURRENT OFFER <span>→</span></a></li><li><a href="#preview-creative">SOCIAL ASSETS <span>→</span></a></li><li><a href="#preview-creative">PRODUCT IMAGERY <span>→</span></a></li></ul></article><article><p class="olr-account-eyebrow">Partner guidelines</p><ul><li><a href="#preview-guidelines">AFFILIATE DISCLOSURE <span>→</span></a></li><li><a href="#preview-guidelines">RESEARCH USE GUIDELINES <span>→</span></a></li><li><a href="#preview-guidelines">AFFILIATE TERMS <span>→</span></a></li></ul></article></section>
                 </div>
               </div>
             </div>
@@ -200,5 +204,6 @@
 </div>
 
   </div>
+  <script src="scripts/olr-site-navigation.js"></script>
 </body>
 </html>

@@ -65,14 +65,14 @@
         </a>
       </nav>
 
-      <details class="olr-nav-shell">
-        <summary class="olr-nav-toggle">
-          <span>Menu</span>
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-            <path d="M3 7h18M3 12h18M3 17h18" fill="none" stroke="currentColor" stroke-width="1.5"></path>
-          </svg>
+      <details class="olr-nav-shell" data-olr-nav-drawer>
+        <summary class="olr-nav-toggle" data-olr-nav-toggle aria-controls="olr-mobile-navigation" aria-expanded="false">
+          <span class="screen-reader-text" data-olr-nav-label>Open menu</span>
+          <span class="olr-nav-toggle__icon" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
         </summary>
-        <nav class="olr-primary-nav olr-primary-nav--mobile" aria-label="Mobile primary navigation">
+        <nav class="olr-primary-nav olr-primary-nav--mobile" id="olr-mobile-navigation" data-olr-nav-panel aria-label="Mobile primary navigation" tabindex="-1">
           <a href="research.html" data-nav="shop">Research</a>
           <a href="about.html" data-nav="about">About</a>
           <a href="testing.html" data-nav="coas">Testing</a>
@@ -102,7 +102,7 @@
       <form class="olr-faq-search" role="search">
         <label for="olr-faq-search-input">Find an answer</label>
         <div class="olr-faq-search__field">
-          <input id="olr-faq-search-input" type="search" placeholder="Search frequently asked questions" autocomplete="off" aria-describedby="olr-faq-search-status">
+          <input id="olr-faq-search-input" type="search" placeholder="Search questions" autocomplete="off" aria-describedby="olr-faq-search-status">
           <button type="submit" aria-label="Search frequently asked questions">
             <svg viewBox="0 0 24 24" width="23" height="23" aria-hidden="true" focusable="false">
               <circle cx="10.5" cy="10.5" r="6.75" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
@@ -284,6 +284,7 @@
 </div>
 
   </div>
+  <script src="scripts/olr-site-navigation.js"></script>
   <script src="scripts/olr-faq.js"></script>
 </body>
 </html>

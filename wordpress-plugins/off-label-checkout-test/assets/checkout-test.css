@@ -4,7 +4,7 @@
   --olr-checkout-line: #b9b6b0;
   --olr-checkout-muted: #77736d;
   --olr-checkout-error: #9b1c1c;
-  --olr-checkout-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+  --olr-checkout-font: var(--olr-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif);
 }
 
 body.olr-checkout-test-page {
@@ -37,6 +37,17 @@ body.olr-checkout-test-page #main-content .container::before {
   display: none !important;
 }
 
+/* Divi injects this mobile page-title strip above managed page content. */
+body.olr-checkout-test-page :where(.entry-title.main_title, .entry-header, .page-header) {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
 body.olr-checkout-test-page .olr-gitpress-site[data-olr-page="checkout-test"],
 body.olr-checkout-test-page .olr-gitpress-site[data-olr-page="checkout-test"] > :where(.et_pb_section, .et_pb_row, .et_pb_column, .et_pb_module, .et_pb_code, .et_pb_code_inner) {
   width: 100% !important;
@@ -64,11 +75,12 @@ body.olr-checkout-test-page {
   padding-top: 0 !important;
 }
 
-body.olr-checkout-test-page :where(#wpadminbar, #main-header, #top-header, #et-top-navigation, .et-l--header, .et-l--footer, #main-footer, .dgs-managed-header, .olr-managed-header, .olr-announcement, .site-header) {
+body.olr-checkout-test-page :where(#wpadminbar, #main-header, #top-header, #et-top-navigation, #main-footer) {
   display: none !important;
 }
 
-body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content, .entry-content, .et_pb_section, .et_pb_row, .et_pb_column, .et_pb_text, .et_pb_text_inner) {
+body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content),
+body.olr-checkout-test-page #main-content :where(.entry-content, .et_pb_section, .et_pb_row, .et_pb_column, .et_pb_text, .et_pb_text_inner) {
   width: 100% !important;
   max-width: none !important;
   margin: 0 !important;
@@ -114,14 +126,10 @@ body.olr-checkout-test-page :where(#page-container, #et-main-area, #main-content
 }
 
 .olr-checkout-test__steps,
-.olr-checkout-test__main,
-.olr-checkout-test__footer {
+.olr-checkout-test__main {
   width: min(100% - 48px, 1180px);
   margin-inline: auto;
 }
-
-.olr-checkout-test__footer-brand > img { display: block; width: 205px; height: auto; }
-.olr-checkout-test__footer-brand > img { width: 185px; }
 
 .olr-checkout-test__secure svg {
   width: 20px;
@@ -297,6 +305,16 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
   grid-column: 2;
 }
 
+.olr-checkout-test form #billing_first_name_field,
+.olr-checkout-test form #billing_last_name_field,
+.olr-checkout-test form #shipping_first_name_field,
+.olr-checkout-test form #shipping_last_name_field {
+  width: 100% !important;
+  grid-column: 1 / -1 !important;
+  float: none !important;
+  clear: both !important;
+}
+
 .olr-checkout-test form .form-row label {
   position: absolute;
   z-index: 1;
@@ -325,8 +343,39 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
   pointer-events: auto;
 }
 
+/* Keep consent controls on one shared checkbox-and-copy grid, even when an
+ * extension registers its field after the core checkout fields have loaded. */
+.olr-checkout-enhanced[data-olr-checkout-stage="information"] #customer_details :where(.olr-checkout-consent-field, .form-row, p):has(input[type="checkbox"]) {
+  width: 100% !important;
+  min-height: 44px;
+  margin: 0 !important;
+  padding: 0 4px !important;
+}
+
+.olr-checkout-enhanced[data-olr-checkout-stage="information"] #customer_details :where(label.checkbox, label:has(input[type="checkbox"])) {
+  width: 100%;
+  min-height: 44px;
+  display: grid !important;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.olr-checkout-enhanced[data-olr-checkout-stage="information"] #customer_details :where(.form-row, p) > input[type="checkbox"] {
+  float: left;
+  margin: 13px 12px 0 0 !important;
+}
+
+.olr-checkout-enhanced[data-olr-checkout-stage="information"] #customer_details input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0 !important;
+  justify-self: start;
+}
+
 .olr-checkout-test .olr-research-updates-field .optional { display: none; }
-.olr-checkout-test .olr-checkout-hidden-optin { display: none !important; }
 
 .olr-checkout-test form .form-row :where(input.input-text, select, textarea),
 .olr-checkout-test .select2-container .select2-selection--single {
@@ -373,6 +422,13 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
   grid-template-columns: minmax(0, 760px);
   justify-content: center;
   gap: 0;
+}
+
+/* The payment layout intentionally narrows to one 760px column. Match notices
+ * to that same measure while preserving the wider two-column stages. */
+.olr-checkout-enhanced[data-olr-checkout-stage="payment"] .olr-checkout-test__main > .woocommerce > :where(.woocommerce-notices-wrapper, .woocommerce-info, .woocommerce-error, .woocommerce-message) {
+  width: min(100%, 760px) !important;
+  margin-inline: auto !important;
 }
 
 .olr-checkout-enhanced[data-olr-checkout-stage="payment"] form.checkout > #customer_details {
@@ -561,16 +617,8 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
 .olr-checkout-empty__product-meta > a { min-width: 0; font-weight: 700; text-decoration: none; text-transform: uppercase; }
 .olr-checkout-empty__product-meta > span { flex: 0 0 auto; }
 
-.olr-checkout-test__footer { display: grid; grid-template-columns: 1.35fr repeat(4, 1fr); gap: 24px; padding: 25px 10px 30px; border-top: 1px solid var(--olr-checkout-line); }
-.olr-checkout-test__footer > div:not(:first-child) { display: flex; flex-direction: column; gap: 7px; padding-left: 24px; border-left: 1px solid var(--olr-checkout-line); }
-.olr-checkout-test__footer b { margin-bottom: 7px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
-.olr-checkout-test__footer a { font-size: 10px; text-decoration: none; text-transform: uppercase; }
-.olr-checkout-test__footer-brand { display: flex; flex-direction: column; align-items: flex-start; }
-.olr-checkout-test__footer-brand p { margin: 20px 0 0; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
-.olr-checkout-test__legal { min-height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 max(24px, calc((100% - 1180px) / 2)); background: #050505; color: #fff; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
-
 @media (max-width: 900px) {
-  .olr-checkout-test__steps, .olr-checkout-test__main, .olr-checkout-test__footer { width: min(100% - 40px, 760px); }
+  .olr-checkout-test__steps, .olr-checkout-test__main { width: min(100% - 40px, 760px); }
   .olr-checkout-test form.checkout { grid-template-columns: 1fr; }
   .olr-checkout-enhanced[data-olr-checkout-stage="payment"] form.checkout { grid-template-columns: minmax(0, 1fr); }
   .olr-checkout-test form.checkout > #customer_details { grid-column: 1; grid-row: 1; padding: 10px 0 25px; border-right: 0; }
@@ -578,15 +626,13 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
   .olr-checkout-test form.checkout > #order_review { grid-column: 1; grid-row: 3; }
   .olr-checkout-test .shop_table td.product-name > .product-quantity { margin-left: 100px; }
   .olr-checkout-empty__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .olr-checkout-test__footer { grid-template-columns: 1.4fr repeat(2, 1fr); }
-  .olr-checkout-test__footer > div:nth-child(n+4) { margin-top: 15px; }
 }
 
 @media (max-width: 600px) {
   .olr-checkout-test { font-size: 14px; }
   .olr-checkout-test__steps { min-height: 78px; grid-template-columns: auto 1fr auto 1fr auto; gap: 8px; }
   .olr-checkout-test__steps button { font-size: 9px; letter-spacing: .03em; }
-  .olr-checkout-test__steps, .olr-checkout-test__main, .olr-checkout-test__footer { width: calc(100% - 28px); }
+  .olr-checkout-test__steps, .olr-checkout-test__main { width: calc(100% - 28px); }
   .olr-checkout-test form .form-row-first, .olr-checkout-test form .form-row-last { float: none !important; width: 100% !important; }
   .olr-checkout-test :where(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper) { grid-template-columns: 1fr; }
   .olr-checkout-test :where(#billing_first_name_field, #billing_city_field, #billing_postcode_field, #shipping_first_name_field, #shipping_city_field, #shipping_postcode_field, #billing_last_name_field, #billing_state_field, #billing_phone_field, #shipping_last_name_field, #shipping_state_field, #shipping_phone_field) { grid-column: 1; }
@@ -605,10 +651,6 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
   .olr-checkout-empty__image { padding: 14px; }
   .olr-checkout-empty__product-meta { display: block; font-size: 10px; }
   .olr-checkout-empty__product-meta > span { display: block; margin-top: 4px; }
-  .olr-checkout-test__footer { grid-template-columns: 1fr 1fr; gap: 25px 15px; }
-  .olr-checkout-test__footer-brand { grid-column: 1 / -1; }
-  .olr-checkout-test__footer > div:not(:first-child) { padding-left: 15px; }
-  .olr-checkout-test__legal { padding: 12px 18px; gap: 15px; font-size: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -625,7 +667,35 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
 :is(#olr-checkout-type-system, .olr-checkout-test) :where(label, summary, button, .button, nav a) { font-weight: 600 !important; }
 :is(#olr-checkout-type-system, .olr-checkout-test) :where(.olr-label, small) { letter-spacing: .025em !important; }
 :is(#olr-checkout-type-system, .olr-checkout-test) :where(.amount, .order-total) { font-variant-numeric: tabular-nums; }
-:is(#olr-checkout-type-system, .olr-checkout-test) .olr-checkout-test__logo strong,
-:is(#olr-checkout-type-system, .olr-checkout-test) .olr-checkout-test__footer-brand > strong { letter-spacing: .08em !important; }
-:is(#olr-checkout-type-system, .olr-checkout-test) .olr-checkout-test__logo span,
-:is(#olr-checkout-type-system, .olr-checkout-test) .olr-checkout-test__footer-brand > span { letter-spacing: .12em !important; }
+
+/* Staging-only responsive regression guard. */
+.olr-checkout-test,.olr-checkout-test *{min-width:0}
+.olr-checkout-test :where(img,svg,video,iframe,canvas){max-width:100%}
+.olr-checkout-test :where(p,li,td,th,a,label,span){overflow-wrap:anywhere}
+.olr-checkout-test :where(button,.button,a[role="button"],input[type="submit"]){min-height:44px}
+
+@media(max-width:768px){
+  .olr-checkout-test :where(input:not([type="checkbox"]):not([type="radio"]),select,textarea){width:100%!important;max-width:100%!important;font-size:16px!important}
+  .olr-checkout-test__notice,.olr-checkout-test__steps,.olr-checkout-test__main{width:min(100% - 32px,var(--olr-checkout-max))}
+  .olr-checkout-test__layout{grid-template-columns:minmax(0,1fr)}
+  .olr-checkout-test__order{position:static;width:100%}
+  .olr-checkout-test .shop_table{width:100%;table-layout:fixed}
+  .olr-checkout-test .shop_table :where(td,th){overflow-wrap:anywhere}
+}
+
+@media(max-width:360px){
+  .olr-checkout-test__notice,.olr-checkout-test__steps,.olr-checkout-test__main{width:min(100% - 24px,var(--olr-checkout-max))}
+  .olr-checkout-test__steps{grid-template-columns:minmax(0,1fr) 12px minmax(0,1fr) 12px minmax(0,1fr);gap:4px;font-size:9px}
+  .olr-checkout-test__steps button{width:100%;padding-inline:2px;line-height:1.25;white-space:normal}
+  .olr-checkout-test__steps button b{display:block;margin-bottom:2px}
+  .olr-checkout-test .shop_table td.product-name{width:72%;padding-right:8px}
+  .olr-checkout-test .shop_table td.product-total{width:28%;font-size:12px}
+  .olr-checkout-test__product{grid-template-columns:52px minmax(0,1fr);gap:9px}
+  .olr-checkout-test__product-image{width:48px!important;height:62px!important}
+  .olr-checkout-test .shop_table td.product-name>.product-quantity{margin-left:0}
+  .olr-checkout-test__promo div{grid-template-columns:minmax(0,1fr) 78px;gap:7px}
+  .olr-checkout-test__promo button{padding-inline:6px;font-size:10px}
+  .olr-checkout-test #payment ul.payment_methods li{padding-inline:10px}
+  .olr-checkout-test #payment label{white-space:normal;overflow-wrap:anywhere}
+  .olr-checkout-test .woocommerce-terms-and-conditions-wrapper :where(p,label){font-size:12px;line-height:1.45}
+}

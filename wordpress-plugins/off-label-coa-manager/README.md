@@ -2,6 +2,8 @@
 
 Install the `off-label-coa-manager` directory as a WordPress plugin and activate it with WooCommerce active.
 
+Current build: **1.0.9**. This release adds compact-mobile PDF toolbar and document-layout guards without changing report storage, routing, or product relationships.
+
 ## One-time setup
 
 Activation creates a published **Receipt** page with the slug `receipt`. In the page's GitPress metabox:

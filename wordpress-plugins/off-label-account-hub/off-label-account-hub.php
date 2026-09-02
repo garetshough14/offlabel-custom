@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Account Hub
  * Description: Unified Ultimate Member, WooCommerce, and Ultimate Affiliate Pro account experience for Off Label Research.
- * Version: 1.0.11
+ * Version: 1.1.0
  * Author: Off Label Research
  * Text Domain: off-label-account-hub
  * Requires Plugins: ultimate-member, woocommerce
@@ -11,8 +11,10 @@
 defined( 'ABSPATH' ) || exit;
 
 final class OLR_Account_Hub {
-	const VERSION                  = '1.0.11';
+	const VERSION                  = '1.1.0';
 	const ACCOUNT_SLUG             = 'account';
+	const AFFILIATE_SLUG           = 'affiliate';
+	const GUIDELINES_SLUG          = 'affiliate-guidelines';
 	const CDN_ASSET_BASE           = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/wordpress-plugins/off-label-account-hub/assets/';
 	const OPTION_TERMS_URL         = 'olr_affiliate_terms_url';
 	const OPTION_NOTIFICATION_EMAIL = 'olr_affiliate_notification_email';
@@ -44,6 +46,8 @@ final class OLR_Account_Hub {
 
 	private function __construct() {
 		add_shortcode( 'olr_account_hub', array( $this, 'shortcode' ) );
+		add_shortcode( 'olr_affiliate_landing', array( $this, 'affiliate_landing_shortcode' ) );
+		add_shortcode( 'olr_affiliate_guidelines', array( $this, 'affiliate_guidelines_shortcode' ) );
 		add_filter( 'dgs_allowed_inner_shortcodes', array( $this, 'allow_gitpress_shortcodes' ) );
 		add_filter( 'body_class', array( $this, 'body_classes' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_assets' ), 40 );
@@ -66,6 +70,40 @@ final class OLR_Account_Hub {
 		add_action( 'wp_ajax_uap_ajax_remove_many_affiliates', array( $this, 'protect_uap_affiliate_ajax_deletion' ), -100 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_notices', array( $this, 'dependency_notices' ) );
+	}
+
+	/**
+	 * Create unpublished fallback pages for the two public affiliate surfaces.
+	 * GitPress remains responsible for the final managed page bodies and chrome.
+	 */
+	public static function activate() {
+		$pages = array(
+			self::AFFILIATE_SLUG  => array(
+				'title'   => __( 'Affiliate', 'off-label-account-hub' ),
+				'content' => '[olr_affiliate_landing]',
+			),
+			self::GUIDELINES_SLUG => array(
+				'title'   => __( 'Affiliate Guidelines', 'off-label-account-hub' ),
+				'content' => '[olr_affiliate_guidelines]',
+			),
+		);
+
+		foreach ( $pages as $slug => $page ) {
+			if ( get_page_by_path( $slug ) ) {
+				continue;
+			}
+
+			wp_insert_post(
+				array(
+					'post_title'     => $page['title'],
+					'post_name'      => $slug,
+					'post_content'   => $page['content'],
+					'post_status'    => 'draft',
+					'post_type'      => 'page',
+					'comment_status' => 'closed',
+				)
+			);
+		}
 	}
 
 	/**
@@ -97,7 +135,7 @@ final class OLR_Account_Hub {
 		$shortcodes = is_array( $shortcodes ) ? $shortcodes : array();
 		$shortcodes = array_merge(
 			$shortcodes,
-			array( 'olr_account_hub', 'ultimatemember_account', 'uap-account-page' )
+			array( 'olr_account_hub', 'olr_affiliate_landing', 'olr_affiliate_guidelines', 'ultimatemember_account', 'uap-account-page' )
 		);
 
 		return array_values( array_unique( $shortcodes ) );
@@ -160,6 +198,41 @@ final class OLR_Account_Hub {
 			}
 
 			if ( '/account/' === $request_path || 0 === strpos( $request_path, '/account/' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine whether this is one of the public affiliate content pages.
+	 *
+	 * @param string $slug Optional page slug to test.
+	 * @return bool
+	 */
+	private function is_public_affiliate_request( $slug = '' ) {
+		$slugs = $slug ? array( sanitize_key( $slug ) ) : array( self::AFFILIATE_SLUG, self::GUIDELINES_SLUG );
+		if ( function_exists( 'is_page' ) && is_page( $slugs ) ) {
+			return true;
+		}
+
+		$queried_id = function_exists( 'get_queried_object_id' ) ? absint( get_queried_object_id() ) : 0;
+		if ( ! $queried_id ) {
+			return false;
+		}
+
+		$post = get_post( $queried_id );
+		if ( ! $post instanceof WP_Post ) {
+			return false;
+		}
+
+		$shortcodes = array(
+			self::AFFILIATE_SLUG  => 'olr_affiliate_landing',
+			self::GUIDELINES_SLUG => 'olr_affiliate_guidelines',
+		);
+		foreach ( $slugs as $candidate ) {
+			if ( $candidate === $post->post_name || ( isset( $shortcodes[ $candidate ] ) && has_shortcode( (string) $post->post_content, $shortcodes[ $candidate ] ) ) ) {
 				return true;
 			}
 		}
@@ -247,6 +320,12 @@ final class OLR_Account_Hub {
 		if ( $this->is_account_request() ) {
 			$classes[] = 'olr-account-hub-page';
 		}
+		if ( $this->is_public_affiliate_request( self::AFFILIATE_SLUG ) ) {
+			$classes[] = 'olr-affiliate-landing-page';
+		}
+		if ( $this->is_public_affiliate_request( self::GUIDELINES_SLUG ) ) {
+			$classes[] = 'olr-affiliate-guidelines-page';
+		}
 
 		return array_values( array_unique( $classes ) );
 	}
@@ -255,29 +334,33 @@ final class OLR_Account_Hub {
 	 * Load frontend assets only on the account route.
 	 */
 	public function frontend_assets( $force = false ) {
-		if ( ! $force && ! $this->is_account_request() ) {
+		$is_account  = $this->is_account_request();
+		$is_affiliate = $this->is_public_affiliate_request();
+		if ( ! $force && ! $is_account && ! $is_affiliate ) {
 			return;
 		}
 
 		/* GitPress loads the nested UAP shortcode after normal content discovery. */
-		foreach ( array( 'uap_public_style', 'uap_templates' ) as $uap_style ) {
-			if ( wp_style_is( $uap_style, 'registered' ) ) {
-				wp_enqueue_style( $uap_style );
+		if ( $is_account ) {
+			foreach ( array( 'uap_public_style', 'uap_templates' ) as $uap_style ) {
+				if ( wp_style_is( $uap_style, 'registered' ) ) {
+					wp_enqueue_style( $uap_style );
+				}
 			}
-		}
-		foreach ( array( 'uap-public-functions' ) as $uap_script ) {
-			if ( wp_script_is( $uap_script, 'registered' ) ) {
-				wp_enqueue_script( $uap_script );
+			foreach ( array( 'uap-public-functions' ) as $uap_script ) {
+				if ( wp_script_is( $uap_script, 'registered' ) ) {
+					wp_enqueue_script( $uap_script );
+				}
 			}
-		}
-		if ( defined( 'UAP_URL' ) && defined( 'UAP_ASSET_VERSION' ) && ! wp_script_is( 'uap-account_page-functions', 'enqueued' ) ) {
-			wp_enqueue_script(
-				'uap-account_page-functions',
-				UAP_URL . 'assets/js/account_page.js',
-				array( 'jquery' ),
-				UAP_ASSET_VERSION,
-				array( 'in_footer' => true )
-			);
+			if ( defined( 'UAP_URL' ) && defined( 'UAP_ASSET_VERSION' ) && ! wp_script_is( 'uap-account_page-functions', 'enqueued' ) ) {
+				wp_enqueue_script(
+					'uap-account_page-functions',
+					UAP_URL . 'assets/js/account_page.js',
+					array( 'jquery' ),
+					UAP_ASSET_VERSION,
+					array( 'in_footer' => true )
+				);
+			}
 		}
 
 		wp_enqueue_style(
@@ -297,10 +380,11 @@ final class OLR_Account_Hub {
 			'olr-account-hub',
 			'olrAccountHub',
 			array(
-				'logoutUrl' => wp_logout_url( home_url( '/' ) ),
-				'menuLabel' => __( 'Account menu', 'off-label-account-hub' ),
-				'copyLabel' => __( 'Copy', 'off-label-account-hub' ),
-				'copied'    => __( 'Copied', 'off-label-account-hub' ),
+				'logoutUrl'    => wp_logout_url( home_url( '/' ) ),
+				'guidelinesUrl' => home_url( '/' . self::GUIDELINES_SLUG . '/' ),
+				'menuLabel'    => __( 'Account menu', 'off-label-account-hub' ),
+				'copyLabel'    => __( 'Copy', 'off-label-account-hub' ),
+				'copied'       => __( 'Copied', 'off-label-account-hub' ),
 			)
 		);
 	}
@@ -314,14 +398,14 @@ final class OLR_Account_Hub {
 	 */
 	private function account_asset_url( $filename ) {
 		$filename = sanitize_file_name( $filename );
-		$root     = plugin_dir_path( __FILE__ ) . $filename;
-		if ( is_readable( $root ) ) {
-			return plugins_url( $filename, __FILE__ );
-		}
-
 		$nested = plugin_dir_path( __FILE__ ) . 'assets/' . $filename;
 		if ( is_readable( $nested ) ) {
 			return plugins_url( 'assets/' . $filename, __FILE__ );
+		}
+
+		$root = plugin_dir_path( __FILE__ ) . $filename;
+		if ( is_readable( $root ) ) {
+			return plugins_url( $filename, __FILE__ );
 		}
 
 		return self::CDN_ASSET_BASE . rawurlencode( $filename );
@@ -339,9 +423,9 @@ final class OLR_Account_Hub {
 			return '';
 		}
 
-		$stylesheet = plugin_dir_path( __FILE__ ) . 'account-hub.css';
+		$stylesheet = plugin_dir_path( __FILE__ ) . 'assets/account-hub.css';
 		if ( ! is_readable( $stylesheet ) ) {
-			$stylesheet = plugin_dir_path( __FILE__ ) . 'assets/account-hub.css';
+			$stylesheet = plugin_dir_path( __FILE__ ) . 'account-hub.css';
 		}
 		if ( ! is_readable( $stylesheet ) ) {
 			$this->late_styles_printed = true;
@@ -420,6 +504,212 @@ final class OLR_Account_Hub {
 		);
 
 		return $late_styles . '<div class="olr-account-hub" data-olr-account-hub>' . $brand . $output . '</div>';
+	}
+
+	/**
+	 * Render the public Affiliate Program landing page.
+	 *
+	 * @return string
+	 */
+	public function affiliate_landing_shortcode() {
+		$this->frontend_assets( true );
+		$late_styles = $this->late_style_markup();
+		$policy      = $this->affiliate_program_policy();
+		$ctas        = $this->affiliate_public_ctas();
+		$guidelines  = home_url( '/' . self::GUIDELINES_SLUG . '/' );
+		$terms       = trim( (string) get_option( self::OPTION_TERMS_URL, '' ) );
+		$terms       = $terms ? $terms : $guidelines;
+		$ruo         = home_url( '/research-use-policy/' );
+
+		ob_start();
+		?>
+		<div class="olr-affiliate-public olr-affiliate-landing" data-olr-affiliate-public>
+			<section class="olr-affiliate-landing__hero" aria-labelledby="olr-affiliate-landing-title">
+				<div class="olr-affiliate-landing__hero-copy">
+					<p class="olr-affiliate-public__eyebrow"><?php esc_html_e( 'Off Label affiliate program', 'off-label-account-hub' ); ?></p>
+					<h1 id="olr-affiliate-landing-title"><?php esc_html_e( 'SHARE THE RESEARCH. EARN FOR LIFE.', 'off-label-account-hub' ); ?></h1>
+					<p><?php echo esc_html( sprintf( __( 'Invite others to Off Label and earn %s commission on qualifying purchases from customers you refer.', 'off-label-account-hub' ), $policy['commission'] ) ); ?></p>
+					<div class="olr-affiliate-public__actions">
+						<a class="olr-affiliate-public__button is-primary" href="<?php echo esc_url( $ctas['primary']['url'] ); ?>"><?php echo esc_html( $ctas['primary']['label'] ); ?><span aria-hidden="true">&rarr;</span></a>
+						<a class="olr-affiliate-public__button" href="<?php echo esc_url( $ctas['secondary']['url'] ); ?>"><?php echo esc_html( $ctas['secondary']['label'] ); ?><span aria-hidden="true">&rarr;</span></a>
+					</div>
+				</div>
+				<div class="olr-affiliate-landing__benefits" aria-label="<?php esc_attr_e( 'Affiliate program benefits', 'off-label-account-hub' ); ?>">
+					<div><?php echo $this->affiliate_icon( 'tag' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><strong><?php echo esc_html( $policy['customer_discount'] ); ?></strong><span><b><?php esc_html_e( 'For them.', 'off-label-account-hub' ); ?></b><?php echo esc_html( sprintf( __( 'New customers receive %s off their first qualifying order.', 'off-label-account-hub' ), $policy['customer_discount'] ) ); ?></span></div>
+					<div><?php echo $this->affiliate_icon( 'commission' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><strong><?php echo esc_html( $policy['commission'] ); ?></strong><span><b><?php esc_html_e( 'For you.', 'off-label-account-hub' ); ?></b><?php echo esc_html( sprintf( __( 'Earn %s commission on qualifying purchases.', 'off-label-account-hub' ), $policy['commission'] ) ); ?></span></div>
+					<div><?php echo $this->affiliate_icon( 'infinity' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><strong><?php esc_html_e( 'Lifetime', 'off-label-account-hub' ); ?></strong><span><b><?php esc_html_e( 'Keep earning.', 'off-label-account-hub' ); ?></b><?php esc_html_e( 'When your customers return and order again, you earn again.', 'off-label-account-hub' ); ?></span></div>
+				</div>
+			</section>
+
+			<section class="olr-affiliate-landing__payout" aria-labelledby="olr-affiliate-payout-title">
+				<h2 id="olr-affiliate-payout-title"><?php esc_html_e( 'GETTING PAID IS SIMPLE.', 'off-label-account-hub' ); ?></h2>
+				<div class="olr-affiliate-landing__payout-grid">
+					<div><?php echo $this->affiliate_icon( 'document' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php esc_html_e( 'W-9 required', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Complete your W-9 so we can properly report your earnings.', 'off-label-account-hub' ); ?></p></div>
+					<div><?php echo $this->affiliate_icon( 'payment' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php echo esc_html( $policy['payout_method'] . ' ' . __( 'only', 'off-label-account-hub' ) ); ?></h3><p><?php echo esc_html( sprintf( __( 'Payouts are made exclusively through %s. Add your details before payout.', 'off-label-account-hub' ), $policy['payout_method'] ) ); ?></p></div>
+					<div><?php echo $this->affiliate_icon( 'calendar' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php echo esc_html( $policy['payout_schedule'] . ' ' . __( 'payouts', 'off-label-account-hub' ) ); ?></h3><p><?php echo esc_html( sprintf( __( '%1$s hold period on new commissions. %2$s minimum payout.', 'off-label-account-hub' ), $policy['hold_period'], $policy['minimum_payout'] ) ); ?></p></div>
+				</div>
+				<p class="olr-affiliate-landing__payout-note"><?php esc_html_e( 'You can activate your affiliate account and start earning right away. W-9 and payout information must be completed before any commission can be paid.', 'off-label-account-hub' ); ?></p>
+			</section>
+
+			<section class="olr-affiliate-landing__process" aria-labelledby="olr-affiliate-process-title">
+				<h2 id="olr-affiliate-process-title"><?php esc_html_e( 'HOW IT WORKS.', 'off-label-account-hub' ); ?></h2>
+				<ol>
+					<li><span>01</span><?php echo $this->affiliate_icon( 'link' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php esc_html_e( 'Share your link or code', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Send your unique link or code to friends, followers, and your network.', 'off-label-account-hub' ); ?></p></li>
+					<li><span>02</span><?php echo $this->affiliate_icon( 'customer' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php esc_html_e( 'They become new customers', 'off-label-account-hub' ); ?></h3><p><?php echo esc_html( sprintf( __( 'They receive %s off their first qualifying order.', 'off-label-account-hub' ), $policy['customer_discount'] ) ); ?></p></li>
+					<li><span>03</span><?php echo $this->affiliate_icon( 'package' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php esc_html_e( 'They place an order', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'We track the sale and attribute the customer to you for life.', 'off-label-account-hub' ); ?></p></li>
+					<li><span>04</span><?php echo $this->affiliate_icon( 'commission' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php echo esc_html( sprintf( __( 'You earn %s commission', 'off-label-account-hub' ), $policy['commission'] ) ); ?></h3><p><?php echo esc_html( sprintf( __( 'After the %s hold, commissions become available.', 'off-label-account-hub' ), $policy['hold_period'] ) ); ?></p></li>
+					<li><span>05</span><?php echo $this->affiliate_icon( 'repeat' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php esc_html_e( 'They return. You earn again', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Every future qualifying order earns you commission for the life of the customer.', 'off-label-account-hub' ); ?></p></li>
+				</ol>
+				<a class="olr-affiliate-public__button is-primary" href="<?php echo esc_url( $ctas['primary']['url'] ); ?>"><?php esc_html_e( 'SEE AFFILIATE DASHBOARD PREVIEW', 'off-label-account-hub' ); ?><span aria-hidden="true">&rarr;</span></a>
+			</section>
+
+			<section class="olr-affiliate-landing__policies" aria-label="<?php esc_attr_e( 'Affiliate requirements', 'off-label-account-hub' ); ?>">
+				<article><h2><?php esc_html_e( 'RESEARCH USE ONLY.', 'off-label-account-hub' ); ?></h2><p><?php esc_html_e( 'Off Label products are offered solely for legitimate laboratory, analytical, and research purposes and are not intended for human or animal consumption.', 'off-label-account-hub' ); ?></p><a href="<?php echo esc_url( $ruo ); ?>"><?php esc_html_e( 'RESEARCH USE ONLY PROTOCOL', 'off-label-account-hub' ); ?> &rarr;</a></article>
+				<article><h2><?php esc_html_e( 'RESPONSIBLY REPRESENT OFF LABEL.', 'off-label-account-hub' ); ?></h2><p><?php esc_html_e( 'Affiliates must follow our Affiliate Guidelines and represent Off Label accurately and responsibly at all times.', 'off-label-account-hub' ); ?></p><a href="<?php echo esc_url( $guidelines ); ?>"><?php esc_html_e( 'VIEW AFFILIATE GUIDELINES', 'off-label-account-hub' ); ?> &rarr;</a></article>
+				<article><h2><?php esc_html_e( 'YOU’RE COVERED.', 'off-label-account-hub' ); ?></h2><p><?php esc_html_e( 'The complete terms governing the program, commission rules, payout policies, and more.', 'off-label-account-hub' ); ?></p><a href="<?php echo esc_url( $terms ); ?>"><?php esc_html_e( 'VIEW AFFILIATE TERMS', 'off-label-account-hub' ); ?> &rarr;</a></article>
+			</section>
+
+			<section class="olr-affiliate-landing__final" aria-labelledby="olr-affiliate-final-title">
+				<div><h2 id="olr-affiliate-final-title"><?php esc_html_e( 'READY TO START EARNING?', 'off-label-account-hub' ); ?></h2><p><?php esc_html_e( 'Activate your affiliate access in just a few clicks.', 'off-label-account-hub' ); ?></p></div>
+				<a class="olr-affiliate-public__button" href="<?php echo esc_url( $ctas['primary']['url'] ); ?>"><?php echo esc_html( $ctas['primary']['label'] ); ?><span aria-hidden="true">&rarr;</span></a>
+			</section>
+		</div>
+		<?php
+
+		return $late_styles . ob_get_clean();
+	}
+
+	/**
+	 * Render the complete public affiliate guidelines.
+	 *
+	 * @return string
+	 */
+	public function affiliate_guidelines_shortcode() {
+		$this->frontend_assets( true );
+		$late_styles = $this->late_style_markup();
+		$policy      = $this->affiliate_program_policy();
+		$terms       = trim( (string) get_option( self::OPTION_TERMS_URL, '' ) );
+		$terms       = $terms ? $terms : home_url( '/affiliate-terms/' );
+		$ruo         = home_url( '/research-use-policy/' );
+		$creative    = $this->account_tab_url( 'creative' );
+
+		$cards = array(
+			array( '01', 'SHARE OFF LABEL', '<p>Share your link and code through the channels that work for you.</p><ul class="olr-guidelines-icon-list"><li><b>Text</b><span>Send your link directly to friends and contacts.</span></li><li><b>Email</b><span>Share your link and code through individual email.</span></li><li><b>Social</b><span>Share through your social media accounts and content.</span></li><li><b>Website / Blog</b><span>Use your link within appropriate original content.</span></li></ul><strong class="olr-guidelines-card__closing">Your link. Your code.<br>We track the rest.</strong>' ),
+			array( '02', 'DISCLOSE YOUR RELATIONSHIP', '<p>Be clear that you may earn a commission.</p><blockquote>I may earn a commission from purchases made through my Off Label link.</blockquote><button class="olr-guidelines-copy" type="button" data-olr-copy data-copy-value="I may earn a commission from purchases made through my Off Label link.">Copy disclosure <span aria-hidden="true">&rarr;</span></button><p>Do not hide the disclosure or make it difficult for your audience to understand your relationship.</p>' ),
+			array( '03', 'RESEARCH USE ONLY', '<div class="olr-guidelines-ruo"><small>Research use only.</small><strong>Share the research.<br>Not a protocol.</strong><p>All Off Label affiliate content must comply with the Off Label Research Use Only Protocol.</p><b>For research use only.<br>Not for human consumption.</b></div>', 'dark' ),
+			array( '04', 'USE THE BRAND RESPONSIBLY', '<p>Represent Off Label accurately and responsibly.</p><h3>You may identify yourself as:</h3><ul class="is-allowed"><li>Off Label Affiliate</li></ul><h3>You may not represent yourself as:</h3><ul class="is-prohibited"><li>An Off Label employee</li><li>Off Label customer service</li><li>An authorized medical representative</li><li>An official Off Label social account</li><li>Off Label management</li><li>The company itself</li></ul><p>Do not create profiles, pages, or websites designed to make someone believe you are an official Off Label property.</p>' ),
+			array( '05', 'BRAND ASSETS', '<p>Use Off Label-approved assets to keep your content on brand.</p><ul class="is-checklist"><li>Product photography</li><li>Campaign graphics</li><li>Logos approved for affiliate use</li><li>Promotional assets</li><li>Approved captions</li><li>RUO language</li><li>Affiliate disclosure language</li></ul><p>You may create original content. It must follow the Affiliate Guidelines, RUO Protocol, and Affiliate Terms.</p>' ),
+			array( '06', 'COUPON CODE RULES', '<p>Your code is for your audience.</p><p>Do not submit your affiliate code to coupon sites, deal aggregators, coupon databases, browser extensions, or similar mass-distribution services unless Off Label provides written approval.</p><div class="olr-guidelines-symbol">◇</div><p>Affiliate commission is designed to reward genuine customer referrals.</p>' ),
+			array( '07', 'NO SELF-REFERRALS', '<p>Affiliate commission is not earned on your own purchases.</p><p>Off Label may reverse commissions associated with:</p><ul><li>Self-referrals</li><li>Duplicate accounts</li><li>Artificial or fraudulent transactions</li><li>Other referral abuse</li></ul>' ),
+			array( '08', 'YES, FRIENDS + FAMILY', '<p>You can refer people you know. Legitimate referrals to friends, family, and people in your network are allowed.</p><div class="olr-guidelines-symbol">◎</div><strong class="olr-guidelines-card__closing">They need to be genuine customers—not transactions created simply to generate commission.</strong>' ),
+			array( '09', 'NO SPAM', '<p>Share. Do not spam.</p><p>Do not use:</p><ul class="is-prohibited"><li>Purchased lists</li><li>Unsolicited bulk email or SMS</li><li>Automated spam</li><li>Deceptive outreach</li><li>Misleading messages</li></ul>' ),
+			array( '10', 'PAID ADVERTISING', '<p>Without written approval, do not bid on or purchase ads targeting Off Label, Off Label Research, our domain names, misspellings, or other branded terms.</p><div class="olr-guidelines-symbol">$</div><p>Do not run ads that reasonably appear to be official Off Label advertising.</p>' ),
+			array( '11', 'ACCURATE PROMOTIONS', '<p>Share the offer that actually exists.</p><ul class="is-checklist"><li>Current customer discount</li><li>Eligible products</li><li>Promotion dates</li><li>Affiliate code</li><li>Off Label pricing</li><li>Shipping offers</li><li>Other promotional terms</li></ul><p>Do not advertise expired or nonexistent offers.</p>' ),
+			array( '12', 'DISCOUNT STACKING', '<p>One promotion at a time. Affiliate discounts do not stack with other percentage promotions unless Off Label specifically states otherwise.</p><table><thead><tr><th>Example</th><th></th></tr></thead><tbody><tr><td>Affiliate offer</td><td>' . esc_html( $policy['customer_discount'] ) . '</td></tr><tr><td>Current Off Label promo</td><td>30%</td></tr><tr><td>Customer receives</td><td>30%</td></tr></tbody></table><small>The applicable offer is determined according to Off Label rules.</small>' ),
+			array( '13', 'HOW YOU EARN', '<div class="olr-guidelines-rate"><strong>' . esc_html( $policy['commission'] ) . '</strong><p>You earn ' . esc_html( $policy['commission'] ) . ' commission on qualifying net merchandise revenue after applicable discounts.</p></div><table><tbody><tr><td>Retail merchandise</td><td>$200.00</td></tr><tr><td>Customer receives ' . esc_html( $policy['customer_discount'] ) . ' off</td><td>−$40.00</td></tr><tr><td>Net eligible purchase</td><td>$160.00</td></tr><tr><td>Your commission (' . esc_html( $policy['commission'] ) . ')</td><td>$16.00</td></tr></tbody></table><p>Excludes shipping, tax, refunds, canceled items, chargebacks, and other noncommissionable amounts defined in the Affiliate Terms.</p>' ),
+			array( '14', 'LIFETIME COMMISSION', '<p>Refer once. Keep earning.</p><div class="olr-guidelines-lifetime"><span>First order<br><b>' . esc_html( $policy['commission'] ) . '</b></span><i>→</i><span>Repeat order<br><b>' . esc_html( $policy['commission'] ) . '</b></span><i>→</i><span>Repeat order<br><b>' . esc_html( $policy['commission'] ) . '</b></span><i>→</i><span>Repeat order<br><b>' . esc_html( $policy['commission'] ) . '</b></span></div><strong class="olr-guidelines-card__closing">They do not need to keep using your code. You referred them. We track the relationship.</strong>' ),
+			array( '15', 'STAY UP TO DATE', '<p>Program offers, commission structures, eligible transactions, payout requirements, and rules may change.</p><dl class="olr-guidelines-statuses"><div><dt>Pending</dt><dd>Within the ' . esc_html( $policy['hold_period'] ) . ' hold period.</dd></div><div><dt>Available</dt><dd>Cleared and eligible for payout.</dd></div><div><dt>Paid</dt><dd>Included in a completed payout.</dd></div><div><dt>Reversed</dt><dd>Adjusted due to refund, cancellation, chargeback, or other permitted reason.</dd></div></dl>' ),
+			array( '16', 'GETTING PAID', '<ul class="is-checklist"><li>W-9 required</li><li>' . esc_html( $policy['payout_method'] ) . ' only</li><li>' . esc_html( $policy['payout_schedule'] ) . ' payouts</li><li>' . esc_html( $policy['minimum_payout'] ) . ' minimum payout</li><li>' . esc_html( $policy['hold_period'] ) . ' commission hold</li></ul><p>Tax and payout details must be complete before commissions can be paid.</p>', 'dark' ),
+			array( '17', 'REFUNDS + CANCELLATIONS', '<p>Commission follows the sale.</p><ul class="is-prohibited"><li>Canceled orders can be canceled.</li><li>Refunded commission can be reduced or reversed.</li><li>Partially refunded orders are adjusted.</li><li>Chargebacks reverse related commission.</li><li>Paid commission may be deducted from a future payout where permitted.</li></ul>', 'dark' ),
+			array( '18', 'VIOLATIONS', '<p>We protect the program.</p><p>When guidelines are violated, Off Label may investigate, issue a warning, reverse unpaid commission, suspend affiliate access, or remove an affiliate from the program.</p><ul><li>Warning</li><li>Commission reversed</li><li>Account suspension</li><li>Affiliate removal</li></ul>', 'dark' ),
+			array( '19', 'STAY UP TO DATE', '<p>Program offers, commission structures, eligible transactions, payout requirements, and rules may change.</p><p>Material updates to Guidelines may be communicated through the affiliate account or current program materials.</p>', 'dark' ),
+		);
+
+		ob_start();
+		?>
+		<div class="olr-affiliate-public olr-affiliate-guidelines" data-olr-affiliate-public>
+			<section class="olr-affiliate-guidelines__hero" aria-labelledby="olr-affiliate-guidelines-title">
+				<div><p class="olr-affiliate-public__eyebrow"><?php esc_html_e( 'Off Label affiliate program', 'off-label-account-hub' ); ?></p><h1 id="olr-affiliate-guidelines-title"><?php esc_html_e( 'AFFILIATE GUIDELINES.', 'off-label-account-hub' ); ?></h1><h2><?php esc_html_e( 'Share Off Label. Earn responsibly. Protect the brand.', 'off-label-account-hub' ); ?></h2><p><?php esc_html_e( 'These guidelines explain the standards every Off Label affiliate agrees to follow when promoting the brand and participating in the Affiliate Program.', 'off-label-account-hub' ); ?></p><div class="olr-affiliate-public__actions"><a class="olr-affiliate-public__button is-primary" href="<?php echo esc_url( $ruo ); ?>"><?php esc_html_e( 'RESEARCH USE ONLY PROTOCOL', 'off-label-account-hub' ); ?><span aria-hidden="true">&rarr;</span></a><a class="olr-affiliate-public__button" href="<?php echo esc_url( $terms ); ?>"><?php esc_html_e( 'AFFILIATE TERMS', 'off-label-account-hub' ); ?><span aria-hidden="true">&rarr;</span></a></div></div>
+				<div class="olr-affiliate-guidelines__seal" aria-label="<?php esc_attr_e( 'Represent Off Label. Earn responsibly.', 'off-label-account-hub' ); ?>"><span>REP OFF LABEL</span><strong>OFF<br>LABEL</strong><span>EARN RESPONSIBLY</span></div>
+			</section>
+			<section class="olr-affiliate-guidelines__grid" aria-label="<?php esc_attr_e( 'Affiliate program guidelines', 'off-label-account-hub' ); ?>">
+				<?php foreach ( $cards as $card ) : ?>
+					<article class="olr-guidelines-card<?php echo ! empty( $card[3] ) ? ' olr-guidelines-card--' . esc_attr( sanitize_html_class( $card[3] ) ) : ''; ?>">
+						<span class="olr-guidelines-card__number"><?php echo esc_html( $card[0] ); ?></span>
+						<h2><?php echo esc_html( $card[1] ); ?></h2>
+						<div><?php echo wp_kses_post( $card[2] ); ?></div>
+						<?php if ( '03' === $card[0] ) : ?><a class="olr-guidelines-card__link" href="<?php echo esc_url( $ruo ); ?>"><?php esc_html_e( 'VIEW RUO PROTOCOL', 'off-label-account-hub' ); ?> &rarr;</a><?php endif; ?>
+						<?php if ( '05' === $card[0] ) : ?><a class="olr-guidelines-card__link" href="<?php echo esc_url( $creative ); ?>"><?php esc_html_e( 'VIEW CREATIVE LIBRARY', 'off-label-account-hub' ); ?> &rarr;</a><?php endif; ?>
+					</article>
+				<?php endforeach; ?>
+				<article class="olr-guidelines-card olr-guidelines-card--summary"><small><?php esc_html_e( 'The short version', 'off-label-account-hub' ); ?></small><h2><?php esc_html_e( 'SHARE HONESTLY. REPRESENT IT WELL. FOLLOW THE RESEARCH RULES. WE’LL TRACK THE REST.', 'off-label-account-hub' ); ?></h2><div class="olr-guidelines-summary-metrics"><span><b><?php echo esc_html( $policy['customer_discount'] ); ?></b> for them.</span><span><b><?php echo esc_html( $policy['commission'] ); ?></b> for you.</span><span><b><?php echo esc_html( $policy['payout_method'] ); ?></b> payouts.</span><span><b><?php esc_html_e( 'Lifetime', 'off-label-account-hub' ); ?></b> commission.</span></div><div class="olr-affiliate-public__actions"><a class="olr-affiliate-public__button" href="<?php echo esc_url( $ruo ); ?>"><?php esc_html_e( 'VIEW RUO PROTOCOL', 'off-label-account-hub' ); ?> &rarr;</a><a class="olr-affiliate-public__button" href="<?php echo esc_url( $terms ); ?>"><?php esc_html_e( 'AFFILIATE TERMS', 'off-label-account-hub' ); ?> &rarr;</a></div></article>
+			</section>
+		</div>
+		<?php
+
+		return $late_styles . ob_get_clean();
+	}
+
+	/**
+	 * Program terms shown consistently across the public and account surfaces.
+	 *
+	 * @return array
+	 */
+	public static function affiliate_program_policy() {
+		$policy = array(
+			'customer_discount' => '20%',
+			'commission'        => '10%',
+			'payout_method'     => 'Zelle',
+			'payout_schedule'   => __( 'Monthly', 'off-label-account-hub' ),
+			'hold_period'       => __( '30-day', 'off-label-account-hub' ),
+			'minimum_payout'    => '$50',
+		);
+
+		return (array) apply_filters( 'olr_affiliate_program_policy', $policy );
+	}
+
+	/**
+	 * Return state-aware public Affiliate Program actions.
+	 *
+	 * @return array
+	 */
+	private function affiliate_public_ctas() {
+		$application_url = $this->account_tab_url( 'affiliate' );
+		$dashboard_url   = $this->account_tab_url( 'overview' );
+		$guidelines_url  = home_url( '/' . self::GUIDELINES_SLUG . '/' );
+
+		if ( ! is_user_logged_in() ) {
+			return array(
+				'primary'   => array( 'label' => __( 'ACTIVATE AFFILIATE ACCESS', 'off-label-account-hub' ), 'url' => $this->ultimate_member_register_url( $application_url ) ),
+				'secondary' => array( 'label' => __( 'ALREADY ACTIVE? SIGN IN', 'off-label-account-hub' ), 'url' => $this->ultimate_member_login_url( $application_url ) ),
+			);
+		}
+
+		if ( self::is_active_affiliate( get_current_user_id() ) ) {
+			return array(
+				'primary'   => array( 'label' => __( 'OPEN AFFILIATE DASHBOARD', 'off-label-account-hub' ), 'url' => $dashboard_url ),
+				'secondary' => array( 'label' => __( 'VIEW GUIDELINES', 'off-label-account-hub' ), 'url' => $guidelines_url ),
+			);
+		}
+
+		$status = $this->application_status( get_current_user_id() );
+		return array(
+			'primary'   => array( 'label' => $status ? __( 'VIEW APPLICATION STATUS', 'off-label-account-hub' ) : __( 'ACTIVATE AFFILIATE ACCESS', 'off-label-account-hub' ), 'url' => $application_url ),
+			'secondary' => array( 'label' => __( 'VIEW GUIDELINES', 'off-label-account-hub' ), 'url' => $guidelines_url ),
+		);
+	}
+
+	/**
+	 * Small trusted line icons used by the public affiliate presentation.
+	 *
+	 * @param string $name Icon name.
+	 * @return string
+	 */
+	private function affiliate_icon( $name ) {
+		$icons = array(
+			'tag'        => '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5h11l13 13-10 10L5 15Z"/><circle cx="10" cy="10" r="2"/></svg>',
+			'commission' => '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12"/><path d="M19.5 11.5c-1-1.8-6-2-6 1.2 0 3.7 7 2.1 7 6 0 3.4-5.4 3.2-7 1.2M16 8.5v15"/></svg>',
+			'infinity'   => '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16c4-8 8-8 12 0s8 8 12 0c-4-8-8-8-12 0S8 24 4 16Z"/></svg>',
+			'document'   => '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 3h11l6 6v20H8Z"/><path d="M19 3v7h6M12 16h9M12 21h9"/></svg>',
+			'payment'    => '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 3h16v26H8Z"/><path d="M12 8h8M18.5 14c-1-1.6-5-1.8-5 .8 0 3 6 1.6 6 4.8 0 2.7-4.5 2.5-6 1M16 12v11"/></svg>',
+			'calendar'   => '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 7h24v21H4ZM4 13h24M10 3v8M22 3v8"/></svg>',
+			'link'       => '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="m13 20-2 2a6 6 0 0 1-8-8l5-5a6 6 0 0 1 9 1M19 12l2-2a6 6 0 0 1 8 8l-5 5a6 6 0 0 1-9-1M10 22l12-12"/></svg>',
+			'customer'   => '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="14" cy="10" r="5"/><path d="M4 28v-4a10 10 0 0 1 20 0v4M25 8v8M21 12h8"/></svg>',
+			'package'    => '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="m5 9 11-6 11 6v14l-11 6-11-6ZM5 9l11 6 11-6M16 15v14"/></svg>',
+			'repeat'     => '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M27 10A12 12 0 0 0 7 7L4 10M5 22a12 12 0 0 0 20 3l3-3M4 4v6h6M28 28v-6h-6"/></svg>',
+		);
+
+		return isset( $icons[ $name ] ) ? $icons[ $name ] : '';
 	}
 
 	/**
@@ -502,13 +792,11 @@ final class OLR_Account_Hub {
 					'custom' => true,
 				);
 			}
-			if ( $this->uap_tab_enabled( 'help' ) ) {
-				$tabs[60]['guidelines'] = array(
-					'icon'   => 'um-faicon-file-text',
-					'title'  => __( 'Guidelines', 'off-label-account-hub' ),
-					'custom' => true,
-				);
-			}
+			$tabs[60]['guidelines'] = array(
+				'icon'   => 'um-faicon-file-text',
+				'title'  => __( 'Guidelines', 'off-label-account-hub' ),
+				'custom' => true,
+			);
 		} else {
 			$tabs[20]['affiliate'] = array(
 				'icon'   => 'um-faicon-share-alt',
@@ -642,7 +930,14 @@ final class OLR_Account_Hub {
 				$creative = $this->creative_uap_tab();
 				return $active && $creative ? $this->render_uap_section( $creative ) : $this->empty_panel( __( 'Creative resources are not configured yet.', 'off-label-account-hub' ) );
 			case 'guidelines':
-				return $active ? $this->render_uap_section( 'help' ) : $this->render_application();
+				return $active
+					? $this->notice_panel(
+						__( 'AFFILIATE GUIDELINES.', 'off-label-account-hub' ),
+						__( 'Review the complete disclosure, research-use, promotion, and payout standards.', 'off-label-account-hub' ),
+						home_url( '/affiliate-guidelines/' ),
+						__( 'VIEW GUIDELINES', 'off-label-account-hub' )
+					)
+					: $this->render_application();
 			case 'olr_logout':
 				return $this->notice_panel(
 					__( 'LOG OUT', 'off-label-account-hub' ),
@@ -862,7 +1157,7 @@ final class OLR_Account_Hub {
 		}
 
 		$items = $indeed_db->get_referrals(
-			max( 1, min( 10, absint( $limit ) ) ),
+			max( 1, min( 250, absint( $limit ) ) ),
 			0,
 			false,
 			'date',
@@ -871,6 +1166,146 @@ final class OLR_Account_Hub {
 		);
 
 		return is_array( $items ) ? $items : array();
+	}
+
+	/**
+	 * Build the dashboard view model from native UAP summaries and owned referral
+	 * records. WooCommerce order metrics are exposed only when an actual order can
+	 * be resolved through WooCommerce CRUD, keeping the implementation HPOS-safe.
+	 *
+	 * @param int   $user_id Current affiliate user ID.
+	 * @param array $native  Native UAP overview payload.
+	 * @return array
+	 */
+	public static function affiliate_dashboard_data( $user_id, $native = array() ) {
+		$user_id     = absint( $user_id );
+		$native      = is_array( $native ) ? $native : array();
+		$stats       = isset( $native['stats'] ) && is_array( $native['stats'] ) ? $native['stats'] : array();
+		$month_stats = isset( $native['referralsExtraStats'] ) && is_array( $native['referralsExtraStats'] ) ? $native['referralsExtraStats'] : array();
+		$report      = isset( $native['referralsStats'] ) && is_array( $native['referralsStats'] ) ? $native['referralsStats'] : array();
+		$currency    = isset( $stats['currency'] ) ? sanitize_text_field( (string) $stats['currency'] ) : ( function_exists( 'uapCurrency' ) ? uapCurrency() : 'USD' );
+		$paid        = isset( $stats['paid_payments_value'] ) ? (float) $stats['paid_payments_value'] : 0.0;
+		$available   = isset( $stats['unpaid_payments_value'] ) ? (float) $stats['unpaid_payments_value'] : 0.0;
+		$rank        = self::affiliate_rank( $user_id );
+		$rate        = '';
+		if ( isset( $rank['amount_value'] ) ) {
+			$rate = isset( $rank['amount_type'] ) && 'flat' === $rank['amount_type']
+				? number_format_i18n( (float) $rank['amount_value'], 2 ) . ' ' . $currency
+				: number_format_i18n( (float) $rank['amount_value'], 0 ) . '%';
+		}
+
+		$items             = self::recent_referrals( $user_id, 250 );
+		$pending           = 0.0;
+		$sales             = 0.0;
+		$repeat_sales      = 0.0;
+		$repeat_commission = 0.0;
+		$order_count       = 0;
+		$customers         = array();
+		$resolved_orders   = array();
+
+		foreach ( $items as $item ) {
+			$status = isset( $item['status'] ) ? absint( $item['status'] ) : 0;
+			$amount = isset( $item['amount'] ) ? (float) $item['amount'] : 0.0;
+			if ( 1 === $status ) {
+				$pending += $amount;
+			}
+
+			$order_id = 0;
+			foreach ( array( 'reference', 'reference_id', 'order_id', 'source' ) as $reference_key ) {
+				if ( empty( $item[ $reference_key ] ) || ! is_scalar( $item[ $reference_key ] ) ) {
+					continue;
+				}
+				if ( preg_match( '/\d+/', (string) $item[ $reference_key ], $match ) ) {
+					$order_id = absint( $match[0] );
+					break;
+				}
+			}
+			if ( ! $order_id || isset( $resolved_orders[ $order_id ] ) || ! function_exists( 'wc_get_order' ) ) {
+				continue;
+			}
+
+			$order = wc_get_order( $order_id );
+			if ( ! $order instanceof WC_Order || in_array( $order->get_status(), array( 'cancelled', 'failed', 'trash' ), true ) ) {
+				continue;
+			}
+
+			$resolved_orders[ $order_id ] = true;
+			$net = max(
+				0,
+				(float) $order->get_total()
+				- (float) $order->get_shipping_total()
+				- (float) $order->get_total_tax()
+				- (float) $order->get_total_refunded()
+			);
+			$customer_id  = absint( $order->get_customer_id() );
+			$billing_email = strtolower( trim( (string) $order->get_billing_email() ) );
+			$customer_key = $customer_id ? 'user:' . $customer_id : ( $billing_email ? 'email:' . hash( 'sha256', $billing_email ) : 'order:' . $order_id );
+
+			if ( ! isset( $customers[ $customer_key ] ) ) {
+				$customers[ $customer_key ] = array( 'orders' => 0, 'sales' => 0.0, 'commission' => 0.0 );
+			}
+			++$customers[ $customer_key ]['orders'];
+			$customers[ $customer_key ]['sales']      += $net;
+			$customers[ $customer_key ]['commission'] += $amount;
+			$sales += $net;
+			++$order_count;
+		}
+
+		$returning = 0;
+		foreach ( $customers as $customer ) {
+			if ( $customer['orders'] > 1 ) {
+				++$returning;
+				$repeat_sales      += (float) $customer['sales'];
+				$repeat_commission += (float) $customer['commission'];
+			}
+		}
+
+		$customer_count = count( $customers );
+		$policy         = self::affiliate_program_policy();
+
+		return array(
+			'currency'              => $currency,
+			'paid'                  => $paid,
+			'available'             => $available,
+			'pending'               => $pending,
+			'earnings'              => $paid + $available + $pending,
+			'referrals'             => isset( $stats['referrals'] ) ? absint( $stats['referrals'] ) : count( $items ),
+			'payments'              => isset( $stats['payments'] ) ? absint( $stats['payments'] ) : 0,
+			'clicks'                => isset( $month_stats['visits'] ) ? absint( $month_stats['visits'] ) : 0,
+			'conversion'            => isset( $report['success_rate'] ) ? (float) $report['success_rate'] : 0.0,
+			'rank'                  => $rank,
+			'rate'                  => $rate ? $rate : $policy['commission'],
+			'referral_url'          => self::affiliate_referral_url( $user_id ),
+			'coupon_code'           => self::affiliate_coupon_code( $user_id ),
+			'recent'                => array_slice( $items, 0, 5 ),
+			'order_metrics_available' => $order_count > 0,
+			'sales_generated'       => $sales,
+			'order_count'           => $order_count,
+			'customer_count'        => $customer_count,
+			'returning_customers'   => $returning,
+			'first_order_only'      => max( 0, $customer_count - $returning ),
+			'repeat_rate'           => $customer_count ? ( $returning / $customer_count ) * 100 : 0,
+			'repeat_sales'          => $repeat_sales,
+			'repeat_commission'     => $repeat_commission,
+			'average_order_value'   => $order_count ? $sales / $order_count : 0,
+			'policy'                => $policy,
+			'chart'                 => ! empty( $native['statsForLast30'] ) && is_array( $native['statsForLast30'] ) ? $native['statsForLast30'] : array(),
+		);
+	}
+
+	/**
+	 * Resolve a configured affiliate coupon without assuming one vendor method.
+	 * Sites can supply an authoritative value through the public filter.
+	 *
+	 * @param int $user_id Affiliate user ID.
+	 * @return string
+	 */
+	public static function affiliate_coupon_code( $user_id ) {
+		$user_id = absint( $user_id );
+		$code    = sanitize_text_field( (string) get_user_meta( $user_id, 'olr_affiliate_coupon_code', true ) );
+		$code    = (string) apply_filters( 'olr_affiliate_dashboard_coupon_code', $code, $user_id, self::affiliate_id( $user_id ) );
+
+		return strtoupper( trim( sanitize_text_field( $code ) ) );
 	}
 
 	/**
@@ -1810,7 +2245,8 @@ final class OLR_Account_Hub {
 	 *
 	 * @return string
 	 */
-	private function ultimate_member_login_url() {
+	private function ultimate_member_login_url( $redirect_url = '' ) {
+		$redirect_url = $redirect_url ? esc_url_raw( $redirect_url ) : $this->account_url();
 		$login_url = '';
 		if ( function_exists( 'um_get_core_page' ) ) {
 			$core_page = um_get_core_page( 'login' );
@@ -1827,10 +2263,40 @@ final class OLR_Account_Hub {
 			}
 		}
 		if ( ! $login_url ) {
-			$login_url = wp_login_url( $this->account_url() );
+			$login_url = wp_login_url( $redirect_url );
 		}
 
-		return add_query_arg( 'redirect_to', $this->account_url(), $login_url );
+		return add_query_arg( 'redirect_to', $redirect_url, $login_url );
+	}
+
+	/**
+	 * Resolve Ultimate Member's registration page with a safe account fallback.
+	 *
+	 * @param string $redirect_url Destination after registration.
+	 * @return string
+	 */
+	private function ultimate_member_register_url( $redirect_url = '' ) {
+		$redirect_url = $redirect_url ? esc_url_raw( $redirect_url ) : $this->account_url();
+		$register_url = '';
+		if ( function_exists( 'um_get_core_page' ) ) {
+			$core_page = um_get_core_page( 'register' );
+			if ( is_numeric( $core_page ) ) {
+				$register_url = get_permalink( absint( $core_page ) );
+			} elseif ( is_string( $core_page ) && wp_http_validate_url( $core_page ) ) {
+				$register_url = $core_page;
+			}
+		}
+		if ( ! $register_url ) {
+			$core_pages = (array) get_option( 'um_core_pages', array() );
+			if ( ! empty( $core_pages['register'] ) ) {
+				$register_url = get_permalink( absint( $core_pages['register'] ) );
+			}
+		}
+		if ( ! $register_url ) {
+			return $this->ultimate_member_login_url( $redirect_url );
+		}
+
+		return add_query_arg( 'redirect_to', $redirect_url, $register_url );
 	}
 
 	/**
@@ -1957,3 +2423,7 @@ final class OLR_Account_Hub {
 }
 
 OLR_Account_Hub::instance();
+
+if ( function_exists( 'register_activation_hook' ) ) {
+	register_activation_hook( __FILE__, array( 'OLR_Account_Hub', 'activate' ) );
+}

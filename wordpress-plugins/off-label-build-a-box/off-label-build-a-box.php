@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Build Your Box
  * Description: Branded mix-and-match research box builder backed by native WooCommerce products, carts, and orders.
- * Version: 1.0.3
+ * Version: 1.3.2
  * Author: Off Label Research
  * Text Domain: off-label-build-a-box
  * Requires Plugins: woocommerce
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Build_A_Box {
-	const VERSION             = '1.0.3';
+	const VERSION             = '1.3.2';
 	const PAGE_SLUG           = 'build-your-box';
 	const SHORTCODE           = 'olr_build_a_box';
 	const META_ELIGIBLE       = '_olr_box_eligible';
@@ -22,7 +22,11 @@ final class OLR_Build_A_Box {
 	const CART_BOX_RATE       = 'olr_box_rate';
 	const CART_BOX_LABEL      = 'olr_box_label';
 	const CART_REGULAR_PRICE  = 'olr_box_regular_price';
+	const CART_BOX_ROLE        = 'olr_box_role';
+	const CART_BOX_MANIFEST    = 'olr_box_manifest';
 	const HERO_IMAGE          = 'assets/hero-three-vials-transparent-glass.png';
+	const BOX_IMAGE_FIVE      = 'assets/research-box-five.png';
+	const BOX_IMAGE_TEN       = 'assets/research-box-ten.png';
 
 	/** @var self|null */
 	private static $instance = null;
@@ -32,6 +36,9 @@ final class OLR_Build_A_Box {
 
 	/** @var bool */
 	private $assets_localized = false;
+
+	/** @var bool */
+	private $is_removing_box = false;
 
 	/**
 	 * Return the shared plugin instance.
@@ -76,14 +83,34 @@ final class OLR_Build_A_Box {
 
 		add_action( 'woocommerce_before_calculate_totals', array( $this, 'apply_box_prices' ), 9999 );
 		add_action( 'woocommerce_check_cart_items', array( $this, 'validate_cart_boxes' ), 5 );
-		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'prevent_coupon_stacking' ), 999, 3 );
+		add_filter( 'woocommerce_coupon_is_valid_for_product', array( $this, 'coupon_valid_for_product' ), 999, 4 );
+		add_filter( 'woocommerce_coupon_get_discount_amount', array( $this, 'coupon_discount_amount' ), 999, 5 );
+		add_filter( 'woocommerce_coupon_get_items_to_validate', array( $this, 'coupon_items_to_validate' ), 999, 2 );
+		add_filter( 'woocommerce_coupon_get_items_to_apply', array( $this, 'coupon_items_to_apply' ), 999, 3 );
 		add_filter( 'woocommerce_get_item_data', array( $this, 'cart_item_data' ), 10, 2 );
+		add_filter( 'woocommerce_cart_item_visible', array( $this, 'cart_item_visible' ), 10, 3 );
+		add_filter( 'woocommerce_checkout_cart_item_visible', array( $this, 'cart_item_visible' ), 10, 3 );
+		add_filter( 'woocommerce_widget_cart_item_visible', array( $this, 'cart_item_visible' ), 10, 3 );
+		add_filter( 'woocommerce_cart_item_name', array( $this, 'cart_item_name' ), 5, 3 );
+		add_filter( 'woocommerce_cart_item_thumbnail', array( $this, 'cart_item_thumbnail' ), 10, 3 );
+		add_filter( 'olr_checkout_test_cart_item_image', array( $this, 'checkout_box_image' ), 10, 2 );
+		add_filter( 'woocommerce_cart_item_permalink', array( $this, 'cart_item_permalink' ), 10, 3 );
+		add_filter( 'woocommerce_cart_item_price', array( $this, 'cart_item_group_price' ), 10, 3 );
+		add_filter( 'woocommerce_cart_item_subtotal', array( $this, 'cart_item_group_price' ), 10, 3 );
+		add_filter( 'woocommerce_cart_contents_count', array( $this, 'cart_contents_count' ) );
 		add_filter( 'woocommerce_cart_item_quantity', array( $this, 'locked_cart_quantity' ), 10, 3 );
+		add_filter( 'woocommerce_checkout_cart_item_quantity', array( $this, 'locked_checkout_quantity' ), 999, 3 );
 		add_filter( 'woocommerce_cart_item_remove_link', array( $this, 'box_remove_link' ), 10, 2 );
 		add_filter( 'woocommerce_cart_item_class', array( $this, 'cart_item_class' ), 10, 3 );
+		add_action( 'woocommerce_remove_cart_item', array( $this, 'cascade_box_removal' ), 5, 2 );
+		add_action( 'woocommerce_after_cart_item_quantity_update', array( $this, 'reject_box_quantity_change' ), 5, 4 );
 		add_action( 'woocommerce_before_cart', array( $this, 'coupon_policy_notice' ), 5 );
 		add_action( 'woocommerce_before_checkout_form', array( $this, 'coupon_policy_notice' ), 20 );
 		add_action( 'woocommerce_checkout_create_order_line_item', array( $this, 'save_order_item_metadata' ), 10, 4 );
+		add_filter( 'woocommerce_order_item_visible', array( $this, 'order_item_visible' ), 10, 2 );
+		add_filter( 'woocommerce_order_item_name', array( $this, 'order_item_name' ), 10, 2 );
+		add_filter( 'woocommerce_order_formatted_line_subtotal', array( $this, 'order_item_group_subtotal' ), 10, 3 );
+		add_filter( 'woocommerce_hidden_order_itemmeta', array( $this, 'hidden_order_item_meta' ) );
 	}
 
 	/**
@@ -499,7 +526,7 @@ final class OLR_Build_A_Box {
 					<p>Any bottles. Any combination.<br>Your box, your research.</p>
 				</div>
 				<figure class="olr-build-box__hero-media">
-					<img src="<?php echo esc_url( plugins_url( self::HERO_IMAGE, __FILE__ ) ); ?>" alt="Off Label Research Sermorelin, KPV, and MOTS-C research vials" width="1554" height="1012">
+					<img src="<?php echo esc_url( plugins_url( self::HERO_IMAGE, __FILE__ ) ); ?>" alt="Off Label Research Sermorelin, KPV, and MOTS-C research vials" width="1554" height="1012" loading="eager" decoding="async" fetchpriority="high">
 				</figure>
 				<ul class="olr-build-box__proof" aria-label="Product standards">
 					<li><?php echo $this->proof_icon( 'purity' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><span>99%+ purity</span></li>
@@ -559,7 +586,7 @@ final class OLR_Build_A_Box {
 
 			<footer class="olr-build-box__notice">
 				<span aria-hidden="true">i</span>
-				<p>Build Your Box discounts cannot be combined with coupon codes, sale pricing, or volume pricing. Discount is applied automatically when the selected box is complete.</p>
+				<p>Coupon codes apply only to eligible products outside your Research Box. Box pricing cannot be combined with sale or volume pricing and is applied automatically when the selected box is complete.</p>
 				<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Questions? Contact us <b aria-hidden="true">→</b></a>
 			</footer>
 			<script type="application/json" data-initial-box-state><?php echo wp_json_encode( $initial ? $initial['items'] : array(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ); ?></script>
@@ -610,14 +637,27 @@ final class OLR_Build_A_Box {
 	private function product_card( $data, $index ) {
 		$is_variable = 'variable' === $data['type'];
 		$price       = isset( $data['regular_price'] ) ? (float) $data['regular_price'] : 0.0;
+		$image_html  = ! empty( $data['image_id'] )
+			? wp_get_attachment_image(
+				absint( $data['image_id'] ),
+				'woocommerce_single',
+				false,
+				array(
+					'alt'      => $data['name'],
+					'loading'  => 'lazy',
+					'decoding' => 'async',
+					'sizes'    => '(max-width: 360px) 100vw, (max-width: 768px) 50vw, (max-width: 1100px) 33vw, 25vw',
+				)
+			)
+			: '';
 		ob_start();
 		?>
-		<article class="olr-build-box__product<?php echo $index >= 7 ? ' is-extra' : ''; ?>" data-product-card data-product-id="<?php echo esc_attr( (string) $data['id'] ); ?>" data-product-name="<?php echo esc_attr( $data['name'] ); ?>" data-product-image="<?php echo esc_url( $data['image'] ); ?>" data-product-type="<?php echo esc_attr( $data['type'] ); ?>" data-regular-price="<?php echo esc_attr( (string) $price ); ?>">
-			<div class="olr-build-box__product-media"><img src="<?php echo esc_url( $data['image'] ); ?>" alt="<?php echo esc_attr( $data['name'] ); ?>" loading="lazy"></div>
+		<article class="olr-build-box__product<?php echo $index >= 7 ? ' is-extra' : ''; ?>" data-product-card data-product-id="<?php echo esc_attr( (string) $data['id'] ); ?>" data-product-name="<?php echo esc_attr( $data['name'] ); ?>" data-product-image="<?php echo esc_url( $data['image'] ); ?>" data-product-image-srcset="<?php echo esc_attr( $data['image_srcset'] ); ?>" data-product-type="<?php echo esc_attr( $data['type'] ); ?>" data-regular-price="<?php echo esc_attr( (string) $price ); ?>">
+			<div class="olr-build-box__product-media"><?php echo wp_kses_post( $image_html ); ?></div>
 			<h3><?php echo esc_html( $data['name'] ); ?></h3>
 			<p class="olr-build-box__product-price"><?php echo wp_kses_post( $data['price_html'] ); ?></p>
 			<?php if ( $is_variable ) : ?>
-				<label class="olr-build-box__variation"><span class="screen-reader-text">Choose an option for <?php echo esc_html( $data['name'] ); ?></span><select data-variation-select><option value="">Choose an option</option><?php foreach ( $data['variations'] as $variation ) : ?><option value="<?php echo esc_attr( (string) $variation['id'] ); ?>" data-price="<?php echo esc_attr( (string) $variation['regular_price'] ); ?>" data-name="<?php echo esc_attr( $variation['name'] ); ?>" data-image="<?php echo esc_url( $variation['image'] ); ?>"><?php echo esc_html( $variation['name'] ); ?> — <?php echo wp_kses_post( $variation['price_text'] ); ?></option><?php endforeach; ?></select></label>
+				<label class="olr-build-box__variation"><span class="screen-reader-text">Choose an option for <?php echo esc_html( $data['name'] ); ?></span><select data-variation-select><option value="">Choose an option</option><?php foreach ( $data['variations'] as $variation ) : ?><option value="<?php echo esc_attr( (string) $variation['id'] ); ?>" data-price="<?php echo esc_attr( (string) $variation['regular_price'] ); ?>" data-name="<?php echo esc_attr( $variation['name'] ); ?>" data-image="<?php echo esc_url( $variation['image'] ); ?>" data-image-srcset="<?php echo esc_attr( $variation['image_srcset'] ); ?>"><?php echo esc_html( $variation['name'] ); ?> — <?php echo wp_kses_post( $variation['price_text'] ); ?></option><?php endforeach; ?></select></label>
 			<?php endif; ?>
 			<div class="olr-build-box__quantity" data-quantity-control>
 				<button type="button" data-quantity-change="-1" aria-label="Decrease <?php echo esc_attr( $data['name'] ); ?> quantity">−</button>
@@ -681,6 +721,8 @@ final class OLR_Build_A_Box {
 			'id'            => $product->get_id(),
 			'name'          => wp_strip_all_tags( $product->get_name() ),
 			'image'         => $image,
+			'image_id'      => $image_id,
+			'image_srcset'  => (string) wp_get_attachment_image_srcset( $image_id, 'woocommerce_single' ),
 			'type'          => $product->get_type(),
 			'regular_price' => 0,
 			'price_html'    => '',
@@ -715,6 +757,7 @@ final class OLR_Build_A_Box {
 				'id'            => $variation->get_id(),
 				'name'          => $variation_name ? $variation_name : sprintf( __( 'Option %d', 'off-label-build-a-box' ), $variation->get_id() ),
 				'image'         => $variation_image ? $variation_image : $image,
+				'image_srcset'  => (string) wp_get_attachment_image_srcset( $variation_image_id, 'woocommerce_single' ),
 				'regular_price' => $display_regular,
 				'price_text'    => wp_strip_all_tags( wc_price( $display_regular ) ),
 			);
@@ -783,10 +826,6 @@ final class OLR_Build_A_Box {
 			wp_send_json_error( array( 'message' => __( 'Your cart is unavailable. Please refresh and try again.', 'off-label-build-a-box' ) ), 503 );
 		}
 
-		if ( WC()->cart->get_applied_coupons() ) {
-			wp_send_json_error( array( 'message' => __( 'Remove the applied coupon before adding a discounted research box.', 'off-label-build-a-box' ) ), 409 );
-		}
-
 		$tier        = isset( $_POST['tier'] ) && is_scalar( $_POST['tier'] ) ? absint( $_POST['tier'] ) : 0;
 		$edit_box_id = isset( $_POST['box_id'] ) ? $this->sanitize_box_id( wp_unslash( $_POST['box_id'] ) ) : '';
 		$raw_items   = isset( $_POST['items'] ) && is_scalar( $_POST['items'] ) ? json_decode( wp_unslash( (string) $_POST['items'] ), true ) : array();
@@ -805,17 +844,12 @@ final class OLR_Build_A_Box {
 			$this->remove_box_from_cart( $edit_box_id );
 		}
 
+		$manifest    = $this->selection_manifest( $selection );
+		$allocations = $this->box_line_allocations( $selection, $box_id, $tier, $manifest );
 		$added_keys = array();
 		try {
-			foreach ( $selection as $entry ) {
-				$cart_data = array(
-					self::CART_BOX_ID        => $box_id,
-					self::CART_BOX_SIZE      => $tier,
-					self::CART_BOX_RATE      => $this->tier_rate( $tier ),
-					self::CART_BOX_LABEL     => $this->tier_label( $tier ),
-					self::CART_REGULAR_PRICE => $entry['regular_price'],
-				);
-				$key = WC()->cart->add_to_cart( $entry['product_id'], $entry['quantity'], $entry['variation_id'], $entry['variation'], $cart_data );
+			foreach ( $allocations as $allocation ) {
+				$key = WC()->cart->add_to_cart( $allocation['product_id'], $allocation['quantity'], $allocation['variation_id'], $allocation['variation'], $allocation['data'] );
 				if ( ! $key ) {
 					throw new Exception( __( 'One of the selected bottles could not be added.', 'off-label-build-a-box' ) );
 				}
@@ -956,6 +990,86 @@ final class OLR_Build_A_Box {
 	}
 
 	/**
+	 * Build a trusted, customer-readable manifest from validated products.
+	 *
+	 * @param array $selection Validated box selection.
+	 * @return array
+	 */
+	private function selection_manifest( $selection ) {
+		$manifest = array();
+		foreach ( $selection as $entry ) {
+			$product = wc_get_product( $entry['product_id'] );
+			$current = wc_get_product( $entry['variation_id'] ? $entry['variation_id'] : $entry['product_id'] );
+			if ( ! $product instanceof WC_Product || ! $current instanceof WC_Product ) {
+				continue;
+			}
+
+			$name = wp_strip_all_tags( $product->get_name() );
+			if ( $current instanceof WC_Product_Variation && function_exists( 'wc_get_formatted_variation' ) ) {
+				$variation_name = wp_strip_all_tags( wc_get_formatted_variation( $current, true, true, true ) );
+				$name          .= $variation_name ? ' - ' . $variation_name : '';
+			}
+			$image_id  = $current->get_image_id() ? $current->get_image_id() : $product->get_image_id();
+			$manifest[] = array(
+				'product_id'    => $product->get_id(),
+				'variation_id'  => $current instanceof WC_Product_Variation ? $current->get_id() : 0,
+				'quantity'      => absint( $entry['quantity'] ),
+				'name'          => $name,
+				'image'         => $image_id ? esc_url_raw( wp_get_attachment_image_url( $image_id, 'woocommerce_thumbnail' ) ) : '',
+				'regular_price' => (float) $entry['regular_price'],
+			);
+		}
+		return $manifest;
+	}
+
+	/**
+	 * Split a box into one visible parent and native hidden allocations.
+	 *
+	 * @param array  $selection Validated box selection.
+	 * @param string $box_id Box ID.
+	 * @param int    $tier Box size.
+	 * @param array  $manifest Trusted manifest.
+	 * @return array
+	 */
+	private function box_line_allocations( $selection, $box_id, $tier, $manifest ) {
+		$allocations = array();
+		foreach ( $selection as $entry_index => $entry ) {
+			$data = array(
+				self::CART_BOX_ID        => $box_id,
+				self::CART_BOX_SIZE      => $tier,
+				self::CART_BOX_RATE      => $this->tier_rate( $tier ),
+				self::CART_BOX_LABEL     => $this->tier_label( $tier ),
+				self::CART_REGULAR_PRICE => $entry['regular_price'],
+				self::CART_BOX_ROLE       => 0 === $entry_index ? 'parent' : 'component',
+			);
+			if ( 0 === $entry_index ) {
+				$data[ self::CART_BOX_MANIFEST ] = $manifest;
+			}
+			$allocations[] = array(
+				'product_id'   => $entry['product_id'],
+				'variation_id' => $entry['variation_id'],
+				'variation'    => $entry['variation'],
+				'quantity'     => 0 === $entry_index ? 1 : $entry['quantity'],
+				'data'         => $data,
+			);
+
+			if ( 0 === $entry_index && $entry['quantity'] > 1 ) {
+				$component_data = $data;
+				$component_data[ self::CART_BOX_ROLE ] = 'component';
+				unset( $component_data[ self::CART_BOX_MANIFEST ] );
+				$allocations[] = array(
+					'product_id'   => $entry['product_id'],
+					'variation_id' => $entry['variation_id'],
+					'variation'    => $entry['variation'],
+					'quantity'     => $entry['quantity'] - 1,
+					'data'         => $component_data,
+				);
+			}
+		}
+		return $allocations;
+	}
+
+	/**
 	 * Apply final non-stacking box prices to valid groups only.
 	 *
 	 * @param WC_Cart $cart Cart instance.
@@ -999,9 +1113,6 @@ final class OLR_Build_A_Box {
 		}
 
 		$groups = $this->cart_box_groups( WC()->cart );
-		if ( $groups && WC()->cart->get_applied_coupons() ) {
-			$this->add_notice_once( __( 'Research box discounts cannot be combined with coupon codes. Remove the coupon or remove the box before checkout.', 'off-label-build-a-box' ) );
-		}
 
 		foreach ( $groups as $group ) {
 			$size = absint( $group['size'] );
@@ -1022,20 +1133,76 @@ final class OLR_Build_A_Box {
 	}
 
 	/**
-	 * Reject every coupon while a validated or persisted box is present.
+	 * Exclude protected box allocations from product-level coupon validation.
 	 *
-	 * @param bool         $valid Existing validity.
+	 * @param bool       $valid Existing validity.
+	 * @param WC_Product $product Product being checked.
+	 * @param WC_Coupon  $coupon Coupon object.
+	 * @param array      $values Cart item values.
+	 * @return bool
+	 */
+	public function coupon_valid_for_product( $valid, $product, $coupon, $values ) {
+		unset( $product, $coupon );
+		return is_array( $values ) && ! empty( $values[ self::CART_BOX_ID ] ) ? false : $valid;
+	}
+
+	/**
+	 * Force every protected box allocation to receive zero coupon discount.
+	 *
+	 * @param float     $discount Calculated discount.
+	 * @param float     $discounting_amount Amount being discounted.
+	 * @param array     $cart_item Cart item values.
+	 * @param bool      $single Whether this is a single-item calculation.
+	 * @param WC_Coupon $coupon Coupon object.
+	 * @return float
+	 */
+	public function coupon_discount_amount( $discount, $discounting_amount, $cart_item, $single, $coupon ) {
+		unset( $discounting_amount, $single, $coupon );
+		return is_array( $cart_item ) && ! empty( $cart_item[ self::CART_BOX_ID ] ) ? 0.0 : $discount;
+	}
+
+	/**
+	 * Remove box allocations before WooCommerce checks cart coupon products.
+	 *
+	 * @param array        $items Discount item objects.
+	 * @param WC_Discounts $discounts Discounts object.
+	 * @return array
+	 */
+	public function coupon_items_to_validate( $items, $discounts ) {
+		unset( $discounts );
+		return $this->without_box_coupon_items( $items );
+	}
+
+	/**
+	 * Remove box allocations before WooCommerce distributes coupon value.
+	 *
+	 * @param array        $items Discount item objects.
 	 * @param WC_Coupon    $coupon Coupon object.
 	 * @param WC_Discounts $discounts Discounts object.
-	 * @return bool
-	 * @throws Exception When boxes and coupons conflict.
+	 * @return array
 	 */
-	public function prevent_coupon_stacking( $valid, $coupon, $discounts = null ) {
+	public function coupon_items_to_apply( $items, $coupon, $discounts ) {
 		unset( $coupon, $discounts );
-		if ( $valid && $this->cart_has_box() ) {
-			throw new Exception( __( 'Coupon codes cannot be combined with Build Your Box pricing.', 'off-label-build-a-box' ) );
+		return $this->without_box_coupon_items( $items );
+	}
+
+	/**
+	 * Keep only ordinary cart lines in a WooCommerce discount-item collection.
+	 *
+	 * @param array $items Discount item objects.
+	 * @return array
+	 */
+	private function without_box_coupon_items( $items ) {
+		if ( ! is_array( $items ) ) {
+			return $items;
 		}
-		return $valid;
+
+		return array_filter(
+			$items,
+			static function ( $item ) {
+				return ! is_object( $item ) || ! isset( $item->object ) || ! is_array( $item->object ) || empty( $item->object[ self::CART_BOX_ID ] );
+			}
+		);
 	}
 
 	/**
@@ -1046,13 +1213,143 @@ final class OLR_Build_A_Box {
 	 * @return array
 	 */
 	public function cart_item_data( $data, $cart_item ) {
-		if ( empty( $cart_item[ self::CART_BOX_ID ] ) ) {
+		if ( empty( $cart_item[ self::CART_BOX_ID ] ) || 'component' === $this->box_item_role( $cart_item ) ) {
 			return $data;
 		}
 		$size = absint( $cart_item[ self::CART_BOX_SIZE ] );
-		$data[] = array( 'key' => __( 'Research Box', 'off-label-build-a-box' ), 'value' => $this->tier_label( $size ) );
-		$data[] = array( 'key' => __( 'Box discount', 'off-label-build-a-box' ), 'value' => absint( $this->tier_rate( $size ) * 100 ) . '%' );
+		$data[] = array( 'key' => __( 'Box savings', 'off-label-build-a-box' ), 'value' => absint( $this->tier_rate( $size ) * 100 ) . '% applied' );
+		$manifest = $this->manifest_for_cart_item( $cart_item );
+		if ( $manifest ) {
+			$rows  = array();
+			$plain = array();
+			foreach ( $manifest as $entry ) {
+				$rows[]  = '<li><strong>' . absint( $entry['quantity'] ) . ' &times;</strong> ' . esc_html( $entry['name'] ) . '</li>';
+				$plain[] = absint( $entry['quantity'] ) . ' x ' . $entry['name'];
+			}
+			$data[] = array(
+				'key'     => __( 'Contents', 'off-label-build-a-box' ),
+				'value'   => implode( ', ', $plain ),
+				'display' => '<ul class="olr-box-manifest">' . implode( '', $rows ) . '</ul>',
+			);
+		}
 		return $data;
+	}
+
+	/**
+	 * Hide native component allocations while leaving one parent line visible.
+	 *
+	 * @param bool   $visible Existing visibility.
+	 * @param array  $cart_item Cart item.
+	 * @param string $cart_item_key Cart item key.
+	 * @return bool
+	 */
+	public function cart_item_visible( $visible, $cart_item, $cart_item_key ) {
+		if ( ! $visible || empty( $cart_item[ self::CART_BOX_ID ] ) ) {
+			return $visible;
+		}
+		return 'component' !== $this->box_item_role( $cart_item, $cart_item_key );
+	}
+
+	/**
+	 * Give the visible parent a stable box name.
+	 *
+	 * @param string $name Existing product name HTML.
+	 * @param array  $cart_item Cart item.
+	 * @param string $cart_item_key Cart item key.
+	 * @return string
+	 */
+	public function cart_item_name( $name, $cart_item, $cart_item_key ) {
+		if ( empty( $cart_item[ self::CART_BOX_ID ] ) || 'component' === $this->box_item_role( $cart_item, $cart_item_key ) ) {
+			return $name;
+		}
+		$size = absint( $cart_item[ self::CART_BOX_SIZE ] );
+		return '<span class="olr-box-line-name">' . esc_html( sprintf( __( '%s Research Box', 'off-label-build-a-box' ), $this->tier_label( $size ) ) ) . '</span>';
+	}
+
+	/**
+	 * Use the tier artwork for the one visible box row in standard cart views.
+	 *
+	 * @param string $thumbnail Existing thumbnail HTML.
+	 * @param array  $cart_item Cart item.
+	 * @param string $cart_item_key Cart item key.
+	 * @return string
+	 */
+	public function cart_item_thumbnail( $thumbnail, $cart_item, $cart_item_key ) {
+		if ( empty( $cart_item[ self::CART_BOX_ID ] ) || 'component' === $this->box_item_role( $cart_item, $cart_item_key ) ) {
+			return $thumbnail;
+		}
+		return $this->box_image_markup( $cart_item, 'attachment-woocommerce_thumbnail size-woocommerce_thumbnail' );
+	}
+
+	/**
+	 * Supply the same tier artwork to the custom checkout product wrapper.
+	 *
+	 * @param string $image Existing product image HTML.
+	 * @param array  $cart_item Cart item.
+	 * @return string
+	 */
+	public function checkout_box_image( $image, $cart_item ) {
+		if ( empty( $cart_item[ self::CART_BOX_ID ] ) || 'component' === $this->box_item_role( $cart_item ) ) {
+			return $image;
+		}
+		return $this->box_image_markup( $cart_item, 'olr-checkout-test__product-image olr-box-tier-image' );
+	}
+
+	/**
+	 * Link the visible box name to the protected editor rather than one product.
+	 *
+	 * @param string|false $permalink Existing permalink.
+	 * @param array        $cart_item Cart item.
+	 * @param string       $cart_item_key Cart item key.
+	 * @return string|false
+	 */
+	public function cart_item_permalink( $permalink, $cart_item, $cart_item_key ) {
+		if ( empty( $cart_item[ self::CART_BOX_ID ] ) ) {
+			return $permalink;
+		}
+		if ( 'component' === $this->box_item_role( $cart_item, $cart_item_key ) ) {
+			return false;
+		}
+		return $this->box_edit_url( $cart_item[ self::CART_BOX_ID ] );
+	}
+
+	/**
+	 * Display the whole validated box total on its single visible row.
+	 *
+	 * @param string $html Existing amount HTML.
+	 * @param array  $cart_item Cart item.
+	 * @param string $cart_item_key Cart item key.
+	 * @return string
+	 */
+	public function cart_item_group_price( $html, $cart_item, $cart_item_key ) {
+		if ( empty( $cart_item[ self::CART_BOX_ID ] ) || 'component' === $this->box_item_role( $cart_item, $cart_item_key ) ) {
+			return $html;
+		}
+		$amount = $this->cart_box_total( $cart_item[ self::CART_BOX_ID ] );
+		return null === $amount ? $html : wc_price( $amount );
+	}
+
+	/**
+	 * Count each protected group as one cart item.
+	 *
+	 * @param int $count Native contents count.
+	 * @return int
+	 */
+	public function cart_contents_count( $count ) {
+		if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+			return $count;
+		}
+		$total = 0;
+		$boxes = array();
+		foreach ( WC()->cart->get_cart() as $item ) {
+			$box_id = isset( $item[ self::CART_BOX_ID ] ) ? $this->sanitize_box_id( $item[ self::CART_BOX_ID ] ) : '';
+			if ( $box_id ) {
+				$boxes[ $box_id ] = true;
+			} else {
+				$total += absint( $item['quantity'] );
+			}
+		}
+		return $total + count( $boxes );
 	}
 
 	/**
@@ -1067,12 +1364,46 @@ final class OLR_Build_A_Box {
 		if ( empty( $cart_item[ self::CART_BOX_ID ] ) ) {
 			return $html;
 		}
-		$box_id = $this->sanitize_box_id( $cart_item[ self::CART_BOX_ID ] );
-		$output = '<span class="olr-box-locked-quantity" aria-label="Quantity">× ' . absint( $cart_item['quantity'] ) . '</span>';
-		if ( $this->is_first_box_cart_item( $cart_item_key, $box_id ) ) {
-			$output .= '<span class="olr-box-cart-actions"><a href="' . esc_url( add_query_arg( 'edit_box', $box_id, home_url( '/' . self::PAGE_SLUG . '/' ) ) ) . '">' . esc_html__( 'Edit box', 'off-label-build-a-box' ) . '</a></span>';
+		if ( 'component' === $this->box_item_role( $cart_item, $cart_item_key ) ) {
+			return '';
 		}
-		return $output;
+		return '<span class="olr-box-cart-actions"><a href="' . esc_url( $this->box_edit_url( $cart_item[ self::CART_BOX_ID ] ) ) . '">' . esc_html__( 'Edit contents', 'off-label-build-a-box' ) . '</a></span>';
+	}
+
+	/**
+	 * Replace checkout-test quantity controls with one fixed box control.
+	 *
+	 * @param string $html Existing checkout quantity HTML.
+	 * @param array  $cart_item Cart item.
+	 * @param string $cart_item_key Cart item key.
+	 * @return string
+	 */
+	public function locked_checkout_quantity( $html, $cart_item, $cart_item_key ) {
+		if ( empty( $cart_item[ self::CART_BOX_ID ] ) ) {
+			return $html;
+		}
+		if ( 'component' === $this->box_item_role( $cart_item, $cart_item_key ) ) {
+			return '';
+		}
+		return '<span class="olr-box-checkout-actions">'
+			. '<button class="olr-checkout-remove" type="button" data-olr-remove-item="' . esc_attr( $cart_item_key ) . '">' . esc_html__( 'Remove box', 'off-label-build-a-box' ) . '</button>'
+			. '<a class="olr-checkout-edit" href="' . esc_url( $this->box_edit_url( $cart_item[ self::CART_BOX_ID ] ) ) . '">' . esc_html__( 'Edit contents', 'off-label-build-a-box' ) . '</a>'
+			. '</span>';
+	}
+
+	/**
+	 * Build the approved tier artwork used for the single visible box line.
+	 *
+	 * @param array  $cart_item Cart item.
+	 * @param string $class Image class list.
+	 * @return string
+	 */
+	private function box_image_markup( $cart_item, $class ) {
+		$size   = isset( $cart_item[ self::CART_BOX_SIZE ] ) ? absint( $cart_item[ self::CART_BOX_SIZE ] ) : 5;
+		$asset  = 10 === $size ? self::BOX_IMAGE_TEN : self::BOX_IMAGE_FIVE;
+		$label  = sprintf( __( '%s Research Box', 'off-label-build-a-box' ), $this->tier_label( $size ) );
+
+		return '<img src="' . esc_url( plugins_url( $asset, __FILE__ ) ) . '" class="' . esc_attr( $class ) . '" alt="' . esc_attr( $label ) . '" width="720" height="480" loading="eager" decoding="async">';
 	}
 
 	/**
@@ -1107,18 +1438,64 @@ final class OLR_Build_A_Box {
 	 * @return string
 	 */
 	public function cart_item_class( $class, $cart_item, $cart_item_key ) {
-		unset( $cart_item_key );
-		return empty( $cart_item[ self::CART_BOX_ID ] ) ? $class : trim( $class . ' olr-box-cart-item' );
+		if ( empty( $cart_item[ self::CART_BOX_ID ] ) ) {
+			return $class;
+		}
+		return trim( $class . ' olr-box-cart-item olr-box-cart-item--' . $this->box_item_role( $cart_item, $cart_item_key ) );
 	}
 
 	/**
-	 * Explain the non-stacking policy before customers interact with coupons.
+	 * Remove every allocation when any one box line is removed.
+	 *
+	 * @param string  $cart_item_key Removed cart key.
+	 * @param WC_Cart $cart Cart instance.
+	 */
+	public function cascade_box_removal( $cart_item_key, $cart ) {
+		if ( $this->is_removing_box || ! $cart instanceof WC_Cart ) {
+			return;
+		}
+		$item   = $cart->get_cart_item( $cart_item_key );
+		$box_id = is_array( $item ) && ! empty( $item[ self::CART_BOX_ID ] ) ? $this->sanitize_box_id( $item[ self::CART_BOX_ID ] ) : '';
+		if ( ! $box_id ) {
+			return;
+		}
+		$this->is_removing_box = true;
+		foreach ( $cart->get_cart() as $other_key => $other_item ) {
+			if ( $other_key !== $cart_item_key && ! empty( $other_item[ self::CART_BOX_ID ] ) && $box_id === $this->sanitize_box_id( $other_item[ self::CART_BOX_ID ] ) ) {
+				$cart->remove_cart_item( $other_key );
+			}
+		}
+		$this->is_removing_box = false;
+	}
+
+	/**
+	 * Treat quantity tampering as a request to remove the complete protected box.
+	 *
+	 * @param string  $cart_item_key Cart key.
+	 * @param int     $quantity New quantity.
+	 * @param int     $old_quantity Previous quantity.
+	 * @param WC_Cart $cart Cart instance.
+	 */
+	public function reject_box_quantity_change( $cart_item_key, $quantity, $old_quantity, $cart ) {
+		if ( $this->is_removing_box || absint( $quantity ) === absint( $old_quantity ) || ! $cart instanceof WC_Cart ) {
+			return;
+		}
+		$item = $cart->get_cart_item( $cart_item_key );
+		if ( ! is_array( $item ) || empty( $item[ self::CART_BOX_ID ] ) ) {
+			return;
+		}
+		$this->remove_box_from_cart( $this->sanitize_box_id( $item[ self::CART_BOX_ID ] ) );
+		$this->add_notice_once( __( 'The complete research box was removed because its contents can only be changed in the box builder.', 'off-label-build-a-box' ), 'notice' );
+	}
+
+	/**
+	 * Explain how coupons behave when a research box is present.
 	 */
 	public function coupon_policy_notice() {
 		if ( ! $this->cart_has_box() ) {
 			return;
 		}
-		wc_print_notice( __( 'Build Your Box pricing is already applied to the selected bottles and cannot be combined with coupon codes.', 'off-label-build-a-box' ), 'notice' );
+		wc_print_notice( __( 'Research Box pricing is locked. Coupon codes apply only to eligible products outside the box.', 'off-label-build-a-box' ), 'notice' );
 	}
 
 	/**
@@ -1130,22 +1507,103 @@ final class OLR_Build_A_Box {
 	 * @param WC_Order              $order Order.
 	 */
 	public function save_order_item_metadata( $item, $cart_item_key, $values, $order ) {
-		unset( $cart_item_key, $order );
+		unset( $order );
 		if ( empty( $values[ self::CART_BOX_ID ] ) ) {
 			return;
 		}
-		$size    = absint( $values[ self::CART_BOX_SIZE ] );
-		$rate    = $this->tier_rate( $size );
-		$regular = isset( $values[ self::CART_REGULAR_PRICE ] ) ? (float) $values[ self::CART_REGULAR_PRICE ] : 0.0;
-		$savings = $regular * $rate * absint( $values['quantity'] );
-		$item->add_meta_data( 'Research Box', $this->tier_label( $size ), true );
-		$item->add_meta_data( 'Box discount', absint( $rate * 100 ) . '%', true );
-		if ( $savings > 0 ) {
-			$item->add_meta_data( 'Box savings', wp_strip_all_tags( wc_price( $savings ) ), true );
+		$size     = absint( $values[ self::CART_BOX_SIZE ] );
+		$rate     = $this->tier_rate( $size );
+		$role     = $this->box_item_role( $values, $cart_item_key );
+		$manifest = 'parent' === $role ? $this->manifest_for_cart_item( $values ) : array();
+		if ( 'parent' === $role ) {
+			$contents = array();
+			$regular  = 0.0;
+			foreach ( $manifest as $entry ) {
+				$contents[] = absint( $entry['quantity'] ) . ' x ' . $entry['name'];
+				$regular  += (float) $entry['regular_price'] * absint( $entry['quantity'] );
+			}
+			$item->add_meta_data( 'Research Box', $this->tier_label( $size ), true );
+			$item->add_meta_data( 'Box discount', absint( $rate * 100 ) . '%', true );
+			if ( $contents ) {
+				$item->add_meta_data( 'Contents', implode( ', ', $contents ), true );
+			}
+			if ( $regular > 0 ) {
+				$item->add_meta_data( 'Box savings', wp_strip_all_tags( wc_price( $regular * $rate ) ), true );
+			}
 		}
 		$item->add_meta_data( '_olr_box_id', $this->sanitize_box_id( $values[ self::CART_BOX_ID ] ), true );
 		$item->add_meta_data( '_olr_box_size', $size, true );
 		$item->add_meta_data( '_olr_box_rate', $rate, true );
+		$item->add_meta_data( '_olr_box_role', $role, true );
+		if ( $manifest ) {
+			$item->add_meta_data( '_olr_box_manifest', wp_json_encode( $manifest ), true );
+		}
+	}
+
+	/**
+	 * Hide native component order lines from customer order views and emails.
+	 *
+	 * @param bool                  $visible Existing visibility.
+	 * @param WC_Order_Item_Product $item Order item.
+	 * @return bool
+	 */
+	public function order_item_visible( $visible, $item ) {
+		if ( ! $visible || ! $item instanceof WC_Order_Item_Product ) {
+			return $visible;
+		}
+		return 'component' !== $item->get_meta( '_olr_box_role', true );
+	}
+
+	/**
+	 * Keep the single customer-facing order line named as the complete box.
+	 *
+	 * @param string                $name Existing item name.
+	 * @param WC_Order_Item_Product $item Order item.
+	 * @return string
+	 */
+	public function order_item_name( $name, $item ) {
+		if ( ! $item instanceof WC_Order_Item_Product || 'parent' !== $item->get_meta( '_olr_box_role', true ) ) {
+			return $name;
+		}
+		return sprintf( __( '%s Research Box', 'off-label-build-a-box' ), $this->tier_label( $item->get_meta( '_olr_box_size', true ) ) );
+	}
+
+	/**
+	 * Display the combined native line total on the one visible order row.
+	 *
+	 * @param string                $subtotal Existing formatted subtotal.
+	 * @param WC_Order_Item_Product $item Order item.
+	 * @param WC_Order              $order Order object.
+	 * @return string
+	 */
+	public function order_item_group_subtotal( $subtotal, $item, $order ) {
+		if ( ! $item instanceof WC_Order_Item_Product || ! $order instanceof WC_Order || 'parent' !== $item->get_meta( '_olr_box_role', true ) ) {
+			return $subtotal;
+		}
+		$box_id = $this->sanitize_box_id( $item->get_meta( '_olr_box_id', true ) );
+		if ( ! $box_id ) {
+			return $subtotal;
+		}
+		$total = 0.0;
+		foreach ( $order->get_items( 'line_item' ) as $order_item ) {
+			if ( $order_item instanceof WC_Order_Item_Product && $box_id === $this->sanitize_box_id( $order_item->get_meta( '_olr_box_id', true ) ) ) {
+				$total += (float) $order_item->get_total();
+				if ( 'incl' === get_option( 'woocommerce_tax_display_cart' ) ) {
+					$total += (float) $order_item->get_total_tax();
+				}
+			}
+		}
+		return wc_price( $total, array( 'currency' => $order->get_currency() ) );
+	}
+
+	/**
+	 * Keep implementation metadata out of order administration and emails.
+	 *
+	 * @param array $keys Existing hidden keys.
+	 * @return array
+	 */
+	public function hidden_order_item_meta( $keys ) {
+		return array_values( array_unique( array_merge( (array) $keys, array( '_olr_box_id', '_olr_box_size', '_olr_box_rate', '_olr_box_role', '_olr_box_manifest' ) ) ) );
 	}
 
 	/**
@@ -1337,11 +1795,27 @@ final class OLR_Build_A_Box {
 				continue;
 			}
 			if ( ! isset( $groups[ $box_id ] ) ) {
-				$groups[ $box_id ] = array( 'size' => absint( $item[ self::CART_BOX_SIZE ] ), 'quantity' => 0, 'keys' => array() );
+				$groups[ $box_id ] = array(
+					'size'       => absint( $item[ self::CART_BOX_SIZE ] ),
+					'quantity'   => 0,
+					'keys'       => array(),
+					'parent_key' => '',
+					'manifest'   => array(),
+				);
 			}
 			$groups[ $box_id ]['quantity'] += absint( $item['quantity'] );
 			$groups[ $box_id ]['keys'][]    = $key;
+			if ( 'parent' === $this->box_item_role( $item, $key ) ) {
+				$groups[ $box_id ]['parent_key'] = $key;
+				$groups[ $box_id ]['manifest']   = $this->normalize_manifest( isset( $item[ self::CART_BOX_MANIFEST ] ) ? $item[ self::CART_BOX_MANIFEST ] : array() );
+			}
 		}
+		foreach ( $groups as &$group ) {
+			if ( ! $group['parent_key'] && ! empty( $group['keys'][0] ) ) {
+				$group['parent_key'] = $group['keys'][0];
+			}
+		}
+		unset( $group );
 		return $groups;
 	}
 
@@ -1354,6 +1828,16 @@ final class OLR_Build_A_Box {
 	private function builder_state_for_box( $box_id ) {
 		if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
 			return array();
+		}
+		$groups = $this->cart_box_groups( WC()->cart );
+		if ( isset( $groups[ $box_id ] ) && $groups[ $box_id ]['manifest'] ) {
+			$items = array();
+			foreach ( $groups[ $box_id ]['manifest'] as $entry ) {
+				$current = wc_get_product( $entry['variation_id'] ? $entry['variation_id'] : $entry['product_id'] );
+				$entry['regular_price'] = $current instanceof WC_Product ? $this->display_regular_price( $current ) : (float) $entry['regular_price'];
+				$items[] = $entry;
+			}
+			return array( 'tier' => absint( $groups[ $box_id ]['size'] ), 'items' => $items );
 		}
 		$items = array();
 		$tier  = 0;
@@ -1374,7 +1858,12 @@ final class OLR_Build_A_Box {
 				$variation_name = wp_strip_all_tags( wc_get_formatted_variation( $current, true, true, true ) );
 				$name          .= $variation_name ? ' — ' . $variation_name : '';
 			}
-			$items[] = array(
+			$item_key = $product->get_id() . ':' . ( $current instanceof WC_Product_Variation ? $current->get_id() : 0 );
+			if ( isset( $items[ $item_key ] ) ) {
+				$items[ $item_key ]['quantity'] += absint( $item['quantity'] );
+				continue;
+			}
+			$items[ $item_key ] = array(
 				'product_id'   => $product->get_id(),
 				'variation_id' => $current instanceof WC_Product_Variation ? $current->get_id() : 0,
 				'quantity'     => absint( $item['quantity'] ),
@@ -1383,7 +1872,7 @@ final class OLR_Build_A_Box {
 				'regular_price'=> $this->display_regular_price( $current ),
 			);
 		}
-		return $items && in_array( $tier, array( 5, 10 ), true ) ? array( 'tier' => $tier, 'items' => $items ) : array();
+		return $items && in_array( $tier, array( 5, 10 ), true ) ? array( 'tier' => $tier, 'items' => array_values( $items ) ) : array();
 	}
 
 	/**
@@ -1441,12 +1930,15 @@ final class OLR_Build_A_Box {
 			return false;
 		}
 		$removed = false;
+		$previous_guard = $this->is_removing_box;
+		$this->is_removing_box = true;
 		foreach ( WC()->cart->get_cart() as $key => $item ) {
 			if ( ! empty( $item[ self::CART_BOX_ID ] ) && $box_id === $this->sanitize_box_id( $item[ self::CART_BOX_ID ] ) ) {
 				WC()->cart->remove_cart_item( $key );
 				$removed = true;
 			}
 		}
+		$this->is_removing_box = $previous_guard;
 		return $removed;
 	}
 
@@ -1504,7 +1996,144 @@ final class OLR_Build_A_Box {
 	 */
 	private function is_first_box_cart_item( $cart_item_key, $box_id ) {
 		$groups = $this->cart_box_groups();
-		return isset( $groups[ $box_id ]['keys'][0] ) && $groups[ $box_id ]['keys'][0] === $cart_item_key;
+		return isset( $groups[ $box_id ]['parent_key'] ) && $groups[ $box_id ]['parent_key'] === $cart_item_key;
+	}
+
+	/**
+	 * Resolve a line's public parent or hidden component role.
+	 *
+	 * @param array  $cart_item Cart item data.
+	 * @param string $cart_item_key Optional cart key.
+	 * @return string
+	 */
+	private function box_item_role( $cart_item, $cart_item_key = '' ) {
+		$role = isset( $cart_item[ self::CART_BOX_ROLE ] ) ? sanitize_key( $cart_item[ self::CART_BOX_ROLE ] ) : '';
+		if ( in_array( $role, array( 'parent', 'component' ), true ) ) {
+			return $role;
+		}
+		if ( ! $cart_item_key || ! function_exists( 'WC' ) || ! WC()->cart || empty( $cart_item[ self::CART_BOX_ID ] ) ) {
+			return 'parent';
+		}
+		$box_id = $this->sanitize_box_id( $cart_item[ self::CART_BOX_ID ] );
+		foreach ( WC()->cart->get_cart() as $key => $item ) {
+			if ( ! empty( $item[ self::CART_BOX_ID ] ) && $box_id === $this->sanitize_box_id( $item[ self::CART_BOX_ID ] ) ) {
+				return $key === $cart_item_key ? 'parent' : 'component';
+			}
+		}
+		return 'component';
+	}
+
+	/**
+	 * Sanitize a stored manifest before displaying or persisting it.
+	 *
+	 * @param mixed $manifest Raw manifest.
+	 * @return array
+	 */
+	private function normalize_manifest( $manifest ) {
+		if ( ! is_array( $manifest ) ) {
+			return array();
+		}
+		$normalized = array();
+		foreach ( $manifest as $entry ) {
+			if ( ! is_array( $entry ) || empty( $entry['product_id'] ) || empty( $entry['quantity'] ) || empty( $entry['name'] ) ) {
+				continue;
+			}
+			$normalized[] = array(
+				'product_id'    => absint( $entry['product_id'] ),
+				'variation_id'  => isset( $entry['variation_id'] ) ? absint( $entry['variation_id'] ) : 0,
+				'quantity'      => absint( $entry['quantity'] ),
+				'name'          => sanitize_text_field( $entry['name'] ),
+				'image'         => isset( $entry['image'] ) ? esc_url_raw( $entry['image'] ) : '',
+				'regular_price' => isset( $entry['regular_price'] ) ? (float) $entry['regular_price'] : 0.0,
+			);
+		}
+		return $normalized;
+	}
+
+	/**
+	 * Return the trusted manifest stored on the parent, with a legacy fallback.
+	 *
+	 * @param array $cart_item Cart item data.
+	 * @return array
+	 */
+	private function manifest_for_cart_item( $cart_item ) {
+		$manifest = $this->normalize_manifest( isset( $cart_item[ self::CART_BOX_MANIFEST ] ) ? $cart_item[ self::CART_BOX_MANIFEST ] : array() );
+		if ( $manifest || empty( $cart_item[ self::CART_BOX_ID ] ) || ! function_exists( 'WC' ) || ! WC()->cart ) {
+			return $manifest;
+		}
+
+		$box_id = $this->sanitize_box_id( $cart_item[ self::CART_BOX_ID ] );
+		$merged = array();
+		foreach ( WC()->cart->get_cart() as $line ) {
+			if ( empty( $line[ self::CART_BOX_ID ] ) || $box_id !== $this->sanitize_box_id( $line[ self::CART_BOX_ID ] ) ) {
+				continue;
+			}
+			$product = wc_get_product( $line['product_id'] );
+			$current = wc_get_product( ! empty( $line['variation_id'] ) ? $line['variation_id'] : $line['product_id'] );
+			if ( ! $product instanceof WC_Product || ! $current instanceof WC_Product ) {
+				continue;
+			}
+			$key = $product->get_id() . ':' . ( $current instanceof WC_Product_Variation ? $current->get_id() : 0 );
+			if ( isset( $merged[ $key ] ) ) {
+				$merged[ $key ]['quantity'] += absint( $line['quantity'] );
+				continue;
+			}
+			$name = wp_strip_all_tags( $product->get_name() );
+			if ( $current instanceof WC_Product_Variation && function_exists( 'wc_get_formatted_variation' ) ) {
+				$variation_name = wp_strip_all_tags( wc_get_formatted_variation( $current, true, true, true ) );
+				$name          .= $variation_name ? ' - ' . $variation_name : '';
+			}
+			$image_id = $current->get_image_id() ? $current->get_image_id() : $product->get_image_id();
+			$merged[ $key ] = array(
+				'product_id'    => $product->get_id(),
+				'variation_id'  => $current instanceof WC_Product_Variation ? $current->get_id() : 0,
+				'quantity'      => absint( $line['quantity'] ),
+				'name'          => $name,
+				'image'         => $image_id ? esc_url_raw( wp_get_attachment_image_url( $image_id, 'woocommerce_thumbnail' ) ) : '',
+				'regular_price' => $this->regular_price( $current ),
+			);
+		}
+		return array_values( $merged );
+	}
+
+	/**
+	 * Calculate the displayed total for one box from its native cart allocations.
+	 *
+	 * @param string $box_id Box ID.
+	 * @return float|null
+	 */
+	private function cart_box_total( $box_id ) {
+		if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+			return null;
+		}
+		$box_id = $this->sanitize_box_id( $box_id );
+		$total  = 0.0;
+		$found  = false;
+		foreach ( WC()->cart->get_cart() as $line ) {
+			if ( empty( $line[ self::CART_BOX_ID ] ) || $box_id !== $this->sanitize_box_id( $line[ self::CART_BOX_ID ] ) ) {
+				continue;
+			}
+			$found = true;
+			$line_total = isset( $line['line_total'] ) ? (float) $line['line_total'] : 0.0;
+			if ( ! isset( $line['line_total'] ) && isset( $line['data'] ) && $line['data'] instanceof WC_Product ) {
+				$line_total = (float) $line['data']->get_price() * absint( $line['quantity'] );
+			}
+			$total += $line_total;
+			if ( 'incl' === get_option( 'woocommerce_tax_display_cart' ) ) {
+				$total += isset( $line['line_tax'] ) ? (float) $line['line_tax'] : 0.0;
+			}
+		}
+		return $found ? $total : null;
+	}
+
+	/**
+	 * Return the canonical protected editor URL for a box.
+	 *
+	 * @param string $box_id Box ID.
+	 * @return string
+	 */
+	private function box_edit_url( $box_id ) {
+		return add_query_arg( 'edit_box', $this->sanitize_box_id( $box_id ), home_url( '/' . self::PAGE_SLUG . '/' ) );
 	}
 
 	/**

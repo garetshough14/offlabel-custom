@@ -29,6 +29,14 @@ add_action(
 add_action(
 	'wp_enqueue_scripts',
 	static function () {
+		wp_enqueue_script(
+			'olr-site-navigation',
+			'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-site-navigation.js',
+			array(),
+			'1.1.0',
+			true
+		);
+
 		if ( is_front_page() ) {
 			wp_enqueue_script(
 				'olr-compliance-gate',
@@ -54,13 +62,13 @@ add_action(
 				'olr-coa-archive',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'20260830.7'
+				'20260901.1'
 			);
 
 			/* Keep the testing typography independent of Divi and CDN cache state. */
 			wp_add_inline_style(
 				'olr-coa-archive',
-				'body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]), body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(*) { font-family: Arial, Helvetica, sans-serif !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(*) { letter-spacing: 0 !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(h1, h2, h3, h4, h5, h6) { font-weight: 700 !important; letter-spacing: -.015em !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(button, .button, summary, nav a, label) { font-weight: 600 !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(.olr-label, .olr-coa-hero__kicker, small) { letter-spacing: .025em !important; }'
+				'body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]), body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(*) { font-family: var(--olr-font) !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(*) { letter-spacing: 0 !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(h1, h2, h3, h4, h5, h6) { font-weight: 700 !important; letter-spacing: -.015em !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(button, .button, summary, nav a, label) { font-weight: 600 !important; } body :is(#olr-testing-type-system, .olr-page--testing, [data-olr-coa]) :where(.olr-label, .olr-coa-hero__kicker, small) { letter-spacing: .025em !important; }'
 			);
 
 			wp_enqueue_script(
@@ -77,7 +85,7 @@ add_action(
 				'olr-research-catalog',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
 				array(),
-				'20260830.6'
+				'20260901.1'
 			);
 		}
 
@@ -101,7 +109,7 @@ add_action(
 				'olr-product-record',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles-product.css',
 				array(),
-				'20260830.2'
+				'20260901.1'
 			);
 
 			wp_enqueue_script(
@@ -112,6 +120,28 @@ add_action(
 				true
 			);
 		}
+	},
+	20
+);
+
+add_filter(
+	'body_class',
+	static function ( $classes ) {
+		$classes   = is_array( $classes ) ? $classes : array();
+		$classes[] = 'olr-site-responsive';
+
+		$native_pages = array( 'contact', 'shipping', 'returns', 'terms-conditions', 'privacy-policy', 'research-use-policy' );
+		if ( is_page( $native_pages ) ) {
+			$classes[] = 'olr-native-support-page';
+			foreach ( $native_pages as $native_page ) {
+				if ( is_page( $native_page ) ) {
+					$classes[] = 'olr-native-page--' . sanitize_html_class( $native_page );
+					break;
+				}
+			}
+		}
+
+		return array_values( array_unique( $classes ) );
 	},
 	20
 );
@@ -137,6 +167,9 @@ add_filter(
 			'olr_checkout_test',
 			'olr_cart_count',
 			'olr_build_a_box',
+			'olr_account_hub',
+			'olr_affiliate_landing',
+			'olr_affiliate_guidelines',
 		);
 
 		return array_values( array_unique( array_merge( $shortcodes, $woocommerce_shortcodes ) ) );
@@ -241,6 +274,7 @@ if ( ! function_exists( 'olr_render_catalog_product_card' ) ) {
 				'class'    => 'olr-research-card__image',
 				'loading'  => 'lazy',
 				'decoding' => 'async',
+				'sizes'    => '(max-width: 360px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw',
 			)
 		);
 
@@ -492,9 +526,11 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 		$image_html = $product->get_image(
 			'woocommerce_single',
 			array(
-				'class'    => 'olr-product-view__image',
-				'loading'  => 'eager',
-				'decoding' => 'async',
+				'class'         => 'olr-product-view__image',
+				'loading'       => 'eager',
+				'decoding'      => 'async',
+				'fetchpriority' => 'high',
+				'sizes'         => '(max-width: 768px) 100vw, (max-width: 1200px) 55vw, 48vw',
 			)
 		);
 		$gallery_ids = array_values( array_filter( array_merge( array( $product->get_image_id() ), $product->get_gallery_image_ids() ) ) );
