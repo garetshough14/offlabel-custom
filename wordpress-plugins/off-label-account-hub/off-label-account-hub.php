@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 final class OLR_Account_Hub {
-	const VERSION                  = '1.1.0';
+	const VERSION                  = '1.1.1';
 	const ACCOUNT_SLUG             = 'account';
 	const AFFILIATE_SLUG           = 'affiliate';
 	const GUIDELINES_SLUG          = 'affiliate-guidelines';

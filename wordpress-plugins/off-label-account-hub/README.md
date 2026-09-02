@@ -2,7 +2,7 @@
 
 An update-safe account layer that brings Ultimate Member, WooCommerce order history, and Ultimate Affiliate Pro into the existing `/account/` page. It does not edit or bundle any vendor plugin files.
 
-Current build: **1.1.0**. This build adds the responsive affiliate landing page and complete public guidelines, redesigns the active-affiliate account dashboard around real UAP and HPOS-safe WooCommerce data, and preserves every existing member, application, order, and affiliate state.
+Current build: **1.1.1**. This build makes the public affiliate surfaces full-bleed, restores the intended guidelines composition, strengthens phone and tablet layouts, redesigns the active-affiliate account dashboard around real UAP and HPOS-safe WooCommerce data, and preserves every existing member, application, order, and affiliate state.
 
 ## Requirements
 
