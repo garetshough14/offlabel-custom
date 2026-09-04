@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.13
+ * Version: 1.0.14
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.13' );
+define( 'OLR_COA_VERSION', '1.0.14' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -75,6 +75,9 @@ final class OLR_COA_Manager {
 	}
 
 	public function register() {
+		add_rewrite_tag( '%olr_coa_product%', '([^&]+)' );
+		add_rewrite_tag( '%olr_coa_product_id%', '([0-9]+)' );
+
 		register_post_type(
 			self::POST_TYPE,
 			array(
@@ -244,11 +247,17 @@ final class OLR_COA_Manager {
 		}
 
 		$post = get_page_by_path( $slug, OBJECT, 'product' );
-		if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status ) {
-			return false;
+		if ( $post instanceof WP_Post && 'publish' === $post->post_status ) {
+			return wc_get_product( $post->ID );
 		}
 
-		return wc_get_product( $post->ID );
+		foreach ( wc_get_products( array( 'status' => 'publish', 'limit' => -1 ) ) as $product ) {
+			if ( $product instanceof WC_Product && $slug === $product->get_slug() ) {
+				return $product;
+			}
+		}
+
+		return false;
 	}
 
 	public function canonical_url( $canonical ) {
