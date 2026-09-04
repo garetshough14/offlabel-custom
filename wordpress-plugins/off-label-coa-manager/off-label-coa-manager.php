@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.10
+ * Version: 1.0.11
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.10' );
+define( 'OLR_COA_VERSION', '1.0.11' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -31,6 +31,10 @@ final class OLR_COA_Manager {
 	private function __construct() {
 		add_action( 'init', array( $this, 'register' ) );
 		add_action( 'init', array( $this, 'maybe_upgrade' ), 99 );
+		add_filter( 'query_vars', array( $this, 'query_vars' ) );
+		add_action( 'template_redirect', array( $this, 'canonical_redirect' ), 1 );
+		add_filter( 'get_canonical_url', array( $this, 'canonical_url' ) );
+		add_filter( 'wpseo_canonical', array( $this, 'canonical_url' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save' ), 10, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
@@ -91,6 +95,17 @@ final class OLR_COA_Manager {
 			)
 		);
 
+		$receipt_page_id = absint( get_option( self::PAGE_OPTION ) );
+		if ( $receipt_page_id ) {
+			add_rewrite_rule( '^coas/([^/]+)/?$', 'index.php?page_id=' . $receipt_page_id . '&olr_coa_product=$matches[1]', 'top' );
+		}
+
+	}
+
+	public function query_vars( $query_vars ) {
+		$query_vars   = is_array( $query_vars ) ? $query_vars : array();
+		$query_vars[] = 'olr_coa_product';
+		return array_values( array_unique( $query_vars ) );
 	}
 
 	public function maybe_upgrade() {
@@ -198,14 +213,37 @@ final class OLR_COA_Manager {
 	}
 
 	private function record_url( $product ) {
-		$page = get_page_by_path( 'coas/' . $product->get_slug(), OBJECT, 'page' );
+		return home_url( '/coas/' . $product->get_slug() . '/' );
+	}
 
-		if ( $page instanceof WP_Post && 'publish' === $page->post_status ) {
-			return get_permalink( $page );
+	private function routed_product() {
+		$slug = sanitize_title( (string) get_query_var( 'olr_coa_product' ) );
+		if ( '' === $slug || ! function_exists( 'wc_get_product' ) ) {
+			return false;
 		}
 
-		/* Never send staging archive visitors into a generated receipt route. */
-		return home_url( '/coas/' );
+		$post = get_page_by_path( $slug, OBJECT, 'product' );
+		if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status ) {
+			return false;
+		}
+
+		return wc_get_product( $post->ID );
+	}
+
+	public function canonical_url( $canonical ) {
+		$product = $this->routed_product();
+		return $product instanceof WC_Product ? $this->record_url( $product ) : $canonical;
+	}
+
+	public function canonical_redirect() {
+		if ( is_admin() || ! is_page( absint( get_option( self::PAGE_OPTION ) ) ) || get_query_var( 'olr_coa_product' ) ) {
+			return;
+		}
+
+		$product_id = isset( $_GET['product_id'] ) ? absint( wp_unslash( $_GET['product_id'] ) ) : 0;
+		$product    = $product_id && function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : false;
+		wp_safe_redirect( $product instanceof WC_Product ? $this->record_url( $product ) : home_url( '/coas/' ), 301 );
+		exit;
 	}
 
 	private function display_date( $date ) {
@@ -219,7 +257,7 @@ final class OLR_COA_Manager {
 		if ( ! $product_id && isset( $_GET['product_id'] ) ) {
 			$product_id = absint( wp_unslash( $_GET['product_id'] ) );
 		}
-		$product = $product_id && function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : false;
+		$product = $product_id && function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : $this->routed_product();
 		$reports = $product ? $this->reports( $product_id ) : array();
 		if ( ! $product || empty( $reports ) ) { return $this->empty_state(); }
 		$current = array_shift( $reports );
