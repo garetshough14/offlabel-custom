@@ -12616,8 +12616,7 @@ body .olr-gitpress-site.olr-redesign[data-olr-page="research"],
 body .olr-gitpress-site.olr-redesign[data-olr-page="research"] :where(*, button, input, select, textarea),
 body .olr-research-catalog,
 body .olr-research-catalog :where(*, button, input, select, textarea) {
-  --olr-font: Arial, Helvetica, sans-serif;
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: var(--olr-font) !important;
 }
 
 /* Keep the catalog documentation headline inside its copy column. */
@@ -12632,7 +12631,7 @@ body .olr-gitpress-site.olr-redesign[data-olr-page="research"] .olr-research-doc
 body .olr-gitpress-site.olr-redesign[data-olr-page="research"] .olr-research-documentation__copy > h2 {
   width: 100%;
   max-width: 11ch;
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: var(--olr-font) !important;
   font-size: clamp(2.25rem, 3.25vw, 4rem);
   font-weight: 700 !important;
   letter-spacing: -0.015em !important;
