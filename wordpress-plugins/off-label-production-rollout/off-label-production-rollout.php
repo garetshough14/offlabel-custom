@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.2';
+	const VERSION              = '1.0.3';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
 	const PAGE_BACKUP_OPTION   = 'olr_production_rollout_page_backup_v1';
@@ -601,6 +601,45 @@ final class OLR_Production_Rollout {
 		return array( 'ok' => true, 'checks' => $checks );
 	}
 
+	/** Remove only the known failed rollout-package folders created during this deployment. */
+	public static function cleanup_failed_packages() {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+		global $wp_filesystem;
+		if ( ! $wp_filesystem ) {
+			return array( 'ok' => false, 'errors' => array( 'WordPress filesystem access is unavailable.' ) );
+		}
+
+		$plugin_root = realpath( WP_PLUGIN_DIR );
+		$active_dir  = realpath( plugin_dir_path( __FILE__ ) );
+		$targets     = array( 'off-label-production-rollout', 'off-label-production-rollout-v1.0.0', 'off-label-production-rollout-v1.0.1' );
+		$removed     = array();
+		$skipped     = array();
+		foreach ( $targets as $folder ) {
+			$path = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $folder;
+			$real = realpath( $path );
+			if ( false === $real ) {
+				$skipped[] = $folder . ' (absent)';
+				continue;
+			}
+			if ( $real === $active_dir || dirname( $real ) !== $plugin_root ) {
+				return array( 'ok' => false, 'errors' => array( 'Cleanup safety check rejected: ' . $folder ) );
+			}
+			if ( ! $wp_filesystem->delete( $real, true, 'd' ) ) {
+				return array( 'ok' => false, 'errors' => array( 'Could not remove failed rollout folder: ' . $folder ) );
+			}
+			$removed[] = $folder;
+		}
+		return array(
+			'ok'     => true,
+			'checks' => array(
+				'Removed only failed rollout-package folders: ' . ( $removed ? implode( ', ', $removed ) : 'none' ),
+				'Skipped: ' . ( $skipped ? implode( ', ', $skipped ) : 'none' ),
+				'The active rollout tool and every unrelated plugin were preserved.',
+			),
+		);
+	}
+
 	/** Handle a nonce-protected admin request. */
 	public static function handle_action() {
 		if ( ! current_user_can( 'activate_plugins' ) ) {
@@ -616,6 +655,7 @@ final class OLR_Production_Rollout {
 			'promote_pages'    => 'promote_pages',
 			'restore_pages'    => 'restore_pages',
 			'retire_tests'     => 'retire_test_pages',
+			'cleanup_packages' => 'cleanup_failed_packages',
 		);
 		$report = isset( $handlers[ $operation ] ) ? call_user_func( array( __CLASS__, $handlers[ $operation ] ) ) : array( 'ok' => false, 'errors' => array( 'Unknown rollout operation.' ) );
 		$report['operation'] = $operation;
@@ -653,6 +693,7 @@ final class OLR_Production_Rollout {
 				array( 'Promote pages', 'promote_pages', 'Applies approved GitPress fragments to existing production pages and flushes rewrites.' ),
 				array( 'Rollback pages', 'restore_pages', 'Restores saved page fields, GitPress metadata, and WooCommerce page options.' ),
 				array( 'Retire tests', 'retire_tests', 'Drafts only the exact seeder-marked test pages. Run only after production QA passes.' ),
+				array( 'Clean failed rollout packages', 'cleanup_packages', 'Removes only the three known failed rollout folders created during this deployment; preserves this active tool and all unrelated plugins.' ),
 			);
 			foreach ( $actions as $action ) :
 				?>
