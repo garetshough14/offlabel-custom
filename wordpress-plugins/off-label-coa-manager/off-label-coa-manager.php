@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.12
+ * Version: 1.0.13
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.12' );
+define( 'OLR_COA_VERSION', '1.0.13' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -96,8 +96,14 @@ final class OLR_COA_Manager {
 		);
 
 		$receipt_page_id = absint( get_option( self::PAGE_OPTION ) );
-		if ( $receipt_page_id ) {
-			add_rewrite_rule( '^coas/([^/]+)/?$', 'index.php?page_id=' . $receipt_page_id . '&olr_coa_product=$matches[1]', 'top' );
+		if ( $receipt_page_id && function_exists( 'wc_get_products' ) ) {
+			$product_ids = wc_get_products( array( 'status' => 'publish', 'limit' => -1, 'return' => 'ids' ) );
+			foreach ( $product_ids as $product_id ) {
+				$product = wc_get_product( $product_id );
+				if ( $product instanceof WC_Product && '' !== $product->get_slug() ) {
+					add_rewrite_rule( '^coas/' . preg_quote( $product->get_slug(), '#' ) . '/?$', 'index.php?page_id=' . $receipt_page_id . '&olr_coa_product_id=' . $product->get_id(), 'top' );
+				}
+			}
 		}
 
 	}
@@ -105,6 +111,7 @@ final class OLR_COA_Manager {
 	public function query_vars( $query_vars ) {
 		$query_vars   = is_array( $query_vars ) ? $query_vars : array();
 		$query_vars[] = 'olr_coa_product';
+		$query_vars[] = 'olr_coa_product_id';
 		return array_values( array_unique( $query_vars ) );
 	}
 
@@ -180,7 +187,7 @@ final class OLR_COA_Manager {
 	}
 
 	public function frontend_assets() {
-		if ( ! get_query_var( 'olr_coa_product' ) && ! is_page( absint( get_option( self::PAGE_OPTION ) ) ) ) {
+		if ( ! get_query_var( 'olr_coa_product_id' ) && ! get_query_var( 'olr_coa_product' ) && ! is_page( absint( get_option( self::PAGE_OPTION ) ) ) ) {
 			return;
 		}
 		wp_enqueue_style( 'olr-coa-detail', OLR_COA_URL . 'assets/coa-detail.css', array(), OLR_COA_VERSION );
@@ -217,6 +224,14 @@ final class OLR_COA_Manager {
 	}
 
 	private function routed_product() {
+		$product_id = absint( get_query_var( 'olr_coa_product_id' ) );
+		if ( $product_id && function_exists( 'wc_get_product' ) ) {
+			$product = wc_get_product( $product_id );
+			if ( $product instanceof WC_Product && 'publish' === get_post_status( $product_id ) ) {
+				return $product;
+			}
+		}
+
 		$slug = sanitize_title( (string) get_query_var( 'olr_coa_product' ) );
 		if ( '' === $slug && isset( $_SERVER['REQUEST_URI'] ) ) {
 			$request_path = trim( (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ), '/' );
@@ -242,7 +257,7 @@ final class OLR_COA_Manager {
 	}
 
 	public function canonical_redirect() {
-		if ( is_admin() || ! is_page( absint( get_option( self::PAGE_OPTION ) ) ) || get_query_var( 'olr_coa_product' ) ) {
+		if ( is_admin() || ! is_page( absint( get_option( self::PAGE_OPTION ) ) ) || get_query_var( 'olr_coa_product_id' ) || get_query_var( 'olr_coa_product' ) ) {
 			return;
 		}
 
