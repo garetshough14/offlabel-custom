@@ -620,8 +620,12 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
 
 @media (max-width: 900px) {
   .olr-checkout-test__steps, .olr-checkout-test__main { width: min(100% - 40px, 760px); }
-  .olr-checkout-test form.checkout { grid-template-columns: 1fr; }
-  .olr-checkout-enhanced[data-olr-checkout-stage="payment"] form.checkout { grid-template-columns: minmax(0, 1fr); }
+  body.olr-checkout-test-page .olr-checkout-test form.checkout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  body.olr-checkout-test-page .olr-checkout-enhanced[data-olr-checkout-stage="payment"] form.checkout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
   .olr-checkout-test form.checkout > #customer_details { grid-column: 1; grid-row: 1; padding: 10px 0 25px; border-right: 0; }
   .olr-checkout-test form.checkout > #order_review_heading { grid-column: 1; grid-row: 2; margin-top: 10px !important; }
   .olr-checkout-test form.checkout > #order_review { grid-column: 1; grid-row: 3; }
