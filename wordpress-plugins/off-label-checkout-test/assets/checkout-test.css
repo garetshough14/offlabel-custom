@@ -157,8 +157,9 @@ body.olr-checkout-test-page #main-content :where(.entry-content, .et_pb_section,
   min-height: 44px;
   padding: 0;
   border: 0;
-  background: transparent;
-  color: var(--olr-checkout-muted);
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--olr-checkout-muted) !important;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: .08em;
@@ -167,7 +168,7 @@ body.olr-checkout-test-page #main-content :where(.entry-content, .et_pb_section,
 }
 
 .olr-checkout-test__steps button[aria-current="step"] {
-  color: var(--olr-checkout-ink);
+  color: var(--olr-checkout-ink) !important;
   font-weight: 800;
 }
 

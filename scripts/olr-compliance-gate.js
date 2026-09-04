@@ -56,7 +56,7 @@
       gateForm.toggleAttribute("data-confirmed", confirmation.checked);
     });
 
-    gateForm.addEventListener("submit", function (event) {
+    function acceptGate(event) {
       event.preventDefault();
 
       if (!confirmation.checked) {
@@ -77,7 +77,13 @@
       }
 
       document.documentElement.classList.remove("olr-gate-open");
-    });
+    }
+
+    if (gateForm.matches("form")) {
+      gateForm.addEventListener("submit", acceptGate);
+    } else {
+      enterButton.addEventListener("click", acceptGate);
+    }
 
     gate.addEventListener("cancel", function (event) {
       event.preventDefault();
