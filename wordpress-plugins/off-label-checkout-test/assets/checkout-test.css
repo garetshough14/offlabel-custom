@@ -1024,6 +1024,66 @@ body.olr-checkout-test-page .olr-checkout-test .olr-box-checkout-actions :where(
   body.olr-checkout-test-page .olr-checkout-test__main,
   body.olr-checkout-test-page .olr-checkout-test__footer { width: min(calc(100% - 40px), 760px) !important; }
 
+  body.olr-checkout-test-page .olr-checkout-test form.checkout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body.olr-checkout-test-page .olr-checkout-test form.checkout > #customer_details {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 10px 0 25px !important;
+    border-right: 0 !important;
+    float: none !important;
+  }
+
+  body.olr-checkout-test-page .olr-checkout-test form.checkout > #order_review_heading {
+    position: static !important;
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 10px 0 8px !important;
+    float: none !important;
+    clear: both !important;
+  }
+
+  body.olr-checkout-test-page .olr-checkout-test form.checkout > #order_review {
+    position: static !important;
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    float: none !important;
+    clear: both !important;
+  }
+
+  body.olr-checkout-test-page .olr-checkout-test #customer_details > :where(.col-1, .col-2) {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+  }
+
+  body.olr-checkout-test-page .olr-checkout-test form .form-row,
+  body.olr-checkout-test-page .olr-checkout-test form .form-row :where(input.input-text, select, textarea) {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  body.olr-checkout-test-page .olr-checkout-test form .form-row label {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
   .olr-checkout-test__footer { grid-template-columns: 1.4fr repeat(2, 1fr); }
   .olr-checkout-test__footer > div:nth-child(n+4) { margin-top: 15px; }
 }
