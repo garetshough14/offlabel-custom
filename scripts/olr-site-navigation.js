@@ -16,7 +16,8 @@
   function setCurrentLinks(header) {
     var current = normalizedPath(window.location.href);
     var aliases = {
-      "/research": "/shop",
+      "/research": "/catalog",
+      "/shop": "/catalog",
       "/testing": "/coas"
     };
 

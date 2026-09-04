@@ -5,9 +5,9 @@
  * Child theme: require this file from functions.php.
  * Code Snippets: paste everything below the opening PHP tag and run everywhere.
  * It allowlists the approved WooCommerce tags, registers read-only presentation
- * helpers and loads page-specific frontend interactions. It never
- * modifies gateways, orders, prices, carts, checkout data, products, or post
- * content.
+ * helpers, production catalog routes, and page-specific frontend interactions.
+ * It never modifies gateways, orders, prices, carts, checkout data, products,
+ * or post content.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,6 +26,120 @@ add_action(
 	0
 );
 
+if ( ! function_exists( 'olr_catalog_url' ) ) {
+	/** Return the canonical public catalog URL. */
+	function olr_catalog_url() {
+		return home_url( '/catalog/' );
+	}
+}
+
+if ( ! function_exists( 'olr_catalog_product_url_from_slug' ) ) {
+	/** Return a canonical public product-record URL from a product slug. */
+	function olr_catalog_product_url_from_slug( $slug ) {
+		$slug = sanitize_title( (string) $slug );
+		return $slug ? home_url( '/catalog/' . $slug . '/' ) : olr_catalog_url();
+	}
+}
+
+add_filter(
+	'query_vars',
+	static function ( $query_vars ) {
+		$query_vars[] = 'olr_product_slug';
+		return array_values( array_unique( $query_vars ) );
+	}
+);
+
+add_action(
+	'init',
+	static function () {
+		add_rewrite_rule( '^catalog/([^/]+)/?$', 'index.php?pagename=catalog-item&olr_product_slug=$matches[1]', 'top' );
+	},
+	1
+);
+
+add_filter(
+	'post_type_link',
+	static function ( $url, $post ) {
+		if ( $post instanceof WP_Post && 'product' === $post->post_type && $post->post_name ) {
+			return olr_catalog_product_url_from_slug( $post->post_name );
+		}
+		return $url;
+	},
+	20,
+	2
+);
+
+/** Resolve the published product selected by the pretty catalog route. */
+function olr_get_routed_catalog_product() {
+	$slug = sanitize_title( (string) get_query_var( 'olr_product_slug' ) );
+	if ( ! $slug || ! function_exists( 'wc_get_product' ) ) {
+		return false;
+	}
+
+	$post = get_page_by_path( $slug, OBJECT, 'product' );
+	if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status ) {
+		return false;
+	}
+
+	return wc_get_product( $post->ID );
+}
+
+add_action(
+	'template_redirect',
+	static function () {
+		if ( is_admin() ) {
+			return;
+		}
+
+		$request_path = isset( $_SERVER['REQUEST_URI'] ) ? trim( (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ), '/' ) : '';
+
+		if ( 'shop' === $request_path ) {
+			wp_safe_redirect( olr_catalog_url(), 301 );
+			exit;
+		}
+
+		if ( 'checkout' === $request_path && ( ! function_exists( 'is_wc_endpoint_url' ) || ! is_wc_endpoint_url() ) ) {
+			wp_safe_redirect( home_url( '/cart/' ), 301 );
+			exit;
+		}
+
+		if ( function_exists( 'is_product' ) && is_product() ) {
+			$product_post = get_queried_object();
+			if ( $product_post instanceof WP_Post ) {
+				wp_safe_redirect( olr_catalog_product_url_from_slug( $product_post->post_name ), 301 );
+				exit;
+			}
+		}
+
+		if ( in_array( $request_path, array( 'research-item', 'catalog-item' ), true ) ) {
+			$product_id = isset( $_GET['product_id'] ) ? absint( wp_unslash( $_GET['product_id'] ) ) : 0;
+			$product    = $product_id && function_exists( 'wc_get_product' ) ? wc_get_product( $product_id ) : false;
+			$target     = $product instanceof WC_Product ? olr_catalog_product_url_from_slug( $product->get_slug() ) : olr_catalog_url();
+			wp_safe_redirect( $target, 301 );
+			exit;
+		}
+	},
+	2
+);
+
+foreach ( array( 'get_canonical_url', 'wpseo_canonical' ) as $canonical_filter ) {
+	add_filter(
+		$canonical_filter,
+		static function ( $canonical ) {
+			$product = olr_get_routed_catalog_product();
+			return $product instanceof WC_Product ? olr_catalog_product_url_from_slug( $product->get_slug() ) : $canonical;
+		}
+	);
+}
+
+add_filter(
+	'pre_get_document_title',
+	static function ( $title ) {
+		$product = olr_get_routed_catalog_product();
+		return $product instanceof WC_Product ? $product->get_name() . ' | ' . get_bloginfo( 'name' ) : $title;
+	}
+);
+
 add_action(
 	'wp_enqueue_scripts',
 	static function () {
@@ -33,7 +147,7 @@ add_action(
 			'olr-site-navigation',
 			'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/scripts/olr-site-navigation.js',
 			array(),
-			'1.1.0',
+			'1.2.0',
 			true
 		);
 
@@ -57,7 +171,7 @@ add_action(
 			);
 		}
 
-		if ( is_page( 'testing' ) ) {
+		if ( is_page( array( 'coas', 'testing' ) ) ) {
 			wp_enqueue_style(
 				'olr-coa-archive',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
@@ -80,7 +194,7 @@ add_action(
 			);
 		}
 
-		if ( is_page( array( 'research', 'shop', 'catalog-test', 'research-catalog-test' ) ) || ( function_exists( 'is_shop' ) && is_shop() ) ) {
+		if ( is_page( array( 'catalog', 'research', 'shop', 'catalog-test', 'research-catalog-test' ) ) || ( function_exists( 'is_shop' ) && is_shop() ) ) {
 			wp_enqueue_style(
 				'olr-research-catalog',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles.css',
@@ -95,7 +209,7 @@ add_action(
 		 * mode is still recommended because it also supplies the shared header and
 		 * footer, but the product itself must never fall back to raw browser styles.
 		 */
-		if ( is_page( 'research-item' ) ) {
+		if ( is_page( array( 'catalog-item', 'research-item' ) ) ) {
 			/* WooCommerce does not treat a shortcode-only page as is_product(). */
 			foreach ( array( 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-general', 'photoswipe-default-skin' ) as $style_handle ) {
 				wp_enqueue_style( $style_handle );
@@ -165,6 +279,7 @@ add_filter(
 			'olr_coa_search_controls',
 			'olr_coa_page',
 			'olr_checkout_test',
+			'olr_checkout',
 			'olr_cart_count',
 			'olr_build_a_box',
 			'olr_account_hub',
@@ -187,10 +302,10 @@ if ( ! function_exists( 'olr_get_research_product_url' ) ) {
 	 */
 	function olr_get_research_product_url( $product ) {
 		if ( ! $product instanceof WC_Product ) {
-			return home_url( '/shop/' );
+			return olr_catalog_url();
 		}
 
-		return add_query_arg( 'product_id', $product->get_id(), home_url( '/research-item/' ) );
+		return olr_catalog_product_url_from_slug( $product->get_slug() );
 	}
 }
 
@@ -368,7 +483,7 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 		$products    = isset( $results->products ) && is_array( $results->products ) ? $results->products : array();
 		$total       = isset( $results->total ) ? absint( $results->total ) : count( $products );
 		$total_pages = isset( $results->max_num_pages ) ? absint( $results->max_num_pages ) : 1;
-		$base_url    = get_queried_object_id() ? get_permalink( get_queried_object_id() ) : home_url( '/shop/' );
+		$base_url    = olr_catalog_url();
 		$base_url    = remove_query_arg( array( 'olr_category', 'olr_sort', 'olr_page' ), $base_url );
 		$preferred   = array( $metabolic_term => 10, $restricted_term => 20, 'stack' => 30, 'essential' => 40, 'bundle' => 50 );
 		$pagination_base = str_replace(
@@ -513,9 +628,7 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 			return '';
 		}
 
-		$record_page_id  = get_queried_object_id();
-		$record_page_url = $record_page_id ? get_permalink( $record_page_id ) : home_url( '/research-item/' );
-		$record_url      = add_query_arg( 'product_id', $product_id, $record_page_url );
+		$record_url       = olr_get_research_product_url( $product );
 		$previous_post   = isset( $GLOBALS['post'] ) ? $GLOBALS['post'] : null;
 		$previous_product = isset( $GLOBALS['product'] ) ? $GLOBALS['product'] : null;
 
@@ -689,7 +802,7 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 
 		<?php if ( ! empty( $related_products ) ) : ?>
 			<section class="olr-product-related" aria-labelledby="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">
-				<div class="olr-product-related__head"><h2 id="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">Recently researched</h2><a href="/shop/">View all →</a></div>
+				<div class="olr-product-related__head"><h2 id="olr-related-products-<?php echo esc_attr( (string) $product_id ); ?>">Recently researched</h2><a href="/catalog/">View all →</a></div>
 				<div class="olr-product-related__grid">
 					<?php foreach ( $related_products as $related_product ) : ?>
 						<a class="olr-product-related__item" href="<?php echo esc_url( olr_get_research_product_url( $related_product ) ); ?>">
@@ -743,9 +856,14 @@ add_action(
 						$product_id = absint( wp_unslash( $_GET['product_id'] ) );
 					}
 
+					if ( ! $product_id ) {
+						$routed_product = olr_get_routed_catalog_product();
+						$product_id     = $routed_product instanceof WC_Product ? $routed_product->get_id() : 0;
+					}
+
 					$product = $product_id ? wc_get_product( $product_id ) : false;
 					if ( ! $product || 'publish' !== get_post_status( $product_id ) ) {
-						return '<div class="olr-product-state"><p class="olr-label">Product record</p><h1>' . esc_html__( 'Select a research product.', 'offlabel-research' ) . '</h1><p>' . esc_html__( 'Return to the catalog and choose a product to review its current record.', 'offlabel-research' ) . '</p><a class="olr-button" href="' . esc_url( home_url( '/shop/' ) ) . '">' . esc_html__( 'View all research', 'offlabel-research' ) . '</a></div>';
+						return '<div class="olr-product-state"><p class="olr-label">Product record</p><h1>' . esc_html__( 'Select a research product.', 'offlabel-research' ) . '</h1><p>' . esc_html__( 'Return to the catalog and choose a product to review its current record.', 'offlabel-research' ) . '</p><a class="olr-button" href="' . esc_url( olr_catalog_url() ) . '">' . esc_html__( 'View all research', 'offlabel-research' ) . '</a></div>';
 					}
 
 					return olr_render_product_record( $product );

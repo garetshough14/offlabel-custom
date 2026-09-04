@@ -33,5 +33,5 @@
 	</section>
 
 	<section class="olr-coa-detail__banner"><div><h2>The data is the point.</h2><p>Every batch is tested by independent laboratories.<br>We publish the results so you can verify.</p></div><img src="https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/editorial/newsletter-molecule-black.png" alt="" loading="lazy"></section>
-	<nav class="olr-coa-detail__navigation" aria-label="Receipt navigation"><a href="<?php echo esc_url( home_url( '/coas/' ) ); ?>">←&nbsp; Back to the receipts</a><a href="<?php echo esc_url( add_query_arg( 'product_id', $product->get_id(), home_url( '/research-item/' ) ) ); ?>">View <?php echo esc_html( $product->get_name() ); ?> product&nbsp; →</a></nav>
+	<nav class="olr-coa-detail__navigation" aria-label="Receipt navigation"><a href="<?php echo esc_url( home_url( '/coas/' ) ); ?>">←&nbsp; Back to the receipts</a><a href="<?php echo esc_url( function_exists( 'olr_get_research_product_url' ) ? olr_get_research_product_url( $product ) : home_url( '/catalog/' . $product->get_slug() . '/' ) ); ?>">View <?php echo esc_html( $product->get_name() ); ?> product&nbsp; →</a></nav>
 </main>

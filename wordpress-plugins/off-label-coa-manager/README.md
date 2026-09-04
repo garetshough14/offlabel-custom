@@ -2,7 +2,7 @@
 
 Install the `off-label-coa-manager` directory as a WordPress plugin and activate it with WooCommerce active.
 
-Current build: **1.0.9**. This release adds compact-mobile PDF toolbar and document-layout guards without changing report storage, routing, or product relationships.
+Current build: **1.0.10**. This release sends COA product-return links to the clean `/catalog/{product-slug}/` route without changing report storage, routing, or product relationships.
 
 ## One-time setup
 
@@ -26,8 +26,7 @@ Drafts and entries without a valid product, ISO-format date, and PDF cannot appe
 
 ## Testing and live-page behavior
 
-- `/testing/` — staging archive powered by the plugin.
-- `/coas/` — original live COA archive; the plugin does not intercept or restyle it.
+- `/coas/` — production archive powered by the plugin.
 - `/coas/{product-slug}/` — original published WordPress child page, such as `/coas/glow/`. Staging archive links resolve this existing page.
 - `/receipt/?product_id=123` — isolated diagnostic page for previewing the generated singular design; it is not linked from the staging archive.
 - `[olr_coa_page product_id="123"]` — explicit diagnostic shortcode interface.

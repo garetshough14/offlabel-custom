@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.9
+ * Version: 1.0.10
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.9' );
+define( 'OLR_COA_VERSION', '1.0.10' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -191,7 +191,8 @@ final class OLR_COA_Manager {
 			$restricted_term = 'pep' . 'tide';
 			$metabolic_term = 'g' . 'lp';
 			if ( is_array( $terms ) ) { foreach ( $terms as $term ) { $haystack = strtolower( $term->slug . ' ' . $term->name ); if ( false !== strpos( $haystack, $metabolic_term ) ) { $category = 'metabolic'; break; } if ( false !== strpos( $haystack, $restricted_term ) || false !== strpos( $haystack, 'ipamorelin' ) || false !== strpos( $haystack, 'sermorelin' ) ) { $category = 'compounds'; } } }
-			$items[] = array( 'product_id' => $product_id, 'product_name' => $product->get_name(), 'product_url' => add_query_arg( 'product_id', $product_id, home_url( '/research-item/' ) ), 'product_image_url' => wp_get_attachment_image_url( $product->get_image_id(), 'medium' ), 'category' => $category, 'strength' => function_exists( 'olr_get_catalog_product_detail' ) ? olr_get_catalog_product_detail( $product ) : '', 'test_date' => $this->display_date( get_post_meta( $report->ID, '_olr_test_date', true ) ), 'document_url' => wp_get_attachment_url( $pdf_id ), 'record_url' => $this->record_url( $product ), 'document_label' => __( 'View COA', 'off-label-coa-manager' ) );
+			$product_url = function_exists( 'olr_get_research_product_url' ) ? olr_get_research_product_url( $product ) : home_url( '/catalog/' . $product->get_slug() . '/' );
+			$items[] = array( 'product_id' => $product_id, 'product_name' => $product->get_name(), 'product_url' => $product_url, 'product_image_url' => wp_get_attachment_image_url( $product->get_image_id(), 'medium' ), 'category' => $category, 'strength' => function_exists( 'olr_get_catalog_product_detail' ) ? olr_get_catalog_product_detail( $product ) : '', 'test_date' => $this->display_date( get_post_meta( $report->ID, '_olr_test_date', true ) ), 'document_url' => wp_get_attachment_url( $pdf_id ), 'record_url' => $this->record_url( $product ), 'document_label' => __( 'View COA', 'off-label-coa-manager' ) );
 		}
 		return $items;
 	}
