@@ -9,8 +9,6 @@
 			<p>Independent testing documentation is available in the original report below.</p>
 			<div class="olr-coa-detail__actions"><a class="is-primary" href="<?php echo esc_url( $pdf_url ); ?>" target="_blank" rel="noopener">View original report <span>→</span></a><a href="<?php echo esc_url( $pdf_url ); ?>" download>Download COA <span aria-hidden="true">⇩</span></a></div>
 		</div>
-		<div class="olr-coa-detail__seal" aria-label="Published third-party Certificate of Analysis"><span>Third-party</span><strong>COA</strong><b>Published</b><em>Original report below</em></div>
-		<img class="olr-coa-detail__molecule" src="https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/images/editorial/coa-contact-reference-source.png" alt="" aria-hidden="true">
 	</section>
 
 	<section class="olr-pdf-viewer" aria-label="Certificate of Analysis viewer">

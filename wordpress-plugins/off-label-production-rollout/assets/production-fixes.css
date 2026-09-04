@@ -119,3 +119,39 @@ body dialog.olr-compliance-gate .olr-compliance-gate__actions button {
     overflow-y: auto !important;
   }
 }
+
+/* The production header uses an icon-only cart link. */
+body .olr-gitpress-site.olr-redesign.olr-managed-header .olr-bag-link svg,
+body .olr-gitpress-site.olr-redesign .olr-managed-header .olr-bag-link svg {
+  display: block !important;
+  width: 1.125rem !important;
+  min-width: 1.125rem !important;
+  height: 1.125rem !important;
+  flex: 0 0 1.125rem !important;
+}
+
+@media (max-width: 56rem) {
+  body .olr-gitpress-site.olr-redesign.olr-managed-header,
+  body .olr-gitpress-site.olr-redesign.olr-managed-header .site-header,
+  body .olr-gitpress-site.olr-redesign.olr-managed-header .site-header__inner,
+  body .olr-gitpress-site.olr-redesign.olr-managed-header .olr-nav-shell {
+    overflow: visible !important;
+  }
+
+  body .olr-gitpress-site.olr-redesign.olr-managed-header .olr-nav-shell[open] > .olr-primary-nav--mobile {
+    display: grid !important;
+    visibility: visible !important;
+    z-index: 2147482000 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
+  }
+
+  body .olr-gitpress-site.olr-redesign.olr-managed-header .olr-nav-shell[open] > .olr-primary-nav--mobile > a {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+}

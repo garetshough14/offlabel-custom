@@ -89,3 +89,96 @@
   .olr-pdf-viewer__stage{height:calc(100% - 68px);padding-inline:10px}
   .olr-coa-detail__information>article{padding-inline:14px}
 }
+
+/* Production singular COA precedence lock. Mirrors the approved receipt test. */
+body .olr-page--coa-detail,
+body .olr-page--coa-detail .olr-coa-detail {
+  background: var(--olr-coa-paper, #f6f3ed) !important;
+  color: var(--olr-coa-ink, #080808) !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__seal,
+body .olr-page--coa-detail .olr-coa-detail__molecule {
+  display: none !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__hero {
+  display: block !important;
+  min-height: 0 !important;
+  padding-block: clamp(2.4rem, 5vw, 4.25rem) clamp(1.9rem, 4vw, 3.25rem) !important;
+  overflow: visible !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__identity {
+  width: min(100%, 57.5rem) !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__crumb {
+  flex-wrap: wrap !important;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem) !important;
+  color: var(--olr-coa-ink, #080808) !important;
+  line-height: 1.45 !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__identity h1 {
+  max-width: 16ch !important;
+  color: var(--olr-coa-ink, #080808) !important;
+  font-size: clamp(3.25rem, 5vw, 4.75rem) !important;
+  line-height: 0.94 !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  text-wrap: balance;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__identity h2 {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem) !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__identity :where(h2, p, a),
+body .olr-page--coa-detail .olr-coa-detail__information :where(h2, p, li, a, strong, small, b),
+body .olr-page--coa-detail .olr-coa-detail__navigation a {
+  color: var(--olr-coa-ink, #080808) !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__identity > p:not(.olr-coa-detail__crumb) {
+  max-width: 32.5rem !important;
+  line-height: 1.6 !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__actions {
+  flex-wrap: wrap !important;
+  margin-top: 1.75rem !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__actions a.is-primary {
+  color: #fff !important;
+}
+
+body .olr-page--coa-detail .olr-coa-detail__banner,
+body .olr-page--coa-detail .olr-coa-detail__banner :where(h2, p, a, span, strong) {
+  color: #fff !important;
+}
+
+@media(max-width:640px) {
+  body .olr-page--coa-detail .olr-coa-detail__hero {
+    padding-block: 1.875rem 1.625rem !important;
+  }
+
+  body .olr-page--coa-detail .olr-coa-detail__crumb {
+    margin-bottom: 1.5rem !important;
+  }
+
+  body .olr-page--coa-detail .olr-coa-detail__identity h1 {
+    max-width: 100% !important;
+    font-size: clamp(2.25rem, 10vw, 3rem) !important;
+    line-height: 0.96 !important;
+  }
+
+  body .olr-page--coa-detail .olr-coa-detail__identity h2 {
+    margin-top: 1.5rem !important;
+  }
+
+  body .olr-page--coa-detail .olr-coa-detail__actions {
+    margin-top: 1.5rem !important;
+  }
+}

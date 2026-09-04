@@ -2,7 +2,7 @@
 
 Install the `off-label-coa-manager` directory as a WordPress plugin and activate it with WooCommerce active.
 
-Current build: **1.0.10**. This release sends COA product-return links to the clean `/catalog/{product-slug}/` route without changing report storage, routing, or product relationships.
+Current build: **1.0.17**. This release carries the approved singular-receipt presentation into production: the decorative COA seal and hero image are removed, the product heading is smaller and ink black, supporting copy keeps the ink color, and the black evidence banner keeps white text. Product-return links continue to use `/catalog/{product-slug}/`.
 
 ## One-time setup
 
