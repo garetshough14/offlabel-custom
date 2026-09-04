@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.1';
+	const VERSION              = '1.0.2';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
 	const PAGE_BACKUP_OPTION   = 'olr_production_rollout_page_backup_v1';
@@ -33,7 +33,7 @@ final class OLR_Production_Rollout {
 		add_management_page(
 			__( 'Off Label Production Rollout', 'off-label-production-rollout' ),
 			__( 'Off Label Rollout', 'off-label-production-rollout' ),
-			'manage_options',
+			'activate_plugins',
 			self::MENU_SLUG,
 			array( __CLASS__, 'render_admin_page' )
 		);
@@ -603,7 +603,7 @@ final class OLR_Production_Rollout {
 
 	/** Handle a nonce-protected admin request. */
 	public static function handle_action() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			wp_die( esc_html__( 'You are not allowed to run this rollout.', 'off-label-production-rollout' ) );
 		}
 		check_admin_referer( 'olr_production_rollout' );
@@ -627,7 +627,7 @@ final class OLR_Production_Rollout {
 
 	/** Render status and individually confirmed controls. */
 	public static function render_admin_page() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
 		}
 		$report = get_option( self::LAST_REPORT_OPTION, array() );
