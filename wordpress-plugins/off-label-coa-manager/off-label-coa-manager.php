@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label COA Manager
  * Description: Product-linked Certificates of Analysis, archive data, and branded receipt pages.
- * Version: 1.0.11
+ * Version: 1.0.12
  * Author: Off Label Research
  * Text Domain: off-label-coa-manager
  */
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_COA_VERSION', '1.0.11' );
+define( 'OLR_COA_VERSION', '1.0.12' );
 define( 'OLR_COA_FILE', __FILE__ );
 define( 'OLR_COA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -218,6 +218,12 @@ final class OLR_COA_Manager {
 
 	private function routed_product() {
 		$slug = sanitize_title( (string) get_query_var( 'olr_coa_product' ) );
+		if ( '' === $slug && isset( $_SERVER['REQUEST_URI'] ) ) {
+			$request_path = trim( (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ), '/' );
+			if ( preg_match( '#^coas/([^/]+)$#', $request_path, $matches ) ) {
+				$slug = sanitize_title( $matches[1] );
+			}
+		}
 		if ( '' === $slug || ! function_exists( 'wc_get_product' ) ) {
 			return false;
 		}
