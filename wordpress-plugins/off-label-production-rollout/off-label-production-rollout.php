@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.4';
+	const VERSION              = '1.0.5';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
 	const PAGE_BACKUP_OPTION   = 'olr_production_rollout_page_backup_v1';
@@ -382,7 +382,7 @@ final class OLR_Production_Rollout {
 			if ( $product instanceof WC_Product_Variable ) {
 				foreach ( $product->get_children() as $variation_id ) {
 					$variation = wc_get_product( $variation_id );
-					if ( $variation instanceof WC_Product_Variation && $variation->get_image_id() ) {
+					if ( $variation instanceof WC_Product_Variation && $variation->get_image_id( 'edit' ) ) {
 						$errors[] = sprintf( 'Variation %d retains a variation-specific image for: %s', $variation_id, $row['product_slug'] );
 					}
 				}

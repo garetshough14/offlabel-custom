@@ -1,6 +1,6 @@
 # Off Label Production Rollout
 
-Administrator-only, explicit-action tooling for the approved product-image and production-page rollout. Current build: **1.0.4**.
+Administrator-only, explicit-action tooling for the approved product-image and production-page rollout. Current build: **1.0.5**.
 
 - Activation performs no mutations.
 - Image preflight requires exactly 29 Live manifest rows, 27 unique bundled images, 1150x1600 dimensions, and the exact 29-product published catalog.
