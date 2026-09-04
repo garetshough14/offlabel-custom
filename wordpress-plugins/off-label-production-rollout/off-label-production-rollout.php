@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.6
+ * Version: 1.0.7
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.6';
+	const VERSION              = '1.0.7';
+	const DESIGN_SYSTEM_URL    = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@2ab4ebd385d25759233831763e840a66f35ff649/styles.css';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
 	const PAGE_BACKUP_OPTION   = 'olr_production_rollout_page_backup_v1';
@@ -24,8 +25,32 @@ final class OLR_Production_Rollout {
 
 	/** Register admin-only tools. Activation intentionally performs no work. */
 	public static function init() {
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'frontend_assets' ), 5 );
 		add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
 		add_action( 'admin_post_olr_production_rollout', array( __CLASS__, 'handle_action' ) );
+	}
+
+	/**
+	 * Load the approved shared design system on production pages.
+	 *
+	 * The isolated test-page seeder loaded styles.css as a normal WordPress
+	 * stylesheet. Promoted pages previously relied on GitPress preserving the
+	 * very large inline copy inside the managed header, which is not reliable
+	 * across every page/cache pipeline. Loading the identical, commit-pinned
+	 * stylesheet here keeps the production homepage and global chrome identical
+	 * to the approved test pages without changing their HTML or design rules.
+	 */
+	public static function frontend_assets() {
+		if ( is_admin() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'olr-production-design-system',
+			self::DESIGN_SYSTEM_URL,
+			array(),
+			self::VERSION
+		);
 	}
 
 	/** Add the guarded rollout screen under Tools. */

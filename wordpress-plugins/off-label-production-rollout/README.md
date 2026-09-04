@@ -1,6 +1,8 @@
 # Off Label Production Rollout
 
-Administrator-only, explicit-action tooling for the approved product-image and production-page rollout. Current build: **1.0.6**.
+Administrator-only, explicit-action tooling for the approved product-image and production-page rollout. Current build: **1.0.7**.
+
+Version 1.0.7 also loads the exact approved, commit-pinned shared design system on the public site. This gives the production homepage, managed header, and managed footer the same styling used by the approved test pages without changing their markup or the canonical stylesheet.
 
 - Activation performs no mutations.
 - Image preflight requires exactly 29 Live manifest rows, 27 unique bundled images, 1150x1600 dimensions, and the exact 29-product published catalog.
