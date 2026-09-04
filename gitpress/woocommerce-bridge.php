@@ -14,6 +14,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/*
+ * This repository is public. Never send a stale site-level GitPress token when
+ * fetching its contents, while leaving authentication for every other GitHub
+ * request untouched.
+ */
+add_filter(
+	'http_request_args',
+	static function ( $args, $url ) {
+		$parts = wp_parse_url( (string) $url );
+		$path  = isset( $parts['path'] ) ? (string) $parts['path'] : '';
+		if ( 'api.github.com' !== strtolower( (string) ( $parts['host'] ?? '' ) ) || 0 !== strpos( $path, '/repos/garetshough14/offlabel-custom/contents/' ) ) {
+			return $args;
+		}
+
+		if ( isset( $args['headers'] ) && is_array( $args['headers'] ) ) {
+			foreach ( array_keys( $args['headers'] ) as $header ) {
+				if ( 'authorization' === strtolower( (string) $header ) ) {
+					unset( $args['headers'][ $header ] );
+				}
+			}
+		}
+		return $args;
+	},
+	PHP_INT_MAX,
+	2
+);
+
 /* Retire the former editorial archive even if its WordPress page still exists. */
 add_action(
 	'template_redirect',
@@ -52,6 +79,10 @@ add_filter(
 add_action(
 	'init',
 	static function () {
+		$shop_page_id = absint( get_option( 'woocommerce_shop_page_id' ) );
+		if ( $shop_page_id ) {
+			add_rewrite_rule( '^catalog/?$', 'index.php?page_id=' . $shop_page_id, 'top' );
+		}
 		add_rewrite_rule( '^catalog/([^/]+)/?$', 'index.php?pagename=catalog-item&olr_product_slug=$matches[1]', 'top' );
 	},
 	1

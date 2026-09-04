@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.5';
+	const VERSION              = '1.0.6';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
 	const PAGE_BACKUP_OPTION   = 'olr_production_rollout_page_backup_v1';
@@ -461,6 +461,27 @@ final class OLR_Production_Rollout {
 		);
 	}
 
+	/** GitPress 1.2.5 page metadata keys. */
+	private static function gitpress_meta_keys() {
+		return array(
+			'_dgs_page_shortcode',
+			'_dgs_page_shortcode_render_mode',
+			'_dgs_page_shortcode_placement',
+			'_dgs_page_shortcode_full_width',
+			'_dgs_page_shortcode_full_page',
+		);
+	}
+
+	/** Unused legacy keys written by the first guarded promotion attempt. */
+	private static function legacy_gitpress_meta_keys() {
+		return array(
+			'dgs_page_shortcode',
+			'dgs_page_shortcode_render_mode',
+			'dgs_page_shortcode_placement',
+			'dgs_page_shortcode_full_width',
+		);
+	}
+
 	/** Read-only production-page readiness checks. */
 	public static function preflight_pages() {
 		$result = array( 'ok' => true, 'checks' => array(), 'errors' => array(), 'warnings' => array() );
@@ -490,6 +511,9 @@ final class OLR_Production_Rollout {
 		}
 		if ( ! function_exists( 'olr_catalog_url' ) || ! function_exists( 'olr_get_research_product_url' ) ) {
 			$result['errors'][] = 'The production WooCommerce bridge with catalog routing is not active.';
+		}
+		if ( ! class_exists( 'DGS_Page_Shortcode_Manager' ) ) {
+			$result['errors'][] = 'GitPress managed-page support is unavailable.';
 		}
 		if ( absint( get_option( 'woocommerce_checkout_page_id' ) ) < 1 ) {
 			$result['errors'][] = 'WooCommerce has no assigned Checkout page for payment/order endpoints.';
@@ -529,7 +553,7 @@ final class OLR_Production_Rollout {
 				),
 				'meta' => array(),
 			);
-			foreach ( array( 'dgs_page_shortcode', 'dgs_page_shortcode_render_mode', 'dgs_page_shortcode_placement', 'dgs_page_shortcode_full_width', self::TEST_PAGE_META ) as $meta_key ) {
+			foreach ( array_merge( self::gitpress_meta_keys(), self::legacy_gitpress_meta_keys(), array( self::TEST_PAGE_META ) ) as $meta_key ) {
 				$entry['meta'][ $meta_key ] = array(
 					'exists' => metadata_exists( 'post', $post->ID, $meta_key ),
 					'value'  => get_post_meta( $post->ID, $meta_key, true ),
@@ -552,7 +576,7 @@ final class OLR_Production_Rollout {
 				),
 				'meta' => array(),
 			);
-			foreach ( array( 'dgs_page_shortcode', 'dgs_page_shortcode_render_mode', 'dgs_page_shortcode_placement', 'dgs_page_shortcode_full_width', self::TEST_PAGE_META ) as $meta_key ) {
+			foreach ( array_merge( self::gitpress_meta_keys(), self::legacy_gitpress_meta_keys(), array( self::TEST_PAGE_META ) ) as $meta_key ) {
 				$entry['meta'][ $meta_key ] = array(
 					'exists' => metadata_exists( 'post', $test_page->ID, $meta_key ),
 					'value'  => get_post_meta( $test_page->ID, $meta_key, true ),
@@ -561,6 +585,39 @@ final class OLR_Production_Rollout {
 			$backup['pages'][ $test_page->ID ] = $entry;
 		}
 		return $backup;
+	}
+
+	/**
+	 * Extend an existing snapshot with GitPress 1.2.5 metadata before the first
+	 * corrected promotion. The earlier attempt did not mutate these keys.
+	 */
+	private static function ensure_gitpress_meta_backup() {
+		$backup = get_option( self::PAGE_BACKUP_OPTION, false );
+		if ( ! is_array( $backup ) || empty( $backup['pages'] ) ) {
+			return;
+		}
+
+		$changed = false;
+		foreach ( $backup['pages'] as $page_id => &$entry ) {
+			if ( ! isset( $entry['meta'] ) || ! is_array( $entry['meta'] ) ) {
+				$entry['meta'] = array();
+			}
+			foreach ( self::gitpress_meta_keys() as $meta_key ) {
+				if ( array_key_exists( $meta_key, $entry['meta'] ) ) {
+					continue;
+				}
+				$entry['meta'][ $meta_key ] = array(
+					'exists' => metadata_exists( 'post', absint( $page_id ), $meta_key ),
+					'value'  => get_post_meta( absint( $page_id ), $meta_key, true ),
+				);
+				$changed = true;
+			}
+		}
+		unset( $entry );
+
+		if ( $changed ) {
+			update_option( self::PAGE_BACKUP_OPTION, $backup, false );
+		}
 	}
 
 	/** Promote approved GitPress designs onto existing production pages. */
@@ -572,6 +629,8 @@ final class OLR_Production_Rollout {
 		$pages = self::production_pages();
 		if ( ! get_option( self::PAGE_BACKUP_OPTION, false ) ) {
 			update_option( self::PAGE_BACKUP_OPTION, self::capture_page_backup( $pages ), false );
+		} else {
+			self::ensure_gitpress_meta_backup();
 		}
 
 		foreach ( $pages as $key => $definition ) {
@@ -587,10 +646,14 @@ final class OLR_Production_Rollout {
 				self::restore_pages();
 				return array( 'ok' => false, 'errors' => array( $updated->get_error_message(), 'The page snapshot was restored.' ) );
 			}
-			update_post_meta( $definition['id'], 'dgs_page_shortcode', self::source_shortcode( $definition['fragment'] ) );
-			update_post_meta( $definition['id'], 'dgs_page_shortcode_render_mode', 'gitpress_managed' );
-			update_post_meta( $definition['id'], 'dgs_page_shortcode_placement', 'after' );
-			update_post_meta( $definition['id'], 'dgs_page_shortcode_full_width', '1' );
+			update_post_meta( $definition['id'], '_dgs_page_shortcode', self::source_shortcode( $definition['fragment'] ) );
+			update_post_meta( $definition['id'], '_dgs_page_shortcode_render_mode', 'gitpress_managed' );
+			update_post_meta( $definition['id'], '_dgs_page_shortcode_placement', 'after' );
+			update_post_meta( $definition['id'], '_dgs_page_shortcode_full_width', '1' );
+			update_post_meta( $definition['id'], '_dgs_page_shortcode_full_page', '1' );
+			foreach ( self::legacy_gitpress_meta_keys() as $legacy_meta_key ) {
+				delete_post_meta( $definition['id'], $legacy_meta_key );
+			}
 			if ( 'catalog-item' === $key ) {
 				delete_post_meta( $definition['id'], self::TEST_PAGE_META );
 			}
@@ -609,6 +672,45 @@ final class OLR_Production_Rollout {
 				'Retained the existing WooCommerce Checkout page for gateway callbacks and order endpoints.',
 				'Renamed the staged product-record page to the internal catalog-item route and removed its test marker.',
 			),
+		);
+	}
+
+	/** Verify the promoted page records and GitPress metadata without mutation. */
+	public static function verify_pages() {
+		$preflight = self::preflight_pages();
+		if ( empty( $preflight['ok'] ) ) {
+			return array( 'ok' => false, 'errors' => array_merge( array( 'Page verification was blocked by preflight.' ), $preflight['errors'] ) );
+		}
+
+		$errors = array();
+		foreach ( self::production_pages() as $key => $definition ) {
+			$post = get_post( $definition['id'] );
+			if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status ) {
+				$errors[] = 'Production page is not published: ' . $key;
+				continue;
+			}
+			if ( null !== $definition['title'] && $definition['title'] !== $post->post_title ) {
+				$errors[] = 'Production page title does not match: ' . $key;
+			}
+			if ( null !== $definition['slug'] && $definition['slug'] !== $post->post_name ) {
+				$errors[] = 'Production page slug does not match: ' . $key;
+			}
+			if ( self::source_shortcode( $definition['fragment'] ) !== get_post_meta( $post->ID, '_dgs_page_shortcode', true ) ) {
+				$errors[] = 'GitPress source does not match: ' . $key;
+			}
+			if ( 'gitpress_managed' !== get_post_meta( $post->ID, '_dgs_page_shortcode_render_mode', true ) || '1' !== (string) get_post_meta( $post->ID, '_dgs_page_shortcode_full_page', true ) ) {
+				$errors[] = 'GitPress Managed mode is not active: ' . $key;
+			}
+		}
+
+		return array(
+			'ok'     => empty( $errors ),
+			'errors' => $errors,
+			'checks' => empty( $errors ) ? array(
+				'All nine production page records use their approved GitPress source.',
+				'All production records are published in GitPress Managed full-page mode.',
+				'WooCommerce Shop, Cart, and separate Checkout assignments remain intact.',
+			) : array(),
 		);
 	}
 
@@ -718,6 +820,7 @@ final class OLR_Production_Rollout {
 			'restore_images'   => 'restore_images',
 			'preflight_pages'  => 'preflight_pages',
 			'promote_pages'    => 'promote_pages',
+			'verify_pages'     => 'verify_pages',
 			'restore_pages'    => 'restore_pages',
 			'retire_tests'     => 'retire_test_pages',
 			'cleanup_packages' => 'cleanup_failed_packages',
@@ -757,6 +860,7 @@ final class OLR_Production_Rollout {
 				array( 'Rollback images', 'restore_images', 'Restores saved product, gallery, and variation image IDs. Preserves all attachments.' ),
 				array( 'Page preflight', 'preflight_pages', 'Read-only: validates production page IDs, routes, Checkout 1.4.0, Build Your Box 1.3.3, and the bridge.' ),
 				array( 'Promote pages', 'promote_pages', 'Applies approved GitPress fragments to existing production pages and flushes rewrites.' ),
+				array( 'Verify promoted pages', 'verify_pages', 'Read-only: verifies all nine production records, slugs, GitPress sources, and managed full-page mode.' ),
 				array( 'Rollback pages', 'restore_pages', 'Restores saved page fields, GitPress metadata, and WooCommerce page options.' ),
 				array( 'Retire tests', 'retire_tests', 'Drafts only the exact seeder-marked test pages. Run only after production QA passes.' ),
 				array( 'Clean failed rollout packages', 'cleanup_packages', 'Removes only the three known failed rollout folders created during this deployment; preserves this active tool and all unrelated plugins.' ),
