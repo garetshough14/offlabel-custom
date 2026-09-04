@@ -186,6 +186,11 @@ add_action(
 			exit;
 		}
 
+		if ( 'testing' === $request_path ) {
+			wp_safe_redirect( home_url( '/coas/' ), 301 );
+			exit;
+		}
+
 		if ( 'checkout' === $request_path && ( ! function_exists( 'is_wc_endpoint_url' ) || ! is_wc_endpoint_url() ) ) {
 			wp_safe_redirect( home_url( '/cart/' ), 301 );
 			exit;
