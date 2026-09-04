@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Build Your Box
  * Description: Branded mix-and-match research box builder backed by native WooCommerce products, carts, and orders.
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Off Label Research
  * Text Domain: off-label-build-a-box
  * Requires Plugins: woocommerce
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Build_A_Box {
-	const VERSION             = '1.3.2';
+	const VERSION             = '1.3.3';
 	const PAGE_SLUG           = 'build-your-box';
 	const SHORTCODE           = 'olr_build_a_box';
 	const META_ELIGIBLE       = '_olr_box_eligible';
@@ -635,9 +635,12 @@ final class OLR_Build_A_Box {
 	 * @return string
 	 */
 	private function product_card( $data, $index ) {
-		$is_variable = 'variable' === $data['type'];
-		$price       = isset( $data['regular_price'] ) ? (float) $data['regular_price'] : 0.0;
-		$image_html  = ! empty( $data['image_id'] )
+		$is_variable       = 'variable' === $data['type'];
+		$variations        = $is_variable && ! empty( $data['variations'] ) ? array_values( $data['variations'] ) : array();
+		$has_options       = count( $variations ) > 1;
+		$default_variation = 1 === count( $variations ) ? $variations[0] : array();
+		$price             = isset( $data['regular_price'] ) ? (float) $data['regular_price'] : 0.0;
+		$image_html        = ! empty( $data['image_id'] )
 			? wp_get_attachment_image(
 				absint( $data['image_id'] ),
 				'woocommerce_single',
@@ -652,12 +655,12 @@ final class OLR_Build_A_Box {
 			: '';
 		ob_start();
 		?>
-		<article class="olr-build-box__product<?php echo $index >= 7 ? ' is-extra' : ''; ?>" data-product-card data-product-id="<?php echo esc_attr( (string) $data['id'] ); ?>" data-product-name="<?php echo esc_attr( $data['name'] ); ?>" data-product-image="<?php echo esc_url( $data['image'] ); ?>" data-product-image-srcset="<?php echo esc_attr( $data['image_srcset'] ); ?>" data-product-type="<?php echo esc_attr( $data['type'] ); ?>" data-regular-price="<?php echo esc_attr( (string) $price ); ?>">
+		<article class="olr-build-box__product<?php echo $index >= 7 ? ' is-extra' : ''; ?>" data-product-card data-product-id="<?php echo esc_attr( (string) $data['id'] ); ?>" data-product-name="<?php echo esc_attr( $data['name'] ); ?>" data-product-image="<?php echo esc_url( $data['image'] ); ?>" data-product-image-srcset="<?php echo esc_attr( $data['image_srcset'] ); ?>" data-product-type="<?php echo esc_attr( $data['type'] ); ?>" data-regular-price="<?php echo esc_attr( (string) $price ); ?>"<?php if ( $default_variation ) : ?> data-default-variation-id="<?php echo esc_attr( (string) $default_variation['id'] ); ?>" data-default-variation-name="<?php echo esc_attr( 'Option' === $default_variation['name'] ? '' : $default_variation['name'] ); ?>" data-default-variation-price="<?php echo esc_attr( (string) $default_variation['regular_price'] ); ?>" data-default-variation-image="<?php echo esc_url( $default_variation['image'] ); ?>"<?php endif; ?>>
 			<div class="olr-build-box__product-media"><?php echo wp_kses_post( $image_html ); ?></div>
 			<h3><?php echo esc_html( $data['name'] ); ?></h3>
 			<p class="olr-build-box__product-price"><?php echo wp_kses_post( $data['price_html'] ); ?></p>
-			<?php if ( $is_variable ) : ?>
-				<label class="olr-build-box__variation"><span class="screen-reader-text">Choose an option for <?php echo esc_html( $data['name'] ); ?></span><select data-variation-select><option value="">Choose an option</option><?php foreach ( $data['variations'] as $variation ) : ?><option value="<?php echo esc_attr( (string) $variation['id'] ); ?>" data-price="<?php echo esc_attr( (string) $variation['regular_price'] ); ?>" data-name="<?php echo esc_attr( $variation['name'] ); ?>" data-image="<?php echo esc_url( $variation['image'] ); ?>" data-image-srcset="<?php echo esc_attr( $variation['image_srcset'] ); ?>"><?php echo esc_html( $variation['name'] ); ?> — <?php echo wp_kses_post( $variation['price_text'] ); ?></option><?php endforeach; ?></select></label>
+			<?php if ( $has_options ) : ?>
+				<label class="olr-build-box__variation"><span class="screen-reader-text">Option for <?php echo esc_html( $data['name'] ); ?></span><select data-variation-select><option value="">Option</option><?php foreach ( $variations as $variation ) : ?><option value="<?php echo esc_attr( (string) $variation['id'] ); ?>" data-price="<?php echo esc_attr( (string) $variation['regular_price'] ); ?>" data-name="<?php echo esc_attr( $variation['name'] ); ?>" data-image="<?php echo esc_url( $variation['image'] ); ?>" data-image-srcset="<?php echo esc_attr( $variation['image_srcset'] ); ?>"><?php echo esc_html( $variation['name'] ); ?> — <?php echo wp_kses_post( $variation['price_text'] ); ?></option><?php endforeach; ?></select></label>
 			<?php endif; ?>
 			<div class="olr-build-box__quantity" data-quantity-control>
 				<button type="button" data-quantity-change="-1" aria-label="Decrease <?php echo esc_attr( $data['name'] ); ?> quantity">−</button>
@@ -751,11 +754,11 @@ final class OLR_Build_A_Box {
 			}
 			$variation_image_id = $variation->get_image_id() ? $variation->get_image_id() : $image_id;
 			$variation_image    = wp_get_attachment_image_url( $variation_image_id, 'woocommerce_single' );
-			$variation_name     = function_exists( 'wc_get_formatted_variation' ) ? wp_strip_all_tags( wc_get_formatted_variation( $variation, true, true, true ) ) : '';
+			$variation_name     = $this->variation_option_name( $variation );
 			$display_regular = $this->display_regular_price( $variation );
 			$data['variations'][] = array(
 				'id'            => $variation->get_id(),
-				'name'          => $variation_name ? $variation_name : sprintf( __( 'Option %d', 'off-label-build-a-box' ), $variation->get_id() ),
+				'name'          => $variation_name,
 				'image'         => $variation_image ? $variation_image : $image,
 				'image_srcset'  => (string) wp_get_attachment_image_srcset( $variation_image_id, 'woocommerce_single' ),
 				'regular_price' => $display_regular,
@@ -773,6 +776,35 @@ final class OLR_Build_A_Box {
 		$data['regular_price'] = $min;
 		$data['price_html']    = $min === $max ? wc_price( $min ) : wc_format_price_range( $min, $max );
 		return $data;
+	}
+
+	/**
+	 * Return a customer-facing variation label without exposing internal IDs.
+	 * Strength attributes use the compact "10 MG" format used by the catalog.
+	 *
+	 * @param WC_Product_Variation $variation Variation object.
+	 * @return string
+	 */
+	private function variation_option_name( $variation ) {
+		$attributes = method_exists( $variation, 'get_variation_attributes' ) ? $variation->get_variation_attributes() : array();
+		foreach ( $attributes as $attribute_key => $attribute_value ) {
+			$value = trim( preg_replace( '/[-_]+/', ' ', rawurldecode( (string) $attribute_value ) ) );
+			if ( '' === $value ) {
+				continue;
+			}
+			$key = strtolower( str_replace( 'attribute_', '', (string) $attribute_key ) );
+			if ( false !== strpos( $key, 'mg' ) || preg_match( '/\bmg\b/i', $value ) ) {
+				$value = trim( preg_replace( '/\s*mg\s*$/i', '', $value ) );
+				return strtoupper( $value . ' MG' );
+			}
+		}
+
+		$formatted = function_exists( 'wc_get_formatted_variation' ) ? wp_strip_all_tags( wc_get_formatted_variation( $variation, true, true, false ) ) : '';
+		$formatted = trim( preg_replace( '/^mg\s*:\s*/i', '', $formatted ) );
+		if ( $formatted && preg_match( '/^\d+(?:\.\d+)?$/', $formatted ) ) {
+			$formatted .= ' MG';
+		}
+		return $formatted ? strtoupper( $formatted ) : __( 'Option', 'off-label-build-a-box' );
 	}
 
 	/**

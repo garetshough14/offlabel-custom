@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Off Label checkout visual fixture</title>
+  <link rel="stylesheet" href="../assets/checkout-test.css">
+</head>
+<body class="olr-checkout-test-page">
+  <div class="olr-checkout-test woocommerce olr-checkout-enhanced" data-olr-page="checkout-test" data-olr-checkout-stage="shipping">
+    <nav class="olr-checkout-test__steps" aria-label="Checkout progress"><button type="button"><b>1.</b> Information</button><span></span><button type="button" aria-current="step"><b>2.</b> Shipping</button><span></span><button type="button"><b>3.</b> Payment</button></nav>
+    <main class="olr-checkout-test__main">
+      <div class="woocommerce-info">Research Box pricing is locked. Coupon codes apply only to eligible products outside the box.</div>
+      <form class="checkout woocommerce-checkout">
+        <div id="customer_details"><div class="col-1"><div class="woocommerce-billing-fields"><h3>Shipping address</h3><div class="woocommerce-billing-fields__field-wrapper"><p class="form-row" id="billing_first_name_field"><label>First name *</label><input class="input-text" value="Research"></p><p class="form-row" id="billing_last_name_field"><label>Last name *</label><input class="input-text" value="Member"></p><p class="form-row"><label>Country / Region *</label><select><option>United States (US)</option></select></p><p class="form-row"><label>Street address *</label><input class="input-text" value="123 Research Way"></p><p class="form-row"><label>Apartment, suite, unit, etc. (optional)</label><input class="input-text"></p><p class="form-row"><label>Town / City *</label><input class="input-text"></p></div><p class="form-row olr-checkout-consent-field"><label class="checkbox"><input type="checkbox"> <span>Email me research updates and new releases</span></label></p><div class="olr-shipping-methods"><h3 class="olr-shipping-methods__title">Shipping method</h3><ul class="woocommerce-shipping-methods"><li><input type="radio" checked><label>Flat rate: <span>$8.99</span></label></li><li><input type="radio"><label>Free shipping</label></li></ul></div><nav class="olr-checkout-navigation"><a href="#">← Back</a><button class="olr-checkout-next">Continue to payment →</button></nav></div></div></div>
+        <h3 id="order_review_heading">Your order</h3>
+        <div id="order_review"><table class="shop_table woocommerce-checkout-review-order-table"><tbody><tr class="cart_item"><td class="product-name"><div class="olr-checkout-test__product"><div aria-hidden="true">▦</div><span class="olr-checkout-test__product-copy">The Ten Research Box<small>10 × selected bottles</small></span></div></td><td class="product-total"><span class="amount">$175.00</span></td></tr><tr class="cart_item"><td class="product-name"><div class="olr-checkout-test__product"><div aria-hidden="true">◫</div><span class="olr-checkout-test__product-copy">Ordinary product</span></div><span class="olr-checkout-quantity"><button>−</button><output>1</output><button>+</button></span><button class="olr-checkout-remove">Remove</button></td><td class="product-total"><span class="amount">$55.00</span></td></tr></tbody><tfoot><tr class="cart-subtotal"><th>Subtotal</th><td>$230.00</td></tr><tr class="cart-discount"><th>Coupon: Research</th><td>−$11.00</td></tr><tr class="order-total"><th>Total</th><td>$227.00</td></tr></tfoot></table><div class="olr-checkout-test__promo"><label>Promo code</label><div><input placeholder="Enter code"><button>Apply</button></div></div><div id="payment" class="woocommerce-checkout-payment"><ul class="payment_methods"><li><input type="radio" checked><label>Same-day bank payment</label><div class="payment_box">Secure payment instructions appear here.</div></li></ul><div class="place-order"><p class="form-row"><label class="checkbox"><input type="checkbox"> I agree to the website terms and conditions</label></p><button id="place_order">Place order</button></div></div></div>
+      </form>
+    </main>
+  </div>
+</body>
+</html>

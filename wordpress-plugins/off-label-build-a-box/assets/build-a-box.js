@@ -66,11 +66,19 @@
       if (card.dataset.productType === 'variable') {
         var select = card.querySelector('[data-variation-select]');
         var option = select && select.options[select.selectedIndex];
-        variationId = select ? parseInt(select.value || '0', 10) : 0;
-        if (!variationId || !option) return null;
-        regularPrice = parseFloat(option.dataset.price || '0');
-        image = option.dataset.image || image;
-        name += option.dataset.name ? ' — ' + option.dataset.name : '';
+        if (select) {
+          variationId = parseInt(select.value || '0', 10);
+          if (!variationId || !option) return null;
+          regularPrice = parseFloat(option.dataset.price || '0');
+          image = option.dataset.image || image;
+          name += option.dataset.name ? ' — ' + option.dataset.name : '';
+        } else {
+          variationId = parseInt(card.dataset.defaultVariationId || '0', 10);
+          if (!variationId) return null;
+          regularPrice = parseFloat(card.dataset.defaultVariationPrice || regularPrice || '0');
+          image = card.dataset.defaultVariationImage || image;
+          name += card.dataset.defaultVariationName ? ' — ' + card.dataset.defaultVariationName : '';
+        }
       }
       if (!productId || !regularPrice) return null;
       return {

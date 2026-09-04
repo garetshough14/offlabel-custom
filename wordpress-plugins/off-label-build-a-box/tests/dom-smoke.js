@@ -56,7 +56,10 @@ dom.window.addEventListener('load', () => {
   assert(root.querySelector('[data-box-count]').textContent === '0', 'Start over clears every selected bottle.');
   assert(root.querySelector('[data-submit-box]').disabled === true, 'An empty box cannot be submitted.');
 
+  addButtons[3].click();
+  assert(root.querySelector('[data-box-count]').textContent === '1', 'A single-variation product adds without a visible selector.');
+  assert(root.querySelector('.olr-build-box__summary-item').textContent.includes('10 MG'), 'The automatic variation keeps its customer-facing MG label.');
+
   console.log('DOM smoke checks completed.');
   dom.window.close();
 });
-

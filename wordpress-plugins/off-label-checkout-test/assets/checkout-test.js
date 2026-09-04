@@ -1,4 +1,25 @@
-(function ($) {
+(function (factory) {
+  'use strict';
+
+  var attempts = 0;
+
+  function start() {
+    var jq = window.jQuery;
+    if (jq && typeof jq.ajax === 'function' && jq.fn && typeof jq.fn.on === 'function') {
+      factory(jq);
+      return;
+    }
+
+    attempts += 1;
+    if (attempts < 100) window.setTimeout(start, 50);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})(function ($) {
   'use strict';
 
   var root = document.querySelector('[data-olr-page="checkout-test"].olr-checkout-test');
@@ -8,6 +29,7 @@
   var stages = ['information', 'shipping', 'payment'];
   var status = root.querySelector('.olr-checkout-test__status');
   var form;
+  var initialRefreshGuard;
 
   root.classList.add('olr-checkout-enhanced');
 
@@ -326,6 +348,21 @@
     review.appendChild(notice);
   }
 
+  function releaseStaleInitialRefresh() {
+    if (!form || stage !== 'information' || root.hasAttribute('data-olr-cart-updating')) return;
+    form.querySelectorAll('.woocommerce-checkout-review-order-table, #payment').forEach(function (target) {
+      var $target = $(target);
+      if (typeof $target.unblock === 'function') $target.unblock();
+      else target.querySelectorAll('.blockUI').forEach(function (overlay) { overlay.remove(); });
+    });
+    root.removeAttribute('aria-busy');
+  }
+
+  function guardInitialRefresh() {
+    window.clearTimeout(initialRefreshGuard);
+    initialRefreshGuard = window.setTimeout(releaseStaleInitialRefresh, 4000);
+  }
+
   function prepare() {
     form = root.querySelector('form.checkout');
     if (!form) return;
@@ -365,12 +402,15 @@
   });
 
   $(document.body).on('updated_checkout', function () {
+    window.clearTimeout(initialRefreshGuard);
     prepare();
     root.setAttribute('data-olr-checkout-stage', stage);
     announce('Order totals updated.');
   });
 
   $(document.body).on('checkout_error', function () {
+    window.clearTimeout(initialRefreshGuard);
+    releaseStaleInitialRefresh();
     var error = root.querySelector('.woocommerce-error');
     if (error) {
       error.setAttribute('role', 'alert');
@@ -380,4 +420,5 @@
   });
 
   prepare();
-})(jQuery);
+  guardInitialRefresh();
+});

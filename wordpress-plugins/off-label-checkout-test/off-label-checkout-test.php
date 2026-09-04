@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Checkout Test
  * Description: Isolated, branded WooCommerce checkout preview at /checkout-test/ with active store gateways and a non-charging test option.
- * Version: 1.3.8
+ * Version: 1.3.10
  * Author: Off Label Research
  * Text Domain: off-label-checkout-test
  * Requires Plugins: woocommerce
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OLR_CHECKOUT_TEST_VERSION', '1.3.8' );
+define( 'OLR_CHECKOUT_TEST_VERSION', '1.3.10' );
 define( 'OLR_CHECKOUT_TEST_FILE', __FILE__ );
 
 register_activation_hook(
@@ -184,6 +184,22 @@ add_action(
 		);
 	},
 	30
+);
+
+/* Advertising pixels are unnecessary on this noindex staging route. Some
+ * pixel handlers throw during WooCommerce's initial totals refresh and can
+ * leave the order review permanently blocked, so keep them off this page. */
+add_action(
+	'wp_enqueue_scripts',
+	static function () {
+		if ( ! olr_checkout_test_is_page() ) {
+			return;
+		}
+		foreach ( array( 'snapchat_tracking', 'reddit_tracking' ) as $handle ) {
+			wp_dequeue_script( $handle );
+		}
+	},
+	999
 );
 
 add_filter(
