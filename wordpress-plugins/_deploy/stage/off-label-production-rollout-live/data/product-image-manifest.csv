@@ -1,0 +1,33 @@
+website_product,product_slug,image_file,site_status,source,notes
+BAC Water,bac-water,bac.jpg,Live,Custom replacement,"Simplified BAC label; no volume printed"
+BPC / TB-500 Blend,bpc-tb-500-blend,bpc-tb-500-blend-5-5mg.jpg,Live,Google Drive,
+BPC-157,bpc-157,bpc-157-10mg.jpg,Live,Google Drive,
+Cagrilintide,cagrilintide,cagrilintide-5mg.jpg,Live,Custom replacement,"Matches current live strength"
+CJC-1295 / Ipamorelin (No DAC),cjc-1295-ipamorelin-no-dac,cjc-1295-ipamorelin-no-dac-5-5mg.jpg,Live,Google Drive,
+DSIP,dsip,dsip-10mg.jpg,Live,Custom replacement,"Matches current live strength"
+Epitalon,epitalon,epitalon-10mg.jpg,Live,Google Drive,
+GHK-Cu,ghk-cu,ghk-cu-50mg.jpg,Live,Google Drive,
+GLOW,glow,glow-50-10-10mg.jpg,Live,Google Drive,
+Glutathione,glutathione,glutathione-1500mg.jpg,Live,Custom replacement,
+Ipamorelin,ipamorelin,ipamorelin-10mg.jpg,Live,Google Drive,
+KLOW,klow,klow.jpg,Live,Custom replacement,"Uses confirmed ingredient line without disputed strength"
+KPV,kpv,kpv-10mg.jpg,Live,Google Drive,
+MOTS-C,mots-c,mots-c-10mg.jpg,Live,Google Drive,
+MT/1,mt-1,mt-1-10mg.jpg,Live,Custom replacement,
+MT/2,mt-2,mt-2-10mg.jpg,Live,Custom replacement,
+NAD+,nad,nad-plus-500mg.jpg,Live,Google Drive,
+NAD+ Bundle,nad-bundle,nad-plus-500mg.jpg,Live,Shared image,"Reuse the NAD+ base-product image"
+PT-141,pt-141,pt-141-10mg.jpg,Live,Google Drive,
+RT-3,glp-3-rt-3,rt-3.jpg,Live,Custom replacement,"Strength-neutral label for selector product"
+RT-3 Bundle,glp-3-rt-bundle-4,rt-3.jpg,Live,Shared image,"Reuse the strength-neutral RT-3 image"
+Selank,selank,selank-10mg.jpg,Live,Google Drive,
+Semax,semax,semax-10mg.jpg,Live,Google Drive,
+Sermorelin,sermorelin,sermorelin.jpg,Live,Custom replacement,"Strength-neutral label for selector product"
+TB-500,tb-500,tb-500-10mg.jpg,Live,Google Drive,
+Tesamorelin,tesamorelin,tesamorelin-10mg.jpg,Live,Google Drive,
+Tesamorelin / Ipamorelin,tesamorelin-ipamorelin,tesamorelin-ipamorelin-10-3mg.jpg,Live,Google Drive,
+Thymosin Alpha-1,thymosin-alpha-1,thymosin-alpha-1-10mg.jpg,Live,Google Drive,"Drive source filename misspelled Thymosin; canonical filename corrected"
+TZ-2,glp-2-tirz-2,tz-2.jpg,Live,Custom replacement,"Strength-neutral label for selector product"
+CJC-1295 / Ipamorelin,cjc-1295-ipamorelin,cjc-1295-ipamorelin-5-5mg.jpg,Drive-only,Google Drive,"Future asset; DAC status not specified in source filename"
+N-Acetyl Semax Amidate,n-acetyl-semax-amidate,n-acetyl-semax-amidate-30mg.jpg,Drive-only,Google Drive,Future asset
+SNAP-8,snap-8,snap-8-10mg.jpg,Drive-only,Google Drive,Future asset
