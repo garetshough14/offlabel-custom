@@ -506,6 +506,16 @@ body.olr-checkout-test-page .olr-checkout-test__main :is(.woocommerce-info, .woo
 .olr-checkout-quantity output { display: block; text-align: center; font-size: 11px; font-weight: 700; line-height: 28px; }
 .olr-checkout-remove { margin: 9px 0 0; padding: 0; border: 0; border-bottom: 1px solid currentColor; border-radius: 0; background: transparent; color: var(--olr-checkout-muted); cursor: pointer; font: inherit; font-size: 9px; font-weight: 700; letter-spacing: .08em; line-height: 1.4; text-transform: uppercase; vertical-align: middle; }
 .olr-checkout-test[data-olr-cart-updating] .shop_table { opacity: .58; pointer-events: none; }
+
+/* Last-resort fail-safe if a third-party script prevents WooCommerce's unblock callback. */
+@keyframes olr-checkout-overlay-timeout {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+.olr-checkout-test #order_review .blockUI.blockOverlay {
+  animation: olr-checkout-overlay-timeout .01s linear 12s 1 forwards !important;
+}
+
 .olr-checkout-test .cart-subtotal th,
 .olr-checkout-test .cart-discount th,
 .olr-checkout-test .woocommerce-shipping-totals th,

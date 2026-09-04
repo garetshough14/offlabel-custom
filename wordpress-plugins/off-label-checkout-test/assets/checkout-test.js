@@ -30,6 +30,8 @@
   var status = root.querySelector('.olr-checkout-test__status');
   var form;
   var initialRefreshGuard;
+  var checkoutOverlayObserver;
+  var refreshTimeout = 10000;
 
   root.classList.add('olr-checkout-enhanced');
 
@@ -348,19 +350,50 @@
     review.appendChild(notice);
   }
 
-  function releaseStaleInitialRefresh() {
-    if (!form || stage !== 'information' || root.hasAttribute('data-olr-cart-updating')) return;
-    form.querySelectorAll('.woocommerce-checkout-review-order-table, #payment').forEach(function (target) {
+  function releaseStaleCheckoutRefresh() {
+    if (!form) return;
+    if (root.hasAttribute('data-olr-cart-updating')) {
+      guardCheckoutRefresh(1500);
+      return;
+    }
+
+    form.querySelectorAll('.woocommerce-checkout-review-order-table, .woocommerce-checkout-payment, #order_review').forEach(function (target) {
       var $target = $(target);
       if (typeof $target.unblock === 'function') $target.unblock();
       else target.querySelectorAll('.blockUI').forEach(function (overlay) { overlay.remove(); });
     });
+    form.querySelectorAll('#order_review .blockUI, #order_review .blockOverlay').forEach(function (overlay) { overlay.remove(); });
     root.removeAttribute('aria-busy');
   }
 
-  function guardInitialRefresh() {
+  function guardCheckoutRefresh(delay) {
     window.clearTimeout(initialRefreshGuard);
-    initialRefreshGuard = window.setTimeout(releaseStaleInitialRefresh, 4000);
+    initialRefreshGuard = window.setTimeout(releaseStaleCheckoutRefresh, delay || refreshTimeout);
+  }
+
+  function observesCheckoutOverlay(node) {
+    if (!node || node.nodeType !== 1) return false;
+    if (node.matches && node.matches('.blockUI, .blockOverlay')) return true;
+    return !!(node.querySelector && node.querySelector('.blockUI, .blockOverlay'));
+  }
+
+  function watchCheckoutOverlays() {
+    if (checkoutOverlayObserver || !window.MutationObserver) return;
+    checkoutOverlayObserver = new MutationObserver(function (mutations) {
+      var overlayAdded = mutations.some(function (mutation) {
+        return Array.prototype.some.call(mutation.addedNodes, observesCheckoutOverlay);
+      });
+      if (overlayAdded) guardCheckoutRefresh();
+    });
+    checkoutOverlayObserver.observe(root, { childList: true, subtree: true });
+  }
+
+  function isOrderReviewRequest(settings) {
+    var url = settings && settings.url ? String(settings.url) : '';
+    var data = settings && settings.data ? String(settings.data) : '';
+    return url.indexOf('wc-ajax=update_order_review') !== -1
+      || url.indexOf('wc_ajax=update_order_review') !== -1
+      || data.indexOf('update_order_review') !== -1;
   }
 
   function prepare() {
@@ -404,13 +437,18 @@
   $(document.body).on('updated_checkout', function () {
     window.clearTimeout(initialRefreshGuard);
     prepare();
+    releaseStaleCheckoutRefresh();
     root.setAttribute('data-olr-checkout-stage', stage);
     announce('Order totals updated.');
   });
 
+  $(document.body).on('update_checkout', function () {
+    guardCheckoutRefresh();
+  });
+
   $(document.body).on('checkout_error', function () {
     window.clearTimeout(initialRefreshGuard);
-    releaseStaleInitialRefresh();
+    releaseStaleCheckoutRefresh();
     var error = root.querySelector('.woocommerce-error');
     if (error) {
       error.setAttribute('role', 'alert');
@@ -419,6 +457,19 @@
     }
   });
 
+  $(document).ajaxComplete(function (event, xhr, settings) {
+    if (!isOrderReviewRequest(settings)) return;
+    window.clearTimeout(initialRefreshGuard);
+    window.setTimeout(releaseStaleCheckoutRefresh, 0);
+  });
+
+  $(document).ajaxError(function (event, xhr, settings) {
+    if (!isOrderReviewRequest(settings)) return;
+    window.clearTimeout(initialRefreshGuard);
+    releaseStaleCheckoutRefresh();
+  });
+
   prepare();
-  guardInitialRefresh();
+  watchCheckoutOverlays();
+  guardCheckoutRefresh(6000);
 });

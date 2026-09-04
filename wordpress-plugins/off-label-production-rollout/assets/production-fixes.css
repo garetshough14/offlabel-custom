@@ -130,6 +130,11 @@ body .olr-gitpress-site.olr-redesign .olr-managed-header .olr-bag-link svg {
   flex: 0 0 1.125rem !important;
 }
 
+/* Product records show whether an item can be purchased, not private stock counts. */
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-view__purchase .stock.in-stock {
+  display: none !important;
+}
+
 @media (max-width: 56rem) {
   body .olr-gitpress-site.olr-redesign.olr-managed-header,
   body .olr-gitpress-site.olr-redesign.olr-managed-header .site-header,
