@@ -1,0 +1,108 @@
+/* Production-only precedence fixes. The canonical design system remains unchanged. */
+
+body dialog.olr-compliance-gate .olr-compliance-gate__panel {
+  max-height: calc(100dvh - 1.3rem) !important;
+  overflow: hidden !important;
+}
+
+body dialog.olr-compliance-gate .olr-compliance-gate__consent {
+  display: block !important;
+  width: min(100%, 43rem) !important;
+  max-width: 43rem !important;
+  box-sizing: border-box !important;
+}
+
+body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation {
+  display: grid !important;
+  width: 100% !important;
+  max-width: 34rem !important;
+  grid-template-columns: 1.35rem minmax(0, 1fr) !important;
+  align-items: start !important;
+  justify-items: stretch !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+}
+
+body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation > input[type="checkbox"] {
+  appearance: none !important;
+  display: block !important;
+  visibility: visible !important;
+  position: static !important;
+  grid-column: 1 !important;
+  float: none !important;
+  clip: auto !important;
+  clip-path: none !important;
+  width: 1.35rem !important;
+  min-width: 1.35rem !important;
+  max-width: 1.35rem !important;
+  height: 1.35rem !important;
+  margin: 0.08rem 0 0 !important;
+  border: 1.5px solid var(--olr-gate-ink, #0d0d0d) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation > input[type="checkbox"]:checked {
+  background: var(--olr-gate-ink, #0d0d0d) !important;
+  box-shadow: inset 0 0 0 0.26rem var(--olr-gate-bone, #f6f4ef) !important;
+}
+
+body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation > span {
+  display: block !important;
+  position: static !important;
+  grid-column: 2 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+}
+
+body dialog.olr-compliance-gate .olr-compliance-gate__actions {
+  position: static !important;
+  width: 100% !important;
+  max-width: 34rem !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+body dialog.olr-compliance-gate .olr-compliance-gate__actions button {
+  position: static !important;
+  width: 100% !important;
+  max-width: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+@media (max-width: 38rem) {
+  body dialog.olr-compliance-gate .olr-compliance-gate__panel {
+    overflow-y: auto !important;
+  }
+
+  body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation {
+    grid-template-columns: 1.1rem minmax(0, 1fr) !important;
+  }
+
+  body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation > input[type="checkbox"] {
+    width: 1.1rem !important;
+    min-width: 1.1rem !important;
+    max-width: 1.1rem !important;
+    height: 1.1rem !important;
+  }
+}
+
+@media (max-height: 44rem) and (min-width: 38.01rem) {
+  body dialog.olr-compliance-gate .olr-compliance-gate__panel {
+    overflow-y: auto !important;
+  }
+}

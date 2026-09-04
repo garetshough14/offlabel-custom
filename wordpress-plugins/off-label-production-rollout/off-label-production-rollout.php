@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.8
+ * Version: 1.0.9
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.8';
+	const VERSION              = '1.0.9';
 	const DESIGN_SYSTEM_URL    = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@2ab4ebd385d25759233831763e840a66f35ff649/styles.css';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
@@ -52,15 +52,22 @@ final class OLR_Production_Rollout {
 			self::VERSION
 		);
 
-		/*
-		 * Divi applies broad label/span sizing rules after GitPress renders the
-		 * homepage. Lock only the compliance consent controls back to the approved
-		 * grid so its copy cannot collapse into a one-character-wide column.
-		 */
-		wp_add_inline_style(
-			'olr-production-design-system',
-			'body dialog.olr-compliance-gate .olr-compliance-gate__panel{max-height:calc(100dvh - 1.3rem)!important;overflow-y:auto!important}body dialog.olr-compliance-gate .olr-compliance-gate__consent{display:block!important;width:min(100%,43rem)!important;max-width:43rem!important;box-sizing:border-box!important}body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation{display:grid!important;width:100%!important;max-width:34rem!important;grid-template-columns:1.35rem minmax(0,1fr)!important;align-items:start!important;justify-items:stretch!important;box-sizing:border-box!important;white-space:normal!important}body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation>input[type="checkbox"]{display:block!important;position:static!important;grid-column:1!important;float:none!important;width:1.35rem!important;min-width:1.35rem!important;max-width:1.35rem!important;height:1.35rem!important;margin:.08rem 0 0!important;opacity:1!important}body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation>span{display:block!important;position:static!important;grid-column:2!important;width:auto!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important;white-space:normal!important;word-break:normal!important;overflow-wrap:normal!important;writing-mode:horizontal-tb!important;text-orientation:mixed!important}body dialog.olr-compliance-gate .olr-compliance-gate__actions{position:static!important;width:100%!important;max-width:34rem!important;opacity:1!important;transform:none!important}body dialog.olr-compliance-gate .olr-compliance-gate__actions button{position:static!important;width:100%!important;max-width:none!important;opacity:1!important;transform:none!important}@media(max-width:38rem){body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation{grid-template-columns:1.1rem minmax(0,1fr)!important}body dialog.olr-compliance-gate label.olr-compliance-gate__confirmation>input[type="checkbox"]{width:1.1rem!important;min-width:1.1rem!important;max-width:1.1rem!important;height:1.1rem!important}}'
+		wp_enqueue_style(
+			'olr-production-presentation-fixes',
+			plugins_url( 'assets/production-fixes.css', __FILE__ ),
+			array( 'olr-production-design-system' ),
+			self::VERSION
 		);
+
+		if ( is_front_page() ) {
+			wp_enqueue_script(
+				'olr-compliance-gate',
+				plugins_url( 'assets/olr-compliance-gate.js', __FILE__ ),
+				array(),
+				self::VERSION,
+				true
+			);
+		}
 	}
 
 	/** Add the guarded rollout screen under Tools. */
