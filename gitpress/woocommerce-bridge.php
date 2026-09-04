@@ -88,6 +88,63 @@ add_action(
 	1
 );
 
+/** Return whether the current public request is the production catalog root. */
+function olr_is_catalog_root_request() {
+	if ( is_admin() || ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return false;
+	}
+
+	$request_path = trim( (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ), '/' );
+	return 'catalog' === $request_path;
+}
+
+/*
+ * WooCommerce turns its assigned Shop page back into a product archive during
+ * pre_get_posts. Restore that exact request to the existing page record so
+ * GitPress can render the approved full-page catalog while the Shop page ID and
+ * WooCommerce assignment remain unchanged.
+ */
+add_action(
+	'pre_get_posts',
+	static function ( $query ) {
+		if ( ! $query instanceof WP_Query || ! $query->is_main_query() || ! olr_is_catalog_root_request() ) {
+			return;
+		}
+
+		$shop_page_id = absint( get_option( 'woocommerce_shop_page_id' ) );
+		if ( ! $shop_page_id ) {
+			return;
+		}
+
+		$query->set( 'page_id', $shop_page_id );
+		$query->set( 'post_type', 'page' );
+		$query->set( 'name', '' );
+		$query->set( 'pagename', '' );
+		$query->set( 'product', '' );
+		$query->set( 'product_cat', '' );
+		$query->set( 'product_tag', '' );
+		$query->set( 'wc_query', '' );
+		$query->set( 'posts_per_page', 1 );
+
+		$query->is_page              = true;
+		$query->is_singular          = true;
+		$query->is_archive           = false;
+		$query->is_post_type_archive = false;
+		$query->is_tax               = false;
+	},
+	PHP_INT_MAX
+);
+
+add_action(
+	'wp',
+	static function () {
+		if ( olr_is_catalog_root_request() ) {
+			remove_filter( 'template_include', array( 'WC_Template_Loader', 'template_loader' ), 10 );
+		}
+	},
+	PHP_INT_MAX
+);
+
 add_filter(
 	'post_type_link',
 	static function ( $url, $post ) {
