@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.3';
+	const VERSION              = '1.0.4';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
 	const PAGE_BACKUP_OPTION   = 'olr_production_rollout_page_backup_v1';
@@ -340,6 +340,70 @@ final class OLR_Production_Rollout {
 		);
 	}
 
+	/** Verify every canonical image association after seeding. This method is read-only. */
+	public static function verify_images() {
+		$preflight = self::preflight_images();
+		if ( empty( $preflight['ok'] ) ) {
+			return array( 'ok' => false, 'errors' => array_merge( array( 'Image verification was blocked by preflight.' ), $preflight['errors'] ) );
+		}
+
+		$rows        = self::live_rows();
+		$errors      = array();
+		$attachments = array();
+		foreach ( $rows as $row ) {
+			$product = self::product_by_slug( $row['product_slug'] );
+			if ( ! $product instanceof WC_Product ) {
+				$errors[] = 'Product not found during verification: ' . $row['product_slug'];
+				continue;
+			}
+
+			$image_id = (int) $product->get_image_id();
+			if ( ! $image_id ) {
+				$errors[] = 'Canonical featured image is missing for: ' . $row['product_slug'];
+				continue;
+			}
+
+			$attached_file = get_attached_file( $image_id );
+			$source_file   = (string) get_post_meta( $image_id, self::ATTACHMENT_FILE_META, true );
+			$source_hash   = (string) hash_file( 'sha256', self::image_path( $row['image_file'] ) );
+			$attached_hash = $attached_file && is_readable( $attached_file ) ? (string) hash_file( 'sha256', $attached_file ) : '';
+			if ( $row['image_file'] !== $source_file || ! $attached_hash || ! hash_equals( $source_hash, $attached_hash ) ) {
+				$errors[] = 'Featured image does not match the canonical file for: ' . $row['product_slug'];
+			}
+
+			if ( isset( $attachments[ $row['image_file'] ] ) && $attachments[ $row['image_file'] ] !== $image_id ) {
+				$errors[] = 'A shared canonical file uses multiple attachments: ' . $row['image_file'];
+			}
+			$attachments[ $row['image_file'] ] = $image_id;
+
+			if ( $product->get_gallery_image_ids() ) {
+				$errors[] = 'Product gallery was not cleared for: ' . $row['product_slug'];
+			}
+			if ( $product instanceof WC_Product_Variable ) {
+				foreach ( $product->get_children() as $variation_id ) {
+					$variation = wc_get_product( $variation_id );
+					if ( $variation instanceof WC_Product_Variation && $variation->get_image_id() ) {
+						$errors[] = sprintf( 'Variation %d retains a variation-specific image for: %s', $variation_id, $row['product_slug'] );
+					}
+				}
+			}
+		}
+
+		if ( 27 !== count( array_unique( array_values( $attachments ) ) ) ) {
+			$errors[] = sprintf( 'Expected exactly 27 canonical attachment IDs; found %d.', count( array_unique( array_values( $attachments ) ) ) );
+		}
+
+		return array(
+			'ok'     => empty( $errors ),
+			'errors' => $errors,
+			'checks' => empty( $errors ) ? array(
+				'All 29 products use their exact canonical featured image.',
+				'Exactly 27 canonical attachments are in use, including the shared NAD+ and RT-3 bundle images.',
+				'All product galleries and variation-specific images are cleared.',
+			) : array(),
+		);
+	}
+
 	/** Restore product, gallery, and variation image IDs. */
 	public static function restore_images() {
 		$backup = get_option( self::IMAGE_BACKUP_OPTION, false );
@@ -650,6 +714,7 @@ final class OLR_Production_Rollout {
 		$handlers  = array(
 			'preflight_images' => 'preflight_images',
 			'seed_images'      => 'seed_images',
+			'verify_images'    => 'verify_images',
 			'restore_images'   => 'restore_images',
 			'preflight_pages'  => 'preflight_pages',
 			'promote_pages'    => 'promote_pages',
@@ -688,6 +753,7 @@ final class OLR_Production_Rollout {
 			$actions = array(
 				array( 'Image preflight', 'preflight_images', 'Read-only: validates 29 Live mappings, 27 files, 1150x1600 dimensions, and the exact published product set.' ),
 				array( 'Seed images', 'seed_images', 'Imports/reuses canonical images and changes product image associations. Automatically blocks unless image preflight passes.' ),
+				array( 'Verify seeded images', 'verify_images', 'Read-only: verifies all 29 featured images, the 27 attachment mapping, empty galleries, and inherited variation images.' ),
 				array( 'Rollback images', 'restore_images', 'Restores saved product, gallery, and variation image IDs. Preserves all attachments.' ),
 				array( 'Page preflight', 'preflight_pages', 'Read-only: validates production page IDs, routes, Checkout 1.4.0, Build Your Box 1.3.3, and the bridge.' ),
 				array( 'Promote pages', 'promote_pages', 'Applies approved GitPress fragments to existing production pages and flushes rewrites.' ),
