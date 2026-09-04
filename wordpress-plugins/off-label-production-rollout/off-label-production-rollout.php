@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.9
+ * Version: 1.0.10
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.9';
+	const VERSION              = '1.0.10';
 	const DESIGN_SYSTEM_URL    = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@2ab4ebd385d25759233831763e840a66f35ff649/styles.css';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
@@ -26,8 +26,38 @@ final class OLR_Production_Rollout {
 	/** Register admin-only tools. Activation intentionally performs no work. */
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'frontend_assets' ), 5 );
+		add_filter( 'the_content', array( __CLASS__, 'restore_compliance_checkbox' ), 999 );
 		add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
 		add_action( 'admin_post_olr_production_rollout', array( __CLASS__, 'handle_action' ) );
+	}
+
+	/**
+	 * Restore the confirmation control after GitPress sanitizes the fragment.
+	 *
+	 * GitPress currently preserves the modal label and button but removes the
+	 * checkbox input. Run after shortcode expansion so the controller always has
+	 * the required explicit-consent control and never silently exits.
+	 */
+	public static function restore_compliance_checkbox( $content ) {
+		$content = (string) $content;
+		if (
+			is_admin()
+			|| ! is_front_page()
+			|| false === strpos( $content, 'data-olr-compliance-gate' )
+			|| false !== strpos( $content, 'data-olr-gate-confirmation' )
+		) {
+			return $content;
+		}
+
+		$checkbox = '<input type="checkbox" data-olr-gate-confirmation required aria-required="true">';
+		$updated  = preg_replace(
+			'/(<label\b[^>]*class=["\'][^"\']*\bolr-compliance-gate__confirmation\b[^"\']*["\'][^>]*>)/i',
+			'$1' . $checkbox,
+			$content,
+			1
+		);
+
+		return is_string( $updated ) ? $updated : $content;
 	}
 
 	/**

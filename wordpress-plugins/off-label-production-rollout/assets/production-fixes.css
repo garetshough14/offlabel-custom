@@ -1,8 +1,21 @@
 /* Production-only precedence fixes. The canonical design system remains unchanged. */
 
+body dialog.olr-compliance-gate {
+  overflow: hidden !important;
+  scrollbar-width: none;
+}
+
 body dialog.olr-compliance-gate .olr-compliance-gate__panel {
   max-height: calc(100dvh - 1.3rem) !important;
   overflow: hidden !important;
+  scrollbar-width: none;
+}
+
+body dialog.olr-compliance-gate::-webkit-scrollbar,
+body dialog.olr-compliance-gate .olr-compliance-gate__panel::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body dialog.olr-compliance-gate .olr-compliance-gate__consent {

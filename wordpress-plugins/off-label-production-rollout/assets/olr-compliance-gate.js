@@ -13,6 +13,16 @@
     var confirmation = gate.querySelector("[data-olr-gate-confirmation]");
     var enterButton = gate.querySelector("[data-olr-gate-enter]");
     var gatePanel = gate.querySelector(".olr-compliance-gate__panel");
+    var confirmationLabel = gate.querySelector(".olr-compliance-gate__confirmation");
+
+    if (!confirmation && confirmationLabel) {
+      confirmation = document.createElement("input");
+      confirmation.type = "checkbox";
+      confirmation.required = true;
+      confirmation.setAttribute("aria-required", "true");
+      confirmation.setAttribute("data-olr-gate-confirmation", "");
+      confirmationLabel.insertBefore(confirmation, confirmationLabel.firstChild);
+    }
 
     if (!confirmation || !enterButton || !gatePanel) {
       return;
