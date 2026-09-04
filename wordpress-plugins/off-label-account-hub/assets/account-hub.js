@@ -171,6 +171,11 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("[data-olr-account-hub], [data-olr-affiliate-public]").forEach(function (hub) {
+      if (hub.getAttribute("data-olr-account-initialized") === "true") {
+        return;
+      }
+      hub.setAttribute("data-olr-account-initialized", "true");
+
       var status = document.createElement("span");
       status.className = "olr-account-copy-status";
       status.setAttribute("aria-live", "polite");

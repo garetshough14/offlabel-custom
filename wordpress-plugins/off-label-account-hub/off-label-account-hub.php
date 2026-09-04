@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Account Hub
  * Description: Unified Ultimate Member, WooCommerce, and Ultimate Affiliate Pro account experience for Off Label Research.
- * Version: 1.1.0
+ * Version: 1.1.2
  * Author: Off Label Research
  * Text Domain: off-label-account-hub
  * Requires Plugins: ultimate-member, woocommerce
@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit;
 
 final class OLR_Account_Hub {
-	const VERSION                  = '1.1.1';
+	const VERSION                  = '1.1.2';
 	const ACCOUNT_SLUG             = 'account';
 	const AFFILIATE_SLUG           = 'affiliate';
 	const GUIDELINES_SLUG          = 'affiliate-guidelines';

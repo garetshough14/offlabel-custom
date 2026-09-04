@@ -337,15 +337,23 @@ body:has(.olr-account-hub) :where(#page, #main-content, .site, .site-content, .s
 }
 
 .olr-account-hub .um-account-side a.um-account-link .um-account-title {
-  flex: 1 1 auto;
-  min-width: 0;
+  flex: 1 1 0% !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .olr-account-hub .um-account-side a.um-account-link .um-account-arrow {
-  flex: 0 0 auto;
-  margin-left: 0.5rem;
+  flex: 0 0 1.25rem !important;
+  width: 1.25rem !important;
+  min-width: 1.25rem !important;
+  max-width: 1.25rem !important;
+  margin-left: auto !important;
   opacity: 0.48;
   font-size: 1rem !important;
+  text-align: right;
 }
 
 .olr-account-hub .um-account-main > .um-account-nav {
