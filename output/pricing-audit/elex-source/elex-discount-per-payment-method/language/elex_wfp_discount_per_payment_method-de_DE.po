@@ -1,0 +1,197 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ELEX WooCommerce Discount Per Payment Method\n"
+"POT-Creation-Date: 2023-04-06 00:34+0530\n"
+"PO-Revision-Date: 2023-04-06 00:35+0530\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: elex-discount-per-payment-method.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: elex-discount-per-payment-method.php:34
+msgid ""
+"<strong>WooCommerce</strong> plugin must be active for <strong>ELEX "
+"WooCommerce Discount Per Payment Method</strong> to work."
+msgstr ""
+
+#: elex-discount-per-payment-method.php:73
+#: elex-discount-per-payment-method.php:134
+#, fuzzy
+msgid "ELEX Discount Per Payment Method"
+msgstr "ELEX-Rabatt pro Zahlungsmethode"
+
+#: elex-discount-per-payment-method.php:86
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"
+
+#: elex-discount-per-payment-method.php:87
+#: elex-discount-per-payment-method.php:264
+#, fuzzy
+msgid "Related Products!"
+msgstr "Verwandte Produkte!"
+
+#: elex-discount-per-payment-method.php:136
+#, fuzzy
+msgid ""
+"<p>Helps you configure and apply a discount on the Checkout page based on "
+"the payment method selected by the customer.</p>"
+msgstr ""
+"<p>Unterstützt Sie bei der Konfiguration und Anwendung eines Rabatts auf "
+"der Checkout-Seite basierend auf der vom Kunden ausgewählten "
+"Zahlungsmethode.</p>"
+
+#: elex-discount-per-payment-method.php:140
+#, fuzzy
+msgid "Checkout discount label"
+msgstr "Kasse Rabatt-Etikett"
+
+#: elex-discount-per-payment-method.php:142
+#, fuzzy
+msgid "Enter custom discount label"
+msgstr "Geben Sie ein benutzerdefiniertes Rabattetikett ein"
+
+#: elex-discount-per-payment-method.php:145
+#, fuzzy
+msgid ""
+"Enter the text to be displayed on checkout. The default text is "
+"<strong>Payment method discount</strong>."
+msgstr ""
+"Geben Sie den Text ein, der an der Kasse angezeigt werden soll. Der "
+"Standardtext lautet <strong>Rabatt bei der Zahlungsmethode</strong>."
+
+#: elex-discount-per-payment-method.php:263
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: includes/form-settings-template.php:21
+msgid "Payment Method"
+msgstr "Zahlungsart"
+
+#: includes/form-settings-template.php:22
+#, fuzzy
+msgid "Discount(%)"
+msgstr "Rabatt (%)"
+
+#: includes/form-settings-template.php:23
+msgid "Status"
+msgstr "Status"
+
+#: includes/form-settings-template.php:24
+msgid "Actions"
+msgstr "Aktionen"
+
+#: includes/form-settings-template.php:45
+#: includes/form-settings-template.php:137 includes/scripts.php:45
+#, fuzzy
+msgid "Enter the discount percentage value from 0 to 100."
+msgstr "Geben Sie den Rabattprozentsatz zwischen 0 und 100 ein."
+
+#: includes/form-settings-template.php:53
+#, fuzzy
+msgid "Click here to disable the discount."
+msgstr "Klicken Sie hier, um den Rabatt zu deaktivieren."
+
+#: includes/form-settings-template.php:66
+#, fuzzy
+msgid "Click here to enable the discount."
+msgstr "Klicken Sie hier, um den Rabatt zu aktivieren."
+
+#: includes/form-settings-template.php:76 includes/scripts.php:46
+#, fuzzy
+msgid "Click here to remove the discount."
+msgstr "Klicken Sie hier, um den Rabatt zu entfernen."
+
+#: includes/form-settings-template.php:89 includes/scripts.php:40
+#, fuzzy
+msgid ""
+"No payment method discounts have been specified. Select a payment method "
+"from the drop-down to set up a discount."
+msgstr ""
+"Es wurden keine Rabatte für Zahlungsmethoden angegeben. Wählen Sie eine "
+"Zahlungsmethode aus dem Dropdown-Menü aus, um einen Rabatt einzurichten."
+
+#: includes/form-settings-template.php:109
+#, fuzzy
+msgid "Select a payment methods."
+msgstr "Wählen Sie eine Zahlungsmethode aus."
+
+#: includes/form-settings-template.php:140
+#, fuzzy
+msgid "Click to enable or disable the discount"
+msgstr "Klicken Sie hier, um den Rabatt zu aktivieren oder zu deaktivieren."
+
+#: includes/form-settings-template.php:147
+#, fuzzy
+msgid "Click here to add a new discount."
+msgstr "Klicken Sie hier, um einen neuen Rabatt hinzuzufügen."
+
+#: includes/market.php:108
+#, fuzzy
+msgid "ELEXtensions Plugins You May Be Interested In"
+msgstr "ELEXtensions-Plugins, die Sie interessieren könnten"
+
+#: includes/scripts.php:41
+#, fuzzy
+msgid "All available payment methods have been selected"
+msgstr "Alle verfügbaren Zahlungsmethoden wurden ausgewählt"
+
+#: includes/scripts.php:42
+#, fuzzy
+msgid "Please enter value between 0 to 100"
+msgstr "Bitte geben Sie einen Wert zwischen 0 und 100 ein."
+
+#: includes/scripts.php:43
+#, fuzzy
+msgid "Click here to enable the discount"
+msgstr "Klicken Sie hier, um den Rabatt zu aktivieren"
+
+#: includes/scripts.php:44
+#, fuzzy
+msgid "Click here to disable the discount"
+msgstr "Klicken Sie hier, um den Rabatt zu deaktivieren"
+
+#. Plugin Name of the plugin/theme
+#, fuzzy
+msgid "ELEX WooCommerce Discount Per Payment Method"
+msgstr "ELEX WooCommerce Rabatt pro Zahlungsmethode"
+
+#. Plugin URI of the plugin/theme
+#, fuzzy
+msgid ""
+"https://elextensions.com/plugin/elex-woocommerce-discount-per-payment-"
+"method-free/"
+msgstr ""
+"https://elextensions.com/plugin/elex-woocommerce-discount-per-payment-"
+"method-free/"
+
+#. Description of the plugin/theme
+#, fuzzy
+msgid ""
+"The plugin allows to set discounts according to the payment method selected "
+"on the Checkout page."
+msgstr ""
+"Das Plugin ermöglicht es, Rabatte entsprechend der auf der Checkout-Seite "
+"ausgewählten Zahlungsmethode festzulegen."
+
+#. Author of the plugin/theme
+#, fuzzy
+msgid "ELEXtensions"
+msgstr "ELEXtensions"
+
+#. Author URI of the plugin/theme
+#, fuzzy
+msgid "https://elextensions.com/"
+msgstr "https://elextensions.com/"

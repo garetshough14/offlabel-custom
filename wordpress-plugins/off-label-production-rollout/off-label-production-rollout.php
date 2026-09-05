@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Production Rollout
  * Description: Guarded, reversible product-image seeding and approved GitPress page promotion tools.
- * Version: 1.0.12
+ * Version: 1.0.13
  * Author: Off Label Research
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Production_Rollout {
-	const VERSION              = '1.0.12';
+	const VERSION              = '1.0.13';
 	const DESIGN_SYSTEM_URL    = 'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@2ab4ebd385d25759233831763e840a66f35ff649/styles.css';
 	const MENU_SLUG            = 'olr-production-rollout';
 	const IMAGE_BACKUP_OPTION  = 'olr_production_rollout_image_backup_v1';
@@ -25,10 +25,41 @@ final class OLR_Production_Rollout {
 
 	/** Register admin-only tools. Activation intentionally performs no work. */
 	public static function init() {
+		add_shortcode( 'olr_site_header', array( __CLASS__, 'site_header' ) );
+		add_shortcode( 'olr_site_footer', array( __CLASS__, 'site_footer' ) );
+		add_filter( 'wp_get_attachment_image_src', array( __CLASS__, 'uncropped_product_images' ), 20, 4 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'frontend_assets' ), 5 );
 		add_filter( 'the_content', array( __CLASS__, 'restore_compliance_checkbox' ), 999 );
 		add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ) );
 		add_action( 'admin_post_olr_production_rollout', array( __CLASS__, 'handle_action' ) );
+	}
+
+	/** Presentation only: never alter stored media or WooCommerce stock data. */
+	public static function uncropped_product_images( $image, $attachment_id, $size, $icon ) {
+		if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || wp_doing_ajax() ) {
+			return $image;
+		}
+		if ( 'woocommerce_thumbnail' !== $size || ! ( is_page( array( 'catalog-item', 'research-item' ) ) || get_query_var( 'olr_product_slug' ) ) ) {
+			return $image;
+		}
+		// Full uses the original aspect ratio. No thumbnail regeneration is needed.
+		return wp_get_attachment_image_src( $attachment_id, 'full', $icon ) ?: $image;
+	}
+
+	/** Shortcodes for Divi Theme Builder Text modules; no template assignments changed. */
+	public static function site_header() {
+		$path = plugin_dir_path( __FILE__ ) . 'assets/site-header.html';
+		if ( ! is_readable( $path ) ) {
+			return '';
+		}
+		$html = file_get_contents( $path );
+		$count = function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
+		return str_replace( '[olr_cart_count]', '(' . absint( $count ) . ')', $html );
+	}
+
+	public static function site_footer() {
+		$path = plugin_dir_path( __FILE__ ) . 'assets/site-footer.html';
+		return is_readable( $path ) ? file_get_contents( $path ) : '';
 	}
 
 	/**
@@ -88,6 +119,11 @@ final class OLR_Production_Rollout {
 			array( 'olr-production-design-system' ),
 			self::VERSION
 		);
+
+		wp_enqueue_style( 'olr-customer-presentation', plugins_url( 'assets/customer-presentation.css', __FILE__ ), array( 'olr-production-presentation-fixes' ), self::VERSION );
+		wp_enqueue_script( 'olr-footer-links', plugins_url( 'assets/footer-links.js', __FILE__ ), array(), self::VERSION, true );
+		// Reuse the bridge's handle when present, avoiding two menu controllers.
+		wp_enqueue_script( 'olr-site-navigation', plugins_url( 'assets/olr-site-navigation.js', __FILE__ ), array(), self::VERSION, true );
 
 		if ( is_front_page() ) {
 			wp_enqueue_script(

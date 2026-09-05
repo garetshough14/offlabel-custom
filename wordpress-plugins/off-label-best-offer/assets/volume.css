@@ -1,0 +1,15 @@
+.olr-volume-pricing.olr-volume-offers > div { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.olr-volume-pricing.olr-volume-offers > p:first-child > span { display:block; margin-top:3px; font-size:11px; }
+.olr-volume-pricing.olr-volume-offers [data-olr-quantity] { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; min-height:154px; padding:23px 8px 14px; text-align:center; line-height:1.25; white-space:normal; }
+.olr-volume-offers .olr-tier-title { order:0; font-size:11px; font-weight:700; }
+.olr-volume-offers .olr-tier-saving { order:1; font-size:10px; letter-spacing:.04em; }
+.olr-volume-offers .olr-tier-unit { order:2; font-size:11px; }
+.olr-volume-offers .olr-tier-regular { order:3; font-size:10px; opacity:.65; }
+.olr-volume-offers .olr-tier-total { order:4; font-size:12px; }
+.olr-volume-offers .olr-tier-badge-slot { position:static; order:-1; align-self:stretch; min-height:17px; padding:3px; border-bottom:1px solid transparent; font-size:8px; line-height:1.25; letter-spacing:.1em; }
+.olr-volume-offers .olr-tier-badge { border-bottom-color:currentColor; }
+.olr-volume-pricing.olr-volume-offers > .olr-volume-policy { display:block; margin:12px 0; font-size:11px; line-height:1.5; font-weight:400; }
+.olr-offer-message { display:block; font-size:11px; line-height:1.5; margin-top:4px; }
+.olr-private-preview-banner { position:relative; z-index:99999; padding:12px 20px; color:#fff; background:#6b3510; font:600 12px/1.5 Arial,sans-serif; text-align:center; }
+.olr-private-preview-banner a { color:#fff; text-decoration:underline; margin-left:8px; }
+@media(max-width:600px) { .olr-volume-pricing.olr-volume-offers > div { grid-template-columns:repeat(2,minmax(0,1fr)); } }

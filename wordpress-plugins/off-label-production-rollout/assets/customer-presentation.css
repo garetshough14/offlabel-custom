@@ -1,0 +1,30 @@
+/* Scoped display corrections. Product values, purchase controls and stock checks stay native. */
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-view__intro,
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-information__section[data-icon="product"],
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .woocommerce-variation-description,
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .stock.in-stock {
+  display: none !important;
+}
+
+/* Absolute image sizing prevents intrinsic portrait dimensions from growing the grid track. */
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-view__media,
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-related__media {
+  position: relative !important;
+  background: #fff !important;
+  min-height: 0 !important;
+}
+
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-view__media img,
+body .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"] .olr-product-related__media img {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  object-fit: contain !important;
+  object-position: center !important;
+}

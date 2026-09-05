@@ -1,0 +1,265 @@
+.elex-discount-payment-method-wrapper {
+    background: #f6f7f7;
+    color: #1d2327;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.small-text-below-input {
+    color: rgb(211, 121, 121);
+    margin-bottom: 10px;
+}
+
+.interested_products{
+    color:red;
+    font:bolder;
+}
+
+.wrap {
+    margin-bottom: 24px;
+}
+
+.fields_adjustment {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid #ccd0d4;
+}
+
+.fields_adjustment th {
+    background: #f6f7f7;
+    font-weight: 600;
+    padding: 12px;
+    border-bottom: 1px solid #ccd0d4;
+    text-align: left;
+}
+
+.fields_adjustment td {
+    padding: 14px;
+    vertical-align: middle;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.fields_adjustment .table_col_2 {
+    width: 26%;
+}
+
+.fields_adjustment .table_col_3 {
+    width: 18%;
+}
+
+.fields_adjustment .table_col_4 {
+    width: 10%;
+}
+
+.fields_adjustment select,
+.fields_adjustment input[type="text"],
+.fields_adjustment input[type="number"] {
+    width: 100%;
+    height: 38px;
+    border: 1px solid #c3c4c7;
+    border-radius: 6px;
+    padding: 0 12px;
+    box-sizing: border-box;
+    background: #ffffff;
+}
+
+.fields_adjustment select {
+    min-width: 180px;
+}
+
+#elex_discount_per_payment_method_options_input_value {
+    text-align: center;
+}
+
+.fields_adjustment td[colspan] {
+    text-align: center;
+    font-size: 14px;
+    color: #50575e;
+    padding: 28px 16px;
+}
+
+.table_input_action_row td {
+    text-align: center;
+    padding: 26px 16px;
+    border-top: 1px solid #ccd0d4;
+    background: #f6f7f7;
+}
+
+#elex_raq_add_field,
+.fields_adjustment .add-row-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #2271b1;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#elex_raq_add_field .dashicons,
+.fields_adjustment .add-row-btn .dashicons {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: #ffffff;
+    color: #2271b1;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+#elex_raq_add_field:hover,
+.fields_adjustment .add-row-btn:hover {
+    background-color: #135e96;
+}
+
+
+.fields_adjustment td.remove_icon_discount {
+    width: 60px;
+    text-align: center;
+}
+
+.remove-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    background: #d63638;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0;
+    line-height: 1;
+}
+
+.remove-row .dashicons {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.remove-row:hover {
+    background: #b32d2e;
+}
+
+.remove-row:focus {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 22px;
+}
+
+.switch input {
+    opacity: 0;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    background-color: #c3c4c7;
+    transition: .3s;
+    border-radius: 22px;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #ffffff;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #2271b1;
+}
+
+input:checked+.slider:before {
+    transform: translateX(20px);
+}
+
+.elex_cpp_custom_title_heading {
+    font-size: 1.4em;
+    margin-bottom: 12px;
+}
+
+.small-text-below-input {
+    color: #d63638;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.woocommerce table.form-table .select2-container {
+    min-width: 100% !important;
+}
+
+.fields_adjustment td[colspan] {
+    text-align: center;
+}
+
+.fields_adjustment td[colspan] p,
+.fields_adjustment td[colspan] span {
+    display: inline-block;
+    max-width: 520px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #50575e;
+}
+
+.wrap>p,
+.woocommerce-page p.description,
+.woocommerce p.description,
+table.form-table p,
+td.forminp-title p,
+td.forminp.forminp-title p {
+    font-size: 16px !important;
+    line-height: 1.8;
+    color: #3c434a;
+}
+
+.fields_adjustment select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%2350575e' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px 8px;
+    padding-right: 36px;
+}
+
+.nodiscount_cell {
+    text-align: center !important;
+    padding: 28px 16px !important;
+    border-top: 1px solid #e5e5e5;
+}
+
+.nodiscount_cell #no_discount_available {
+    display: inline-block;
+    color: #50575e;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 480px;
+}

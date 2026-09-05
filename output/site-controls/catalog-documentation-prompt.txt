@@ -1,0 +1,10 @@
+Mode: built-in image_gen, product-mockup, reference-based generation.
+Reference: exports/website-product-image-library/images/cjc-1295-ipamorelin-5-5mg.jpg
+Saved asset: wordpress-plugins/off-label-site-controls/assets/catalog-documentation-v2.png
+
+Use case: product-mockup.
+Asset type: wide editorial photograph for the right-hand image of an Off Label Research catalog section. Adjacent HTML text (do NOT repeat in image) reads "QUALITY ISN'T A CLAIM. IT'S DOCUMENTED. Every batch is third-party tested. Because the standard is proof."
+Input image 1 is the authoritative real product bottle reference, not a style suggestion. Preserve its exact silver cap, clear glass silhouette, offwhite label, OFF-LABEL logo and label words "CJC-1295/ Ipamorelin" and boxed "5/5 MG". Do not substitute a generic vial or invent packaging.
+Create an understated premium monochrome editorial laboratory still life: this actual upright bottle on an ivory worktop with an archival paper folder and several crisp research documentation sheets beside and behind it. Only document heading text "RESEARCH DOCUMENTATION" and small "OFF LABEL RESEARCH" may appear; remainder of sheets should be blank understated fine rules, not invented test results. Strong photographic realism, paper grain, brushed silver, clear glass, soft daylight shadows, warm white and ink black palette. No human subjects.
+Landscape 1536x1024 composition. Bottle fully visible, approximately centered at x=62%, occupies about 65% image height, generous safe margins top and bottom. Papers fan subtly toward left. Keep all essential content within middle 65% of image width for mobile cropping. Clean quiet backdrop fills entire canvas; no border.
+No purity numbers or percentages, no fabricated measurements, no lab names, no dates, no signatures, no PASSED seals or certification badges, no charts, no extra vials, no watermark. This is a decorative documentation-themed photograph, not a purported actual COA.

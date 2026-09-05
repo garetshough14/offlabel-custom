@@ -55,6 +55,7 @@
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__gallery,
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__summary { min-width: 0 !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__media {
+  position: relative !important;
   display: grid !important;
   width: 100% !important;
   aspect-ratio: .88 !important;
@@ -63,9 +64,11 @@
   overflow: hidden !important;
   margin: 0 !important;
   border: 0 !important;
-  background: var(--olr-panel) !important;
+  background: #fff !important;
 }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__image {
+  position: absolute !important;
+  inset: 0 !important;
   display: block !important;
   width: 100% !important;
   height: 100% !important;
@@ -234,8 +237,8 @@
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__head a { font-size: .62rem !important; letter-spacing: .08em !important; text-decoration: none !important; text-transform: uppercase !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 1rem !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__item { display: grid !important; min-width: 0 !important; grid-template-columns: 42% minmax(0, 1fr) !important; align-items: center !important; border: 1px solid #e3dfd8 !important; background: #f1efeb !important; color: var(--olr-ink) !important; text-decoration: none !important; }
-.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__media { display: grid !important; aspect-ratio: .82 !important; place-items: center !important; overflow: hidden !important; border: 0 !important; background: transparent !important; }
-.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__media img { width: 100% !important; height: 100% !important; padding: .45rem !important; object-fit: contain !important; }
+.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__media { position: relative !important; display: grid !important; aspect-ratio: .82 !important; place-items: center !important; overflow: hidden !important; border: 0 !important; background: #fff !important; }
+.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__media img { position: absolute !important; inset: 0 !important; display: block !important; width: 100% !important; height: 100% !important; margin: 0 !important; padding: .45rem !important; box-sizing: border-box !important; object-fit: contain !important; object-position: center !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__copy { display: grid !important; gap: .25rem !important; min-width: 0 !important; padding: .75rem .7rem .75rem .2rem !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__copy strong { margin: 0 !important; color: var(--olr-ink) !important; font-size: .68rem !important; line-height: 1.2 !important; text-transform: uppercase !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-related__copy :where(small, span) { margin: 0 !important; color: var(--olr-ink) !important; font-size: .58rem !important; }
@@ -308,6 +311,11 @@ body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page
 body :is(#olr-product-type-system, .olr-gitpress-site.olr-redesign[data-olr-page="product-detail"]) :where(.olr-label, .olr-product-view__ruo, small) { letter-spacing: .025em !important; }
 
 /* Authoritative responsive product-record layer. */
+.olr-gitpress-site[data-olr-page="product-detail"] .stock.in-stock,
+.olr-gitpress-site[data-olr-page="product-detail"] .woocommerce-variation-description {
+  display: none !important;
+}
+
 .olr-gitpress-site[data-olr-page="product-detail"],
 .olr-gitpress-site[data-olr-page="product-detail"] * {
   min-width: 0 !important;

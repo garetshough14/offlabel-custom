@@ -1,0 +1,196 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ELEX WooCommerce Discount Per Payment Method\n"
+"POT-Creation-Date: 2023-04-06 00:32+0530\n"
+"PO-Revision-Date: 2023-04-06 00:33+0530\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_AR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: elex-discount-per-payment-method.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: elex-discount-per-payment-method.php:34
+msgid ""
+"<strong>WooCommerce</strong> plugin must be active for <strong>ELEX "
+"WooCommerce Discount Per Payment Method</strong> to work."
+msgstr ""
+
+#: elex-discount-per-payment-method.php:73
+#: elex-discount-per-payment-method.php:134
+#, fuzzy
+msgid "ELEX Discount Per Payment Method"
+msgstr "Descuento ELEX por método de pago"
+
+#: elex-discount-per-payment-method.php:86
+msgid "General Settings"
+msgstr "Configuración general"
+
+#: elex-discount-per-payment-method.php:87
+#: elex-discount-per-payment-method.php:264
+#, fuzzy
+msgid "Related Products!"
+msgstr "¡Productos relacionados!"
+
+#: elex-discount-per-payment-method.php:136
+#, fuzzy
+msgid ""
+"<p>Helps you configure and apply a discount on the Checkout page based on "
+"the payment method selected by the customer.</p>"
+msgstr ""
+"<p>Le ayuda a configurar y aplicar un descuento en la página Finalizar "
+"compra en función del método de pago seleccionado por el cliente.</p>"
+
+#: elex-discount-per-payment-method.php:140
+#, fuzzy
+msgid "Checkout discount label"
+msgstr "Etiqueta de descuento de pago"
+
+#: elex-discount-per-payment-method.php:142
+#, fuzzy
+msgid "Enter custom discount label"
+msgstr "Introducir etiqueta de descuento personalizada"
+
+#: elex-discount-per-payment-method.php:145
+#, fuzzy
+msgid ""
+"Enter the text to be displayed on checkout. The default text is "
+"<strong>Payment method discount</strong>."
+msgstr ""
+"Introduzca el texto que se mostrará al finalizar la compra. El texto "
+"predeterminado es <strong>Descuento por método de pago</strong>."
+
+#: elex-discount-per-payment-method.php:263
+msgid "Settings"
+msgstr "Ajustes"
+
+#: includes/form-settings-template.php:21
+msgid "Payment Method"
+msgstr "Forma de pago"
+
+#: includes/form-settings-template.php:22
+#, fuzzy
+msgid "Discount(%)"
+msgstr "Descuento(%)"
+
+#: includes/form-settings-template.php:23
+msgid "Status"
+msgstr "Estado"
+
+#: includes/form-settings-template.php:24
+msgid "Actions"
+msgstr "Acciones"
+
+#: includes/form-settings-template.php:45
+#: includes/form-settings-template.php:137 includes/scripts.php:45
+#, fuzzy
+msgid "Enter the discount percentage value from 0 to 100."
+msgstr "Introduzca el valor del porcentaje de descuento de 0 a 100."
+
+#: includes/form-settings-template.php:53
+#, fuzzy
+msgid "Click here to disable the discount."
+msgstr "Haga clic aquí para desactivar el descuento."
+
+#: includes/form-settings-template.php:66
+#, fuzzy
+msgid "Click here to enable the discount."
+msgstr "Haga clic aquí para habilitar el descuento."
+
+#: includes/form-settings-template.php:76 includes/scripts.php:46
+#, fuzzy
+msgid "Click here to remove the discount."
+msgstr "Haga clic aquí para eliminar el descuento."
+
+#: includes/form-settings-template.php:89 includes/scripts.php:40
+#, fuzzy
+msgid ""
+"No payment method discounts have been specified. Select a payment method "
+"from the drop-down to set up a discount."
+msgstr ""
+"No se han especificado descuentos por métodos de pago. Seleccione un método "
+"de pago en el menú desplegable para configurar un descuento."
+
+#: includes/form-settings-template.php:109
+#, fuzzy
+msgid "Select a payment methods."
+msgstr "Seleccione un método de pago."
+
+#: includes/form-settings-template.php:140
+#, fuzzy
+msgid "Click to enable or disable the discount"
+msgstr "Haga clic para habilitar o deshabilitar el descuento"
+
+#: includes/form-settings-template.php:147
+#, fuzzy
+msgid "Click here to add a new discount."
+msgstr "Haga clic aquí para agregar un nuevo descuento."
+
+#: includes/market.php:108
+#, fuzzy
+msgid "ELEXtensions Plugins You May Be Interested In"
+msgstr "ELEXtensions plugins que te pueden interesar"
+
+#: includes/scripts.php:41
+#, fuzzy
+msgid "All available payment methods have been selected"
+msgstr "Se han seleccionado todos los métodos de pago disponibles"
+
+#: includes/scripts.php:42
+#, fuzzy
+msgid "Please enter value between 0 to 100"
+msgstr "Introduzca el valor entre 0 y 100"
+
+#: includes/scripts.php:43
+#, fuzzy
+msgid "Click here to enable the discount"
+msgstr "Haga clic aquí para habilitar el descuento"
+
+#: includes/scripts.php:44
+#, fuzzy
+msgid "Click here to disable the discount"
+msgstr "Haga clic aquí para desactivar el descuento"
+
+#. Plugin Name of the plugin/theme
+#, fuzzy
+msgid "ELEX WooCommerce Discount Per Payment Method"
+msgstr "Descuento ELEX WooCommerce por método de pago"
+
+#. Plugin URI of the plugin/theme
+#, fuzzy
+msgid ""
+"https://elextensions.com/plugin/elex-woocommerce-discount-per-payment-"
+"method-free/"
+msgstr ""
+"https://elextensions.com/plugin/elex-woocommerce-discount-per-payment-"
+"method-free/"
+
+#. Description of the plugin/theme
+#, fuzzy
+msgid ""
+"The plugin allows to set discounts according to the payment method selected "
+"on the Checkout page."
+msgstr ""
+"El plugin permite establecer descuentos según el método de pago "
+"seleccionado en la página de pago."
+
+#. Author of the plugin/theme
+#, fuzzy
+msgid "ELEXtensions"
+msgstr "ELEXtensiones"
+
+#. Author URI of the plugin/theme
+#, fuzzy
+msgid "https://elextensions.com/"
+msgstr "https://elextensions.com/"

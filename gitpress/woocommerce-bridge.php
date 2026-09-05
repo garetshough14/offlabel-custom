@@ -447,22 +447,6 @@ if ( ! function_exists( 'olr_render_catalog_product_card' ) ) {
 		$product_url  = olr_get_research_product_url( $product );
 		$product_name = trim( wp_strip_all_tags( $product->get_name() ) );
 		$detail       = olr_get_catalog_product_detail( $product );
-		$terms        = get_the_terms( $product_id, 'product_cat' );
-		$category     = __( 'Research product', 'offlabel-research' );
-		$restricted_term = 'pep' . 'tide';
-		$metabolic_term  = 'g' . 'lp';
-
-		if ( is_array( $terms ) ) {
-			foreach ( $terms as $term ) {
-				if ( 'uncategorized' !== $term->slug ) {
-					$term_search = strtolower( $term->slug . ' ' . $term->name );
-					$category    = false !== strpos( $term_search, $restricted_term )
-						? __( 'Research compounds', 'offlabel-research' )
-						: ( false !== strpos( $term_search, $metabolic_term ) ? __( 'Metabolic research', 'offlabel-research' ) : $term->name );
-					break;
-				}
-			}
-		}
 
 		$badge = '';
 		if ( ! $product->is_in_stock() ) {
@@ -496,7 +480,6 @@ if ( ! function_exists( 'olr_render_catalog_product_card' ) ) {
 				<?php echo wp_kses_post( $image ); ?>
 			</a>
 			<div class="olr-research-card__body">
-				<p><?php echo esc_html( strtoupper( $category ) ); ?></p>
 				<h2><a href="<?php echo esc_url( $product_url ); ?>"><?php echo esc_html( $product_name ); ?></a></h2>
 				<?php if ( '' !== $detail ) : ?>
 					<span class="olr-research-card__detail"><?php echo esc_html( $detail ); ?></span>
@@ -741,8 +724,6 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 		);
 		$gallery_ids = array_values( array_filter( array_merge( array( $product->get_image_id() ), $product->get_gallery_image_ids() ) ) );
 
-		$short_description = trim( (string) $product->get_short_description() );
-		$description       = trim( (string) $product->get_description() );
 		$sku               = trim( (string) $product->get_sku() );
 		$price_html        = $product->get_price_html();
 		$variation_attribute_name = '';
@@ -763,9 +744,6 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 			}
 		}
 
-		if ( '' === $short_description && '' !== $description ) {
-			$short_description = wp_trim_words( wp_strip_all_tags( $description ), 42, '…' );
-		}
 
 		$form_action_filter = static function () use ( $record_url ) {
 			return $record_url;
@@ -864,9 +842,6 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 					</li>
 				</ul>
 				<a class="olr-product-view__receipts" href="/coas/">View COAs <span aria-hidden="true">→</span></a>
-				<?php if ( '' !== $short_description ) : ?>
-					<div class="olr-product-view__intro"><?php echo wp_kses_post( wc_format_content( $short_description ) ); ?></div>
-				<?php endif; ?>
 				<?php if ( $product->is_purchasable() && $product->is_in_stock() ) : ?>
 					<div class="olr-volume-pricing" data-olr-volume-pricing data-unit-price="<?php echo esc_attr( wc_get_price_to_display( $product ) ); ?>">
 						<p><strong>Volume quantities</strong><span>Choose a bottle count.</span></p>
@@ -879,10 +854,6 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 		</article>
 
 		<div class="olr-product-information olr-product-information--accordion">
-			<details class="olr-product-information__section" data-icon="product">
-				<summary id="olr-product-description-<?php echo esc_attr( (string) $product_id ); ?>">Product information</summary>
-				<div class="olr-product-information__copy"><?php echo '' !== $description ? wp_kses_post( wc_format_content( $description ) ) : '<p>' . esc_html__( 'Review the product label and supplied research documentation for current product information.', 'offlabel-research' ) . '</p>'; ?></div>
-			</details>
 
 			<details class="olr-product-information__section" data-icon="quality">
 				<summary id="olr-product-specifications-<?php echo esc_attr( (string) $product_id ); ?>">Testing + quality</summary>
@@ -899,7 +870,7 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 				<div class="olr-product-related__grid">
 					<?php foreach ( $related_products as $related_product ) : ?>
 						<a class="olr-product-related__item" href="<?php echo esc_url( olr_get_research_product_url( $related_product ) ); ?>">
-							<span class="olr-product-related__media"><?php echo wp_kses_post( $related_product->get_image( 'woocommerce_thumbnail' ) ); ?></span>
+							<span class="olr-product-related__media"><?php echo wp_kses_post( $related_product->get_image( 'woocommerce_single' ) ); ?></span>
 							<span class="olr-product-related__copy"><strong><?php echo esc_html( $related_product->get_name() ); ?></strong><?php $related_detail = olr_get_catalog_product_detail( $related_product ); if ( '' !== $related_detail ) : ?><small><?php echo esc_html( $related_detail ); ?></small><?php endif; ?><span><?php echo wp_kses_post( $related_product->get_price_html() ); ?></span><em>View product&nbsp; →</em></span>
 						</a>
 					<?php endforeach; ?>
