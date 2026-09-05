@@ -1,0 +1,82 @@
+<style>
+/* Contact-only styles. Native Fluent Forms owns submission, validation and spam protection. */
+#olr-contact-page {
+  --olr-contact-paper: #f7f5f1;
+  --olr-contact-ink: #080808;
+  --olr-contact-line: #92908c;
+  --olr-contact-font: var(--olr-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif);
+  width: 100%; max-width: none; margin: 0; padding: 0;
+  background: var(--olr-contact-paper); color: var(--olr-contact-ink);
+  font-family: var(--olr-contact-font) !important;
+  line-height: 1.5; color-scheme: light;
+}
+#olr-contact-page, #olr-contact-page * { box-sizing: border-box; }
+#olr-contact-page .olr-contact__inner { width: min(100% - 96px, 760px); margin: 0 auto; padding: 66px 0 62px; }
+#olr-contact-page .olr-contact__eyebrow { margin: 0 0 12px; font-size: 11px; line-height: 1.4; font-weight: 500 !important; letter-spacing: .38em !important; text-transform: uppercase; }
+#olr-contact-page .olr-contact__title { margin: 0 0 14px; padding: 0; color: var(--olr-contact-ink); font-family: var(--olr-contact-font) !important; font-size: clamp(36px, 7.3vw, 72px); font-weight: 900 !important; letter-spacing: -.055em !important; line-height: 1.02 !important; text-transform: uppercase; text-wrap: initial; }
+#olr-contact-page .olr-contact__intro { max-width: none; margin: 0; padding: 0; color: var(--olr-contact-ink); font: 400 15px/1.6 var(--olr-contact-font); }
+#olr-contact-page .olr-contact__form { margin-top: 44px; }
+#olr-contact-page .fluentform, #olr-contact-page form.frm-fluent-form { width: 100%; max-width: none; margin: 0; padding: 0; background: transparent; border: 0; box-shadow: none; }
+#olr-contact-page .ff-el-group { margin: 0 0 22px; padding: 0; }
+#olr-contact-page .ff-t-container { display: flex; gap: 18px; margin: 0; }
+#olr-contact-page .ff-t-cell { flex: 1 1 0; min-width: 0; padding: 0 !important; }
+#olr-contact-page .ff-el-input--label { display: block; width: auto; margin: 0 0 7px; padding: 0; }
+#olr-contact-page .ff-el-input--label label { margin: 0; padding: 0; color: var(--olr-contact-ink); font-family: var(--olr-contact-font) !important; font-size: 11px; font-weight: 700 !important; letter-spacing: .13em !important; line-height: 1.5; text-transform: uppercase; }
+#olr-contact-page .ff-el-input--label.ff-el-is-required label::after { color: var(--olr-contact-ink) !important; }
+#olr-contact-page .ff-el-input--content { width: 100%; margin: 0; padding: 0; }
+#olr-contact-page .ff-el-form-control {
+  display: block; width: 100% !important; max-width: 100%; min-height: 46px; height: auto;
+  margin: 0; padding: 11px 13px !important; border: 1px solid var(--olr-contact-line) !important;
+  border-radius: 0 !important; background: transparent !important; color: var(--olr-contact-ink) !important;
+  box-shadow: none !important; font-family: var(--olr-contact-font) !important;
+  font-size: 14px !important; font-weight: 400 !important; line-height: 1.5 !important; letter-spacing: 0 !important;
+}
+#olr-contact-page .ff-el-form-control::placeholder { color: #55534f; opacity: 1; }
+#olr-contact-page textarea.ff-el-form-control { min-height: 150px; resize: vertical; }
+#olr-contact-page .ff-el-form-control:focus-visible { outline: 2px solid var(--olr-contact-ink); outline-offset: 3px; }
+#olr-contact-page .ff-el-is-error .ff-el-form-control { border-color: #a52921 !important; }
+#olr-contact-page .error, #olr-contact-page .error.text-danger { margin-top: 6px; color: #a52921; font: 400 13px/1.5 var(--olr-contact-font); }
+#olr-contact-page .ff_submit_btn_wrapper { margin: 0; text-align: left; }
+#olr-contact-page button.ff-btn-submit {
+  display: inline-flex; align-items: center; justify-content: center; gap: 14px;
+  width: auto; min-width: 224px; min-height: 46px; margin: 0; padding: 14px 26px !important;
+  border: 1px solid #080808 !important; border-radius: 0 !important; background: #080808 !important;
+  box-shadow: none !important; color: #fff !important; cursor: pointer;
+  font: 600 11px/1.4 var(--olr-contact-font) !important; letter-spacing: .19em !important; text-transform: uppercase;
+}
+#olr-contact-page button.ff-btn-submit::after { content: "\2192"; font-size: 17px; line-height: 1; letter-spacing: 0; }
+#olr-contact-page button.ff-btn-submit:hover { background: #292826 !important; }
+#olr-contact-page button.ff-btn-submit:focus-visible { outline: 2px solid #080808; outline-offset: 4px; }
+#olr-contact-page button.ff-btn-submit:disabled { opacity: .65; cursor: wait; }
+#olr-contact-page .ff-message-success { margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; color: var(--olr-contact-ink); }
+#olr-contact-page .olr-contact__research { margin-top: 38px; padding-top: 30px; border-top: 1px solid var(--olr-contact-line); }
+#olr-contact-page .olr-contact__research-title { margin: 0 0 5px; font: 700 11px/1.6 var(--olr-contact-font); font-weight: 700 !important; letter-spacing: .1em !important; text-transform: uppercase; }
+#olr-contact-page .olr-contact__research-copy { margin: 0; font: 400 12px/1.6 var(--olr-contact-font); }
+@media (max-width: 600px) {
+  #olr-contact-page .olr-contact__inner { padding-top: 44px; padding-bottom: 44px; }
+  #olr-contact-page .olr-contact__form { margin-top: 32px; }
+  #olr-contact-page .ff-t-container { gap: 12px; }
+  #olr-contact-page .ff-el-form-control { font-size: 16px !important; }
+}
+@media (max-width: 420px) {
+  #olr-contact-page .olr-contact__inner { width: calc(100% - 40px); }
+  #olr-contact-page .ff-name-field-wrapper .ff-t-container { flex-direction: column; gap: 0; }
+  #olr-contact-page button.ff-btn-submit { width: 100%; min-width: 0; }
+}
+</style>
+<div class="olr-gitpress-site olr-redesign" data-olr-page="contact" id="olr-contact-page">
+  <section class="olr-contact__inner" aria-labelledby="olr-contact-title">
+    <header class="olr-contact__heading">
+      <p class="olr-contact__eyebrow">Contact</p>
+      <h1 class="olr-contact__title" id="olr-contact-title">Get in touch.</h1>
+      <p class="olr-contact__intro">Have a question? Send us a message and we’ll get back to you as soon as possible.</p>
+    </header>
+    <div class="olr-contact__form">
+      [fluentform id="3"]
+    </div>
+    <aside class="olr-contact__research" aria-label="Research use only">
+      <p class="olr-contact__research-title">For research use only. Not for human consumption.</p>
+      <p class="olr-contact__research-copy">OFF LABEL does not provide medical advice, dosing guidance, administration instructions, or personal-use protocols.</p>
+    </aside>
+  </section>
+</div>
