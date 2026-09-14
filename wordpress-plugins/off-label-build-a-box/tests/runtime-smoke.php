@@ -213,8 +213,19 @@ $GLOBALS['olr_test_wc']->cart = $cart;
 $reflector = new ReflectionClass( $plugin );
 $rate = $reflector->getMethod( 'tier_rate' );
 $rate->setAccessible( true );
-olr_assert( .30 === $rate->invoke( $plugin, 10 ), 'The Ten resolves to the fixed 30% rate.' );
+olr_assert( .35 === $rate->invoke( $plugin, 10 ), 'The Ten resolves to the fixed 35% rate.' );
 olr_assert( 0.0 === $rate->invoke( $plugin, 7 ), 'Unsupported tiers receive no discount.' );
+
+$ten_cart = new WC_Cart();
+$ten_cart->items = array(
+	'parent' => array( 'product_id' => 101, 'variation_id' => 0, 'quantity' => 1, 'data' => clone $one, 'olr_box_id' => 'box-13579', 'olr_box_size' => 10, 'olr_box_rate' => .30, 'olr_box_role' => 'parent' ),
+	'component' => array( 'product_id' => 102, 'variation_id' => 0, 'quantity' => 9, 'data' => clone $two, 'olr_box_id' => 'box-13579', 'olr_box_size' => 10, 'olr_box_rate' => .30, 'olr_box_role' => 'component' ),
+);
+foreach ( array( 1, 2 ) as $calculation ) {
+	$plugin->apply_box_prices( $ten_cart );
+	$total = $ten_cart->items['parent']['data']->price + 9 * $ten_cart->items['component']['data']->price;
+	olr_assert( 357.5 === $total, 'The Ten applies 35% to a $550 mixed box without stacking on recalculation.' );
+}
 
 $validate = $reflector->getMethod( 'validate_selection' );
 $validate->setAccessible( true );

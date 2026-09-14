@@ -18,7 +18,7 @@
     var isSaving = false;
 
     function currentDiscount() {
-      return tier === 10 ? 30 : 25;
+      return tier === 10 ? 35 : 25;
     }
 
     function keyFor(productId, variationId) {

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Best Offer
  * Description: Non-stacking product/group pricing with an explicit live enable switch and a separate administrator-only, non-purchasable preview. Disabled by default.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
  * Author: Off Label Research
@@ -13,7 +13,7 @@ require_once __DIR__ . '/includes/class-olr-offer-admin.php';
 require_once __DIR__ . '/includes/class-olr-offer-live-preview.php';
 
 final class OLR_Best_Offer {
-	const VERSION = '0.3.0';
+	const VERSION = '0.3.1';
 	const AUTO = 'olr-automatic-best-offer';
 	const RUNTIME = 'olr_allocated_offer';
 	private $calculating = false;
@@ -115,7 +115,8 @@ final class OLR_Best_Offer {
 		$errors = array();
 		if ( ! defined( 'WC_VERSION' ) || '11.1.0' !== WC_VERSION ) { $errors[] = 'WooCommerce 11.1.0 is required.'; }
 		if ( defined( 'OLR_ACO_VERSION' ) && '1.1.0' !== OLR_ACO_VERSION ) { $errors[] = 'Advanced Cart Offers 1.1.0 is required.'; }
-		if ( class_exists( 'OLR_Build_A_Box' ) && '1.3.3' !== OLR_Build_A_Box::VERSION ) { $errors[] = 'Build Your Box 1.3.3 is required.'; }
+		// Accept the previous audited build while the two plugins are updated in sequence.
+		if ( class_exists( 'OLR_Build_A_Box' ) && ! in_array( OLR_Build_A_Box::VERSION, array( '1.3.3', '1.3.4' ), true ) ) { $errors[] = 'Build Your Box 1.3.3 or 1.3.4 is required.'; }
 		if ( class_exists( 'Elex_Woo_Discount_Per_Payment_Method' ) ) {
 			$reflection = new ReflectionClass( 'Elex_Woo_Discount_Per_Payment_Method' );
 			$header = get_file_data( $reflection->getFileName(), array( 'Version' => 'Version' ) );
@@ -136,11 +137,20 @@ final class OLR_Best_Offer {
 	public static function settings( $product ) {
 		$parent = $product->get_parent_id() ? wc_get_product( $product->get_parent_id() ) : $product;
 		$tiers = array();
-		foreach ( array( array( 3, 10 ), array( 5, 15 ), array( 10, 20 ) ) as $index => $default ) {
+		$defaults = array( array( 3, 20 ), array( 5, 25 ), array( 10, 35 ) );
+		$legacy = array( array( 3, 10 ), array( 5, 15 ), array( 10, 20 ) );
+		$uses_legacy_defaults = true;
+		foreach ( $defaults as $index => $default ) {
 			$n = $index + 1;
 			$q = $parent->get_meta( '_olr_volume_q' . $n );
 			$p = $parent->get_meta( '_olr_volume_p' . $n );
+			$uses_legacy_defaults = $uses_legacy_defaults && ( '' === $q || (float) $q === (float) $legacy[ $index ][0] ) && ( '' === $p || (float) $p === (float) $legacy[ $index ][1] );
 			$tiers[] = array( 'quantity' => '' === $q ? $default[0] : max( 1, (int) $q ), 'percent' => '' === $p ? $default[1] : max( 0, min( 100, (float) $p ) ) );
+		}
+		// Product edits persisted the old defaults. Upgrade that complete schedule
+		// on read too, while preserving custom tiers and the product's opt-out flags.
+		if ( $uses_legacy_defaults ) {
+			foreach ( $defaults as $index => $default ) { $tiers[ $index ] = array( 'quantity' => $default[0], 'percent' => $default[1] ); }
 		}
 		return array( 'enabled' => 'no' !== $parent->get_meta( '_olr_volume_enabled' ), 'override' => 'no' !== $parent->get_meta( '_olr_volume_override' ), 'tiers' => $tiers );
 	}
@@ -205,7 +215,7 @@ final class OLR_Best_Offer {
 			if ( $is_box ) {
 				$size = (int) ( $first->object['olr_box_size'] ?? 0 );
 				if ( $group['quantity'] !== (float) $size && $group['quantity'] !== $size ) { $this->errors[] = 'A Research Box is incomplete.'; }
-				else { $rate = 5 === $size ? 25 : ( 10 === $size ? 30 : 0 ); }
+				else { $rate = 5 === $size ? 25 : ( 10 === $size ? 35 : 0 ); }
 			} elseif ( $settings['enabled'] ) { $rate = OLR_Offer_Planner::tier( $group['quantity'], $settings['tiers'] ); }
 			$total = array_sum( $group['prices'] );
 			$group['automatic'][ $is_box ? 'Build Your Box' : 'Volume savings' ] = OLR_Offer_Planner::allocate( $total * $rate / 100, $group['prices'] );

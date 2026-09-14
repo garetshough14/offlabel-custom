@@ -86,8 +86,9 @@ class TestOrderLine {
 }
 class WC_Order {public $items=array(),$meta=array();public function get_items($type='line_item'){return $this->items;}public function get_prices_include_tax(){return false;}public function get_meta($key){return $this->meta[$key]??'';}public function update_meta_data($key,$value){$this->meta[$key]=$value;}}
 require __DIR__.'/../output/pricing-audit/class-wc-discounts.php';
-require 'C:/Users/User/Downloads/advanced-cart-offers-for-woocommerce/includes/class-olr-aco-rule.php';
-require 'C:/Users/User/Downloads/advanced-cart-offers-for-woocommerce/includes/class-olr-aco-rule-engine.php';
+$aco_source = getenv('OLR_ACO_SOURCE') ?: __DIR__.'/fixtures/advanced-cart-offers-1.1.0';
+require $aco_source.'/includes/class-olr-aco-rule.php';
+require $aco_source.'/includes/class-olr-aco-rule-engine.php';
 (new OLR_ACO_Rule_Engine())->register_hooks();
 require __DIR__.'/../wordpress-plugins/off-label-best-offer/off-label-best-offer.php';
 $wc=(object)array('session'=>new TestSession(),'cart'=>null);
@@ -106,40 +107,58 @@ $products[1]=new WC_Product(1);$products[2]=new WC_Product(2);$products[338]=new
 $coupons['offduty']=array('discount_type'=>'percent','amount'=>30,'minimum_amount'=>50,'individual_use'=>true,'free_shipping'=>true,'excluded_product_ids'=>array(338),'excluded_product_categories'=>array(99));
 $coupons['fifteen']=array('discount_type'=>'percent','amount'=>15);
 $coupons['thirty']=array('discount_type'=>'percent','amount'=>30);
-foreach(array(1=>65,2=>130,3=>175.50,4=>234,5=>276.25,8=>442,9=>497.25,10=>520,12=>624) as $qty=>$expected){eq(total(run_cart(array('a'=>line(1,$qty)))),$expected,'quantity '.$qty);}
-eq(total(run_cart(array('a'=>line(1,10)),array('offduty'))),455,'30% replaces volume, not 364');
-$cart=run_cart(array('a'=>line(1,10)),array('fifteen'));eq(total($cart),520,'lower coupon suppressed');eq($cart->get_coupon_discount_amount('fifteen'),0,'losing coupon zero');eq(in_array('fifteen',$cart->codes,true),true,'losing coupon retained');
-eq(total(run_cart(array('a'=>line(1,5),'b'=>line(338,10)),array('offduty'))),747.50,'excluded SKU keeps its volume');
-eq(total(run_cart(array('a'=>line(3,10)),array('offduty'))),520,'excluded category');
-eq(total(run_cart(array('a'=>line(1,2),'b'=>line(1,1)))),175.50,'same SKU split lines');
+foreach(array(1=>65,2=>130,3=>156,4=>208,5=>243.75,8=>390,9=>438.75,10=>422.50,12=>507) as $qty=>$expected){eq(total(run_cart(array('a'=>line(1,$qty)))),$expected,'quantity '.$qty);}
+eq(total(run_cart(array('a'=>line(1,10)),array('offduty'))),422.50,'35% volume beats a 30% coupon without stacking');
+$cart=run_cart(array('a'=>line(1,10)),array('fifteen'));eq(total($cart),422.50,'lower coupon suppressed');eq($cart->get_coupon_discount_amount('fifteen'),0,'losing coupon zero');eq(in_array('fifteen',$cart->codes,true),true,'losing coupon retained');
+eq(total(run_cart(array('a'=>line(1,5),'b'=>line(338,10)),array('offduty'))),650,'excluded SKU keeps its volume');
+eq(total(run_cart(array('a'=>line(3,10)),array('offduty'))),422.50,'excluded category');
+eq(total(run_cart(array('a'=>line(1,2),'b'=>line(1,1)))),156,'same SKU split lines');
 eq(total(run_cart(array('a'=>line(1,2),'b'=>line(2,2)))),260,'different SKU no aggregation');
 $products[11]=new WC_Product(11,65,1);$products[12]=new WC_Product(12,65,1);
 eq(total(run_cart(array('a'=>line(11,2),'b'=>line(12,2)))),260,'variations not combined');
+foreach(array(1=>array(3,10),2=>array(5,15),3=>array(10,20)) as $n=>$tier) {
+ $products[1]->meta['_olr_volume_q'.$n]=(string)$tier[0];$products[1]->meta['_olr_volume_p'.$n]=(string)$tier[1];
+}
+foreach(array(3=>156,5=>243.75,10=>422.50) as $qty=>$expected) {
+ eq(total(run_cart(array('a'=>line(1,$qty)))),$expected,'saved legacy defaults upgrade '.$qty);
+ eq(total(run_cart(array('a'=>line(11,$qty)))),$expected,'variation inherits upgraded parent '.$qty);
+}
+$products[1]->meta['_olr_volume_p3']='40';
+eq(total(run_cart(array('a'=>line(1,10)))),390,'deliberate custom schedule preserved');
+$products[1]->meta=array();
 $products[1]->meta['_olr_volume_enabled']='no';eq(total(run_cart(array('a'=>line(1,10)))),650,'disabled product');unset($products[1]->meta['_olr_volume_enabled']);
-$products[1]->meta['_olr_volume_override']='no';eq(total(run_cart(array('a'=>line(1,10)),array('offduty'))),520,'promotional override disabled');eq(total(run_cart(array('a'=>line(1,1)),array('offduty'))),45.50,'override no without a tier');unset($products[1]->meta['_olr_volume_override']);
+$products[1]->meta['_olr_volume_override']='no';eq(total(run_cart(array('a'=>line(1,10)),array('offduty'))),422.50,'promotional override disabled');eq(total(run_cart(array('a'=>line(1,1)),array('offduty'))),45.50,'override no without a tier');unset($products[1]->meta['_olr_volume_override']);
 $box=array('olr_box_id'=>'test','olr_box_size'=>5,'olr_box_role'=>'parent');
 $boxlines=array('a'=>line(1,1,$box),'b'=>line(2,4,array_merge($box,array('olr_box_role'=>'component'))));
 eq(total(run_cart($boxlines)),243.75,'five box');eq(total(run_cart($boxlines,array('offduty'))),243.75,'offduty excludes Bundles and whole box');eq(total(run_cart($boxlines,array('thirty'))),227.50,'eligible coupon replaces box');
+$ten=array('olr_box_id'=>'test-ten','olr_box_size'=>10,'olr_box_rate'=>.30,'olr_box_role'=>'parent');
+$tenlines=array('a'=>line(1,1,$ten),'b'=>line(2,9,array_merge($ten,array('olr_box_role'=>'component'))));
+eq(total(run_cart($tenlines)),422.50,'ten box uses 35% even with saved old cart rate');
+eq(total(run_cart($tenlines,array('thirty'))),422.50,'ten box beats 30% coupon without stacking');
+$coupons['forty']=array('discount_type'=>'percent','amount'=>40);
+eq(total(run_cart($tenlines,array('forty'))),390,'eligible 40% coupon wins over ten box');
+$tenlines['loose']=line(1,3);
+eq(total(run_cart($tenlines)),578.50,'ten box and loose same SKU keep independent tiers');
 $coupons['thirty']['meta']['_olr_exclude_boxes']='yes';eq(total(run_cart($boxlines,array('thirty'))),243.75,'explicit box exclusion');unset($coupons['thirty']['meta']);
 $coupons['thirty']['excluded_product_ids']=array(2);eq(total(run_cart($boxlines,array('thirty'))),243.75,'one excluded member protects whole box');unset($coupons['thirty']['excluded_product_ids']);
 $mixed=$boxlines;$mixed['c']=line(1,3);eq(total(run_cart($mixed,array('offduty'))),380.25,'box plus standalone same SKU, separate groups');
-$cart=run_cart(array('a'=>line(1,10)));foreach(array(8=>442,4=>234,2=>130) as $q=>$expected){$cart->cart_contents['a']['quantity']=$q;$cart=run_cart($cart->cart_contents,array(),$cart);eq(total($cart),$expected,'same session recalculation '.$q);}
+$cart=run_cart(array('a'=>line(1,10)));foreach(array(8=>390,4=>208,2=>130) as $q=>$expected){$cart->cart_contents['a']['quantity']=$q;$cart=run_cart($cart->cart_contents,array(),$cart);eq(total($cart),$expected,'same session recalculation '.$q);}
 $options['elex_discount_per_payment_method_options']=array(array('id'=>'zelle','checkbox_value'=>'yes','discount_type'=>'percentage','value'=>5));$wc->session->set('chosen_payment_method','zelle');
-eq(total(run_cart(array('a'=>line(1,1)))),61.75,'payment wins alone');eq(total(run_cart(array('a'=>line(1,10)),array('offduty'))),455,'payment cannot stack');$wc->session->set('chosen_payment_method','card');eq(total(run_cart(array('a'=>line(1,1)))),65,'payment switch removes discount');
-$products[1]->sale=$products[1]->price=52;eq(total(run_cart(array('a'=>line(1,5)))),260,'sale competes with volume');eq(total(run_cart(array('a'=>line(1,10)),array('offduty'))),455,'coupon against regular not sale');$products[1]->sale=null;$products[1]->price=65;
-$coupons['fixed']=array('discount_type'=>'fixed_cart','amount'=>100);eq(total(run_cart(array('a'=>line(1,10)),array('fixed'))),520,'fixed-cart lower');$coupons['fixed']['amount']=200;eq(total(run_cart(array('a'=>line(1,10)),array('fixed'))),450,'fixed-cart higher');
-$coupons['peritem']=array('discount_type'=>'fixed_product','amount'=>20);eq(total(run_cart(array('a'=>line(1,10)),array('peritem'))),450,'fixed-product higher');
-$coupons['limited']=array('discount_type'=>'percent','amount'=>50,'limit_usage_to_x_items'=>1);eq(total(run_cart(array('a'=>line(1,10)),array('limited'))),520,'50% one item loses to 20% ten items');
+eq(total(run_cart(array('a'=>line(1,1)))),61.75,'payment wins alone');eq(total(run_cart(array('a'=>line(1,10)),array('offduty'))),422.50,'payment cannot stack');$wc->session->set('chosen_payment_method','card');eq(total(run_cart(array('a'=>line(1,1)))),65,'payment switch removes discount');
+$products[1]->sale=$products[1]->price=52;eq(total(run_cart(array('a'=>line(1,5)))),243.75,'25% volume beats 20% sale');eq(total(run_cart(array('a'=>line(1,10)),array('offduty'))),422.50,'coupon against regular not sale');$products[1]->sale=null;$products[1]->price=65;
+$coupons['fixed']=array('discount_type'=>'fixed_cart','amount'=>100);eq(total(run_cart(array('a'=>line(1,10)),array('fixed'))),422.50,'fixed-cart lower');$coupons['fixed']['amount']=250;eq(total(run_cart(array('a'=>line(1,10)),array('fixed'))),400,'fixed-cart higher');
+$coupons['peritem']=array('discount_type'=>'fixed_product','amount'=>25);eq(total(run_cart(array('a'=>line(1,10)),array('peritem'))),400,'fixed-product higher');
+$coupons['limited']=array('discount_type'=>'percent','amount'=>50,'limit_usage_to_x_items'=>1);eq(total(run_cart(array('a'=>line(1,10)),array('limited'))),422.50,'50% one item loses to 35% ten items');
 $coupons['bogo']=array('discount_type'=>'olr_advanced_offer','amount'=>100,'meta'=>array('_olr_aco_mode'=>'bogo','_olr_aco_qualifying_scope'=>'any','_olr_aco_target_scope'=>'any','_olr_aco_buy_qty'=>1,'_olr_aco_get_qty'=>1,'_olr_aco_repeat'=>'yes','_olr_aco_allow_reuse'=>'no'));
 eq(total(run_cart(array('a'=>line(1,10)),array('bogo'))),325,'real ACO buy one get one');
-$coupons['bogo']['meta']['_olr_aco_repeat']='no';eq(total(run_cart(array('a'=>line(1,10)),array('bogo'))),520,'one free bottle loses to volume by dollars');
+$coupons['bogo']['meta']['_olr_aco_repeat']='no';eq(total(run_cart(array('a'=>line(1,10)),array('bogo'))),422.50,'one free bottle loses to volume by dollars');
 eq(total(run_cart(array('a'=>line(1,1)),array('bogo'))),65,'unqualified BOGO rejected');
 $coupons['bogo']['excluded_product_categories']=array(99);eq(total(run_cart($boxlines,array('bogo'))),243.75,'BOGO cannot bypass excluded box');
-$coupons['minimum']=array('discount_type'=>'percent','amount'=>30,'minimum_amount'=>1000);eq(total(run_cart(array('a'=>line(1,10)),array('minimum'))),520,'minimum spend native validation');
+$coupons['minimum']=array('discount_type'=>'percent','amount'=>30,'minimum_amount'=>1000);eq(total(run_cart(array('a'=>line(1,10)),array('minimum'))),422.50,'minimum spend native validation');
 eq((new WC_Coupon('offduty'))->get_free_shipping(),true,'free shipping unchanged');eq((new WC_Coupon('offduty'))->get_individual_use(),true,'individual use unchanged');eq((new WC_Coupon('offduty'))->get_discount_type(),'percent','runtime type never persisted');
 $bad=line(1,3);$bad['data']->set_price(50);run_cart(array('a'=>$bad));$engine->check_cart();eq(count($notices)>0,true,'unknown price modifier pauses checkout');
 $cart=run_cart(array('a'=>line(1,3)));$cart->fees[]= (object)array('amount'=>-5);$engine->finish($cart);eq(count($wc->session->get('olr_best_offer_errors'))>0,true,'negative fee caught');
-$cart=run_cart(array('a'=>line(1,10),'b'=>line(338,10)),array('offduty'));
+$cart=run_cart(array('a'=>line(1,5),'b'=>line(338,10)),array('offduty'));
 $order=new WC_Order();$engine->assert_safe_order($order);
 foreach($cart->cart_contents as $key=>$values){$id=$key==='a'?101:102;$item=new TestOrderLine($id,$values['data'],$values['quantity'],$values['line_subtotal']);$engine->order_meta($item,$key,$values,$order);$order->items[$id]=$item;}
 $order_discount=new WC_Discounts($order);
@@ -148,7 +167,7 @@ eq(array_sum($order_discount->get_discounts_by_item(true)),32500,'order replay p
 eq($order->items[101]->get_meta('_olr_best_offer_name'),'offduty','order records winning coupon');eq($order->items[102]->get_meta('_olr_best_offer_name'),'Volume savings','order records excluded product offer');
 $order->items[101]->qty=8;$caught=false;try{$engine->replay_order_coupon(new WC_Coupon(OLR_Best_Offer::AUTO),OLR_Best_Offer::AUTO,$item,$order);}catch(\Exception $e){$caught=true;}eq($caught,true,'edited-order repricing requires review, not silent stacking');
 $probe=new WC_Discounts(run_cart($boxlines));eq(is_wp_error($probe->is_coupon_valid(new WC_Coupon('offduty'))),true,'excluded-only box cannot unlock offduty free shipping');
-$coupons['thirty']['excluded_product_ids']=array(1);eq(total(run_cart(array('a'=>line(1,10),'b'=>line(2,1)),array('thirty'))),565.50,'independent winning offers across mixed SKUs');unset($coupons['thirty']['excluded_product_ids']);
+$coupons['thirty']['excluded_product_ids']=array(1);eq(total(run_cart(array('a'=>line(1,10),'b'=>line(2,1)),array('thirty'))),468,'independent winning offers across mixed SKUs');unset($coupons['thirty']['excluded_product_ids']);
 $environment='production';$disabled=new OLR_Best_Offer();$disabled->boot();$untouched=new WC_Cart();$untouched->cart_contents=array('a'=>line(1,10));$untouched->codes=array(OLR_Best_Offer::AUTO,'offduty');$disabled->prepare($untouched);eq($untouched->codes,array('offduty'),'production gate removes only its own automatic coupon');eq($untouched->cart_contents['a']['data']->get_price(),65,'production gate does not reprice');$environment='staging';
 $environment='production';$test_user_id=42;$test_caps=array('manage_options'=>true,'manage_woocommerce'=>true);$test_token='browser-session-one';$test_user_meta=array();
 eq(OLR_Offer_Live_Preview::active(),false,'administrator not opted in');

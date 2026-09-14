@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Build Your Box
  * Description: Branded mix-and-match research box builder backed by native WooCommerce products, carts, and orders.
- * Version: 1.3.3
+ * Version: 1.3.4
  * Author: Off Label Research
  * Text Domain: off-label-build-a-box
  * Requires Plugins: woocommerce
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Build_A_Box {
-	const VERSION             = '1.3.3';
+	const VERSION             = '1.3.4';
 	const PAGE_SLUG           = 'build-your-box';
 	const SHORTCODE           = 'olr_build_a_box';
 	const META_ELIGIBLE       = '_olr_box_eligible';
@@ -540,7 +540,7 @@ final class OLR_Build_A_Box {
 				<p id="olr-box-tier-title">Discount is applied automatically when your box is complete.</p>
 				<div class="olr-build-box__tier-grid" role="radiogroup" aria-label="Choose a box size">
 					<?php echo $this->tier_card( 5, 25, 'The Five', $initial_tier ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<?php echo $this->tier_card( 10, 30, 'The Ten', $initial_tier ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo $this->tier_card( 10, 35, 'The Ten', $initial_tier ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 			</section>
 
@@ -573,10 +573,10 @@ final class OLR_Build_A_Box {
 				<aside class="olr-build-box__summary" aria-labelledby="olr-box-summary-title">
 					<p class="olr-build-box__eyebrow" id="olr-box-summary-title">Your research box</p>
 					<ol class="olr-build-box__summary-items" data-summary-items></ol>
-					<div class="olr-build-box__unlock" data-unlock-message><span aria-hidden="true">○</span><p>Add <strong data-remaining-count><?php echo esc_html( (string) $initial_tier ); ?></strong> more <span data-remaining-label>bottles</span> to<br><b>unlock <span data-discount-copy><?php echo esc_html( '5' === (string) $initial_tier ? '25' : '30' ); ?></span>% off</b></p></div>
+					<div class="olr-build-box__unlock" data-unlock-message><span aria-hidden="true">○</span><p>Add <strong data-remaining-count><?php echo esc_html( (string) $initial_tier ); ?></strong> more <span data-remaining-label>bottles</span> to<br><b>unlock <span data-discount-copy><?php echo esc_html( '5' === (string) $initial_tier ? '25' : '35' ); ?></span>% off</b></p></div>
 					<dl class="olr-build-box__totals">
 						<div><dt>Subtotal (<span data-total-items>0</span> items)</dt><dd data-subtotal>$0.00</dd></div>
-						<div class="olr-build-box__discount-row"><dt>Box discount (<span data-discount-copy><?php echo esc_html( '5' === (string) $initial_tier ? '25' : '30' ); ?></span>%)</dt><dd data-savings>−$0.00</dd></div>
+						<div class="olr-build-box__discount-row"><dt>Box discount (<span data-discount-copy><?php echo esc_html( '5' === (string) $initial_tier ? '25' : '35' ); ?></span>%)</dt><dd data-savings>−$0.00</dd></div>
 						<div class="olr-build-box__total-row"><dt>Total</dt><dd data-total>$0.00</dd></div>
 					</dl>
 					<button class="olr-build-box__submit" type="button" data-submit-box disabled><?php echo esc_html( $edit_box_id ? 'Update box' : 'Add box to cart' ); ?> <span aria-hidden="true">→</span></button>
@@ -2211,7 +2211,7 @@ final class OLR_Build_A_Box {
 	 * @return float
 	 */
 	private function tier_rate( $tier ) {
-		return 5 === absint( $tier ) ? 0.25 : ( 10 === absint( $tier ) ? 0.30 : 0.0 );
+		return 5 === absint( $tier ) ? 0.25 : ( 10 === absint( $tier ) ? 0.35 : 0.0 );
 	}
 
 	/**

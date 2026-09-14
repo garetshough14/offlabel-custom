@@ -52,6 +52,13 @@ dom.window.addEventListener('load', () => {
   assert(root.querySelector('[data-box-limit]').textContent === '10', 'Customers can expand a completed Five into The Ten.');
   assert(root.querySelector('[data-submit-box]').disabled === true, 'The Ten remains locked until it reaches ten bottles.');
 
+  for (let i = 0; i < 5; i += 1) addButtons[0].click();
+  assert(root.querySelector('[data-box-count]').textContent === '10', 'The Ten accepts exactly ten bottles.');
+  assert(root.querySelector('[data-subtotal]').textContent === '$665.00', 'The expanded box keeps all selected bottles.');
+  assert(root.querySelector('[data-savings]').textContent === '−$232.75', 'The Ten calculates 35% savings.');
+  assert(root.querySelector('[data-total]').textContent === '$432.25', 'The Ten shows the correct discounted total.');
+  assert(root.querySelector('[data-submit-box]').disabled === false, 'The completed Ten can be submitted.');
+
   root.querySelector('[data-start-over]').click();
   assert(root.querySelector('[data-box-count]').textContent === '0', 'Start over clears every selected bottle.');
   assert(root.querySelector('[data-submit-box]').disabled === true, 'An empty box cannot be submitted.');
