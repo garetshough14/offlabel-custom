@@ -55,7 +55,7 @@ eq($guard->block_order(123,null),123,'ordinary live order is not blocked by prev
 $gateways=array('fixture-offline'=>new stdClass());
 eq($guard->gateways($gateways),$gateways,'ordinary live gateways left available');
 $live_order=new WC_Order();$engine->assert_safe_order($live_order);
-eq($live_order->get_meta('_olr_best_offer_version'),'0.3.1','live order receives version metadata');
+eq($live_order->get_meta('_olr_best_offer_version'),'0.3.2','live order receives version metadata');
 $live_coupon_items=array();$id=801;
 foreach($cart->cart_contents as $key=>$values) {
  $item=new TestOrderLine($id,$values['data'],$values['quantity'],$values['line_subtotal']);

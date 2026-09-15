@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Best Offer
  * Description: Non-stacking product/group pricing with an explicit live enable switch and a separate administrator-only, non-purchasable preview. Disabled by default.
- * Version: 0.3.1
+ * Version: 0.3.2
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
  * Author: Off Label Research
@@ -13,7 +13,7 @@ require_once __DIR__ . '/includes/class-olr-offer-admin.php';
 require_once __DIR__ . '/includes/class-olr-offer-live-preview.php';
 
 final class OLR_Best_Offer {
-	const VERSION = '0.3.1';
+	const VERSION = '0.3.2';
 	const AUTO = 'olr-automatic-best-offer';
 	const RUNTIME = 'olr_allocated_offer';
 	private $calculating = false;
@@ -116,7 +116,7 @@ final class OLR_Best_Offer {
 		if ( ! defined( 'WC_VERSION' ) || '11.1.0' !== WC_VERSION ) { $errors[] = 'WooCommerce 11.1.0 is required.'; }
 		if ( defined( 'OLR_ACO_VERSION' ) && '1.1.0' !== OLR_ACO_VERSION ) { $errors[] = 'Advanced Cart Offers 1.1.0 is required.'; }
 		// Accept the previous audited build while the two plugins are updated in sequence.
-		if ( class_exists( 'OLR_Build_A_Box' ) && ! in_array( OLR_Build_A_Box::VERSION, array( '1.3.3', '1.3.4' ), true ) ) { $errors[] = 'Build Your Box 1.3.3 or 1.3.4 is required.'; }
+		if ( class_exists( 'OLR_Build_A_Box' ) && ! in_array( OLR_Build_A_Box::VERSION, array( '1.3.3', '1.3.4', '1.3.5' ), true ) ) { $errors[] = 'Build Your Box 1.3.3, 1.3.4 or 1.3.5 is required.'; }
 		if ( class_exists( 'Elex_Woo_Discount_Per_Payment_Method' ) ) {
 			$reflection = new ReflectionClass( 'Elex_Woo_Discount_Per_Payment_Method' );
 			$header = get_file_data( $reflection->getFileName(), array( 'Version' => 'Version' ) );

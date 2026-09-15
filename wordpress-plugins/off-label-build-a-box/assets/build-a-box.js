@@ -13,6 +13,7 @@
     var editBoxId = root.dataset.editBox || '';
     var cards = Array.prototype.slice.call(root.querySelectorAll('[data-product-card]'));
     var submit = root.querySelector('[data-submit-box]');
+    var submitLabel = submit ? submit.innerHTML : '';
     var alertBox = root.querySelector('[data-builder-alert]');
     var summary = root.querySelector('[data-summary-items]');
     var isSaving = false;
@@ -217,7 +218,52 @@
       if (submit) {
         submit.disabled = !complete || isSaving;
         submit.setAttribute('aria-disabled', submit.disabled ? 'true' : 'false');
+        submit.setAttribute('aria-busy', isSaving ? 'true' : 'false');
+        if (isSaving) submit.textContent = 'Adding your box…';
+        else submit.innerHTML = submitLabel;
       }
+    }
+
+    function errorMessage(response) {
+      return (response && response.data && response.data.message)
+        || (config.messages && config.messages.genericError)
+        || 'Your box could not be updated. Please try again.';
+    }
+
+    function post(body) {
+      return fetch(config.ajaxUrl || '/wp-admin/admin-ajax.php', {
+        method: 'POST', body: body, credentials: 'same-origin', cache: 'no-store'
+      }).then(function (response) {
+        return response.json().then(function (data) {
+          return { ok: response.ok, status: response.status, data: data };
+        }, function () { throw new Error(errorMessage()); });
+      });
+    }
+
+    function saveBox(body, canRefreshNonce) {
+      return post(body).then(function (result) {
+        var response = result.data;
+        // Retry only a confirmed nonce rejection, which happens before any cart
+        // mutation. Never replay an ambiguous network/server failure: it may
+        // already have saved the box. -1 supports older PHP during deployment.
+        var invalidNonce = result.status === 403 && (response === -1
+          || (response && response.data && response.data.code === 'invalid_nonce'));
+        if (invalidNonce && canRefreshNonce) {
+          var renewal = new FormData();
+          renewal.append('action', 'olr_box_nonce');
+          return post(renewal).then(function (fresh) {
+            if (!fresh.ok || !fresh.data || !fresh.data.success || !fresh.data.data
+                || typeof fresh.data.data.nonce !== 'string' || !fresh.data.data.nonce) {
+              throw new Error(errorMessage(fresh.data));
+            }
+            config.nonce = fresh.data.data.nonce;
+            body.set('nonce', config.nonce);
+            return saveBox(body, false);
+          });
+        }
+        if (!result.ok || !response || !response.success) throw new Error(errorMessage(response));
+        return response;
+      });
     }
 
     function submitBox() {
@@ -235,12 +281,8 @@
       body.append('tier', String(tier));
       body.append('box_id', editBoxId);
       body.append('items', JSON.stringify(payload));
-      fetch(config.ajaxUrl || '/wp-admin/admin-ajax.php', { method: 'POST', body: body, credentials: 'same-origin' })
-        .then(function (response) { return response.json(); })
+      saveBox(body, true)
         .then(function (response) {
-          if (!response || !response.success) {
-            throw new Error(response && response.data && response.data.message ? response.data.message : ((config.messages && config.messages.genericError) || 'Your box could not be updated.'));
-          }
           window.location.assign((response.data && response.data.cartUrl) || config.cartUrl || '/cart/');
         })
         .catch(function (error) {

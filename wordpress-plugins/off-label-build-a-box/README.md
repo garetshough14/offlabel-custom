@@ -18,11 +18,28 @@ An update-safe WooCommerce companion plugin for the branded `/build-your-box/` e
 
 No WooCommerce coupon or custom database table is created.
 
+## Version 1.3.5: expired-page recovery
+
+When an old builder page submits an expired WordPress nonce, the browser now obtains a fresh nonce for the current session and retries that rejected request once, keeping the exact selected bottles. Every save still requires a valid nonce. Network failures, stock errors and ambiguous server errors are never automatically resubmitted, so recovery cannot duplicate a box that might already have saved. The button shows "Adding your box…" while the request is pending and returns to its normal state on error.
+
+Install **Best Offer 0.3.2 first**, then this plugin. The pricing engine checks the builder version explicitly and needs that compatibility update before 1.3.5 is installed.
+
+Regression checks (PHP and Node with `jsdom` installed):
+
+```sh
+node wordpress-plugins/off-label-build-a-box/tests/submission-smoke.js
+node wordpress-plugins/off-label-build-a-box/tests/dom-smoke.js
+php wordpress-plugins/off-label-build-a-box/tests/runtime-smoke.php
+php scripts/verify-best-offer-live.php
+```
+
+The submission test drives the real browser script and PHP AJAX handlers in separate processes, using WordPress 7.1's nonce functions and disposable cart/storage doubles. It reproduces an expired page token adding zero bottles before this fix. It does not verify live WooCommerce database persistence, third-party plugins or hosting caches; those require a signed-in live/staging browser check.
+
 ## Install on staging
 
 1. Back up the staging site and WooCommerce settings.
 2. Upload `off-label-build-a-box.zip` from **Plugins → Add Plugin → Upload Plugin** and activate it.
-3. Confirm that WordPress lists version **1.3.4** and that only one `off-label-build-a-box` plugin directory exists.
+3. Confirm that WordPress lists version **1.3.5** and that only one `off-label-build-a-box` plugin directory exists.
 4. Open **WooCommerce → Build Your Box**, select every approved bottle, and click **Save eligible products**. You do not need to open each product.
 5. Confirm every enabled product has a real featured image, a positive regular price, purchasable stock, and is not on sale.
 6. Open the created **Build Your Box** page and set its slug to `build-your-box` if WordPress changed it.

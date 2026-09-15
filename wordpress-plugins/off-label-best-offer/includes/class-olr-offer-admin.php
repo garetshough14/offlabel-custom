@@ -17,7 +17,7 @@ final class OLR_Offer_Admin {
 	public function page() {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) { return; }
 		echo '<div class="wrap"><h1>Off Label Pricing</h1>';
-		echo '<p>Disabled by default. Targets WooCommerce 11.1.0, Build Your Box 1.3.3/1.3.4, Advanced Cart Offers 1.1.0 and ELEX 1.3.2. Keep Checkout 1.4.4 and your other plugins installed.</p>';
+		echo '<p>Disabled by default. Targets WooCommerce 11.1.0, Build Your Box 1.3.3/1.3.4/1.3.5, Advanced Cart Offers 1.1.0 and ELEX 1.3.2. Keep Checkout 1.4.4 and your other plugins installed.</p>';
 		echo '<p>Environment: <strong>' . esc_html( wp_get_environment_type() ) . '</strong>. WooCommerce: <strong>' . esc_html( defined( 'WC_VERSION' ) ? WC_VERSION : 'not loaded' ) . '</strong>.</p>';
 		if ( 'production' === wp_get_environment_type() ) { $this->production_controls(); $this->live_controls(); echo '</div>'; return; }
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="olr_save_best_offer">';

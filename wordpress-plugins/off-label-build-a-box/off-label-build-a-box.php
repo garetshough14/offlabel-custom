@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Build Your Box
  * Description: Branded mix-and-match research box builder backed by native WooCommerce products, carts, and orders.
- * Version: 1.3.4
+ * Version: 1.3.5
  * Author: Off Label Research
  * Text Domain: off-label-build-a-box
  * Requires Plugins: woocommerce
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class OLR_Build_A_Box {
-	const VERSION             = '1.3.4';
+	const VERSION             = '1.3.5';
 	const PAGE_SLUG           = 'build-your-box';
 	const SHORTCODE           = 'olr_build_a_box';
 	const META_ELIGIBLE       = '_olr_box_eligible';
@@ -77,6 +77,8 @@ final class OLR_Build_A_Box {
 
 		add_action( 'wp_ajax_olr_save_box', array( $this, 'ajax_save_box' ) );
 		add_action( 'wp_ajax_nopriv_olr_save_box', array( $this, 'ajax_save_box' ) );
+		add_action( 'wp_ajax_olr_box_nonce', array( $this, 'ajax_box_nonce' ) );
+		add_action( 'wp_ajax_nopriv_olr_box_nonce', array( $this, 'ajax_box_nonce' ) );
 		add_action( 'wp_ajax_olr_remove_box', array( $this, 'ajax_remove_box' ) );
 		add_action( 'wp_ajax_nopriv_olr_remove_box', array( $this, 'ajax_remove_box' ) );
 		add_action( 'template_redirect', array( $this, 'handle_cart_box_action' ), 1 );
@@ -849,10 +851,23 @@ final class OLR_Build_A_Box {
 	}
 
 	/**
+	 * Renew an expired builder nonce for the current browser identity.
+	 * This read-only endpoint never changes the cart. Same-origin response access
+	 * protects signed-in nonces; every cart mutation still verifies its nonce.
+	 */
+	public function ajax_box_nonce() {
+		nocache_headers();
+		header( 'Cache-Control: private, no-store, max-age=0' );
+		wp_send_json_success( array( 'nonce' => wp_create_nonce( 'olr_box_cart' ) ) );
+	}
+
+	/**
 	 * Save or update a complete box through a nonced AJAX request.
 	 */
 	public function ajax_save_box() {
-		check_ajax_referer( 'olr_box_cart', 'nonce' );
+		if ( false === check_ajax_referer( 'olr_box_cart', 'nonce', false ) ) {
+			wp_send_json_error( array( 'code' => 'invalid_nonce', 'message' => __( 'Your page has expired. Please try adding your box again.', 'off-label-build-a-box' ) ), 403 );
+		}
 		$this->ensure_cart();
 		if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
 			wp_send_json_error( array( 'message' => __( 'Your cart is unavailable. Please refresh and try again.', 'off-label-build-a-box' ) ), 503 );
