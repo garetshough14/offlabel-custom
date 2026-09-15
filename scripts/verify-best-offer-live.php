@@ -48,14 +48,14 @@ qa_save_live('saved');eq(OLR_Best_Offer::live_requested(),true,'explicit acknowl
 $test_user_id=0;$test_caps=array();$test_token='';
 $engine=new OLR_Best_Offer();$engine->boot();
 $cart=run_cart(array('a'=>line(901,3),'b'=>line(902,1)));
-eq(total($cart),250.5,'explicit live opt-in enables guest pricing');
+eq(total($cart),231,'explicit live opt-in enables guest pricing');
 eq(isset($cart->cart_contents['a'][OLR_Offer_Live_Preview::MARKER]),false,'live guest items are not marked as preview');
 $guard=new OLR_Offer_Live_Preview();
 eq($guard->block_order(123,null),123,'ordinary live order is not blocked by preview guard');
 $gateways=array('fixture-offline'=>new stdClass());
 eq($guard->gateways($gateways),$gateways,'ordinary live gateways left available');
 $live_order=new WC_Order();$engine->assert_safe_order($live_order);
-eq($live_order->get_meta('_olr_best_offer_version'),'0.3.0','live order receives version metadata');
+eq($live_order->get_meta('_olr_best_offer_version'),'0.3.1','live order receives version metadata');
 $live_coupon_items=array();$id=801;
 foreach($cart->cart_contents as $key=>$values) {
  $item=new TestOrderLine($id,$values['data'],$values['quantity'],$values['line_subtotal']);
@@ -97,7 +97,7 @@ foreach($live_coupon_items as $code=>$item) {
  $coupon=apply_filters('woocommerce_order_recalculate_coupons_coupon_object',new WC_Coupon($code),$code,$item,$live_order);
  $replay->apply_coupon($coupon,false);
 }
-eq(array_sum($replay->get_discounts_by_item(true)),1950,'saved allocation replays exactly after live pricing turned off');
+eq(array_sum($replay->get_discounts_by_item(true)),3900,'saved allocation replays exactly after live pricing turned off');
 
 // Compatibility failure with an enabled switch pauses checkout instead of
 // silently placing an order at a fallback price.

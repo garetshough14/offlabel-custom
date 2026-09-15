@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $plugin = Join-Path $repo 'wordpress-plugins/off-label-best-offer'
-$target = Join-Path $repo 'wordpress-plugins/_deploy/off-label-best-offer-v0.3.0-LIVE-OPT-IN.zip'
+$target = Join-Path $repo 'wordpress-plugins/_deploy/off-label-best-offer-v0.3.1-LIVE-OPT-IN.zip'
 $files = @('off-label-best-offer.php', 'includes/class-olr-offer-admin.php', 'includes/class-olr-offer-planner.php', 'includes/class-olr-offer-live-preview.php', 'assets/volume.js', 'assets/volume.css')
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 Add-Type -AssemblyName System.IO.Compression

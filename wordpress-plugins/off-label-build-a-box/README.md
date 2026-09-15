@@ -7,7 +7,7 @@ An update-safe WooCommerce companion plugin for the branded `/build-your-box/` e
 - Registers `[olr_build_a_box]` and creates a fallback **Build Your Box** page on activation.
 - Adds a centralized **WooCommerce → Build Your Box** product eligibility manager with search, pagination, readiness checks, and select-all controls.
 - Uses explicitly eligible WooCommerce products, featured images, current regular prices, stock, taxes, shipping, checkout, orders, and refunds.
-- Offers **The Five** at 25% off and **The Ten** at 30% off.
+- Offers **The Five** at 25% off and **The Ten** at 35% off.
 - Shows each completed box as one locked cart and checkout row with its selected bottles listed underneath.
 - Uses dedicated transparent five-vial and ten-vial Off Label artwork for the corresponding box row.
 - Keeps hidden native product allocations behind that row so WooCommerce still owns stock, shipping, tax, HPOS order lines, refunds, and transactional data.
@@ -22,7 +22,7 @@ No WooCommerce coupon or custom database table is created.
 
 1. Back up the staging site and WooCommerce settings.
 2. Upload `off-label-build-a-box.zip` from **Plugins → Add Plugin → Upload Plugin** and activate it.
-3. Confirm that WordPress lists version **1.3.3** and that only one `off-label-build-a-box` plugin directory exists.
+3. Confirm that WordPress lists version **1.3.4** and that only one `off-label-build-a-box` plugin directory exists.
 4. Open **WooCommerce → Build Your Box**, select every approved bottle, and click **Save eligible products**. You do not need to open each product.
 5. Confirm every enabled product has a real featured image, a positive regular price, purchasable stock, and is not on sale.
 6. Open the created **Build Your Box** page and set its slug to `build-your-box` if WordPress changed it.
@@ -37,7 +37,7 @@ No WooCommerce coupon or custom database table is created.
 
 ## Acceptance checks
 
-- Exactly 5 bottles receive 25% off; exactly 10 receive 30% off.
+- Exactly 5 bottles receive 25% off; exactly 10 receive 35% off.
 - Duplicate products and valid variations work, while incomplete boxes never reach the cart.
 - A coupon already in the cart remains applied when a completed box is added.
 - Percentage, fixed-product, and fixed-cart coupon discounts apply only to eligible ordinary products and never reduce any protected box allocation.

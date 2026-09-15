@@ -5,7 +5,7 @@ const { chromium } = require(process.env.OLR_PLAYWRIGHT || 'C:/Users/User/.cache
 const root = path.resolve(__dirname, '..');
 const read = p => fs.readFileSync(path.join(root,p),'utf8');
 const plugin = 'wordpress-plugins/off-label-best-offer/assets/';
-const config = {enabled:true,tiers:[{quantity:3,percent:10},{quantity:5,percent:15},{quantity:10,percent:20}],regular:65,current:65,variable:false};
+const config = {enabled:true,tiers:[{quantity:3,percent:20},{quantity:5,percent:25},{quantity:10,percent:35}],regular:65,current:65,variable:false};
 const fixture = data => `<!doctype html><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{margin:16px;background:#f7f6f2;font-family:Arial}.olr-product-view{max-width:760px;margin:auto}.olr-volume-pricing button{border:1px solid #d8d5ce;background:transparent;color:#111}.olr-volume-pricing button.is-active{background:#111;color:white}.olr-quantity-stepper{display:flex;gap:12px;margin-top:20px}input{width:40px}</style><article class="olr-product-view"><h1>EPITALON</h1><div class="olr-product-view__price"><strong>$65.00</strong></div><div class="olr-volume-pricing" data-olr-volume-pricing data-unit-price="65" data-olr-offer='${JSON.stringify(data)}'><p><strong>Volume quantities</strong><span>Choose a bottle count.</span></p><div>${[1,3,5,10].map(q=>`<button type="button" data-olr-quantity="${q}"><span>${q} BOTTLES</span><strong>$${65*q}</strong></button>`).join('')}</div></div><form class="cart variations_form"><input class="qty" value="1" min="1" step="1"><button class="single_add_to_cart_button" type="button">Add to research</button></form></article>`;
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
@@ -25,10 +25,10 @@ const fixture = data => `<!doctype html><meta name="viewport" content="width=dev
    await page.addScriptTag({content:read('output/pricing-audit/jquery-3.7.1.min.js')});
    await page.addScriptTag({content:read('scripts/olr-product-detail.js')});
    await page.addScriptTag({content:read(plugin+'volume.js')});
-   assert.match(await page.locator('[data-olr-quantity="3"]').innerText(),/\$175.50 TOTAL/);
-   assert.match(await page.locator('[data-olr-quantity="3"]').innerText(),/\$58.50 \/ BOTTLE/);
-   assert.match(await page.locator('[data-olr-quantity="5"]').innerText(),/\$276.25 TOTAL/);
-   assert.match(await page.locator('[data-olr-quantity="10"]').innerText(),/\$520.00 TOTAL/);
+   assert.match(await page.locator('[data-olr-quantity="3"]').innerText(),/\$156.00 TOTAL/);
+   assert.match(await page.locator('[data-olr-quantity="3"]').innerText(),/\$52.00 \/ BOTTLE/);
+   assert.match(await page.locator('[data-olr-quantity="5"]').innerText(),/\$243.75 TOTAL/);
+   assert.match(await page.locator('[data-olr-quantity="10"]').innerText(),/\$422.50 TOTAL/);
    assert.equal(await page.locator('.olr-tier-badge').count(),1);
    const badgeLayout=await page.locator('[data-olr-quantity="10"]').evaluate(button=>{
     const badge=button.querySelector('.olr-tier-badge').getBoundingClientRect();
@@ -46,8 +46,8 @@ const fixture = data => `<!doctype html><meta name="viewport" content="width=dev
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
    if([390,1440].includes(width)) await page.locator('.olr-product-view').screenshot({path:path.join(root,`output/pricing-audit/volume-${width}.png`)});
    await page.evaluate(data=>jQuery('form').trigger('found_variation',[{display_price:80,olr_offer:{...data,regular:80,current:80}}]),config);
-   await page.waitForFunction(()=>document.querySelector('[data-olr-quantity="10"] .olr-tier-total').textContent==='$640.00 TOTAL');
-   assert.match(await page.locator('[data-olr-quantity="3"]').innerText(),/\$216.00 TOTAL/);
+   await page.waitForFunction(()=>document.querySelector('[data-olr-quantity="10"] .olr-tier-total').textContent==='$520.00 TOTAL');
+   assert.match(await page.locator('[data-olr-quantity="3"]').innerText(),/\$192.00 TOTAL/);
    await page.evaluate(data=>jQuery('form').trigger('found_variation',[{display_price:52,olr_offer:{...data,regular:65,current:52}}]),config);
    await page.waitForFunction(()=>document.querySelector('[data-olr-quantity="3"] .olr-tier-total').textContent==='$156.00 TOTAL');
    await page.evaluate(data=>jQuery('form').trigger('found_variation',[{display_price:65,olr_offer:{...data,enabled:false}}]),config);
@@ -75,7 +75,7 @@ const fixture = data => `<!doctype html><meta name="viewport" content="width=dev
    assert.equal(fetchOptions.method,'POST');assert.equal(fetchOptions.credentials,'same-origin');assert.equal(fetchOptions.cache,'no-store');assert.match(fetchOptions.body,/ids%5B%5D=1/);
    if(authorized) {
     await privatePage.waitForFunction(()=>document.querySelector('.olr-private-preview-banner'));
-    assert.match(await privatePage.locator('[data-olr-quantity="10"]').innerText(),/\$520.00 TOTAL/);
+    assert.match(await privatePage.locator('[data-olr-quantity="10"]').innerText(),/\$422.50 TOTAL/);
    } else {
     assert.equal(await privatePage.locator('.olr-private-preview-banner').count(),0);
     assert.equal(await privatePage.locator('.olr-volume-offers').count(),0);
@@ -116,15 +116,15 @@ const fixture = data => `<!doctype html><meta name="viewport" content="width=dev
    await variationPage.evaluate(()=>window.releaseQuotes());
    await variationPage.waitForFunction(()=>document.querySelector('.olr-volume-offers'));
    if(scenario==='auth-before-woocommerce') await loadWoo();
-   const expected=scenario==='reset-during-auth'?'SELECT STRENGTH':scenario==='changed-during-auth'?'$640.00 TOTAL':'$520.00 TOTAL';
+   const expected=scenario==='reset-during-auth'?'SELECT STRENGTH':scenario==='changed-during-auth'?'$520.00 TOTAL':'$422.50 TOTAL';
    await variationPage.waitForFunction(expected=>document.querySelector('[data-olr-quantity="10"] .olr-tier-total').textContent===expected,expected);
    // Changing and clearing the strength must still refresh correctly afterward.
    await variationPage.selectOption('select','20');
-   await variationPage.waitForFunction(()=>document.querySelector('[data-olr-quantity="10"] .olr-tier-total').textContent==='$640.00 TOTAL');
+   await variationPage.waitForFunction(()=>document.querySelector('[data-olr-quantity="10"] .olr-tier-total').textContent==='$520.00 TOTAL');
    await variationPage.selectOption('select','');
    await variationPage.waitForFunction(()=>document.querySelector('[data-olr-quantity="10"] .olr-tier-total').textContent==='SELECT STRENGTH');
    await variationPage.selectOption('select','10');
-   await variationPage.waitForFunction(()=>document.querySelector('[data-olr-quantity="10"] .olr-tier-total').textContent==='$520.00 TOTAL');
+   await variationPage.waitForFunction(()=>document.querySelector('[data-olr-quantity="10"] .olr-tier-total').textContent==='$422.50 TOTAL');
    await variationPage.close();
    console.log(`PASS actual WooCommerce variation lifecycle: ${scenario}, then switch/reset/reselect.`);
   }

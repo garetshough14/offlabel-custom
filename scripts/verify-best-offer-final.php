@@ -73,14 +73,14 @@ $coupons['qa-bogo']['meta']['_olr_aco_repeat']='yes';
 eq(total(run_cart(array('a'=>line(901,7)),array('qa-bogo'))),325,'repeated buy-two-get-one gives two free of seven');
 $coupons['qa-bogo']['meta']['_olr_aco_max_sets']=1;
 $cart=run_cart(array('a'=>line(901,10)),array('qa-bogo'));
-eq(total($cart),520,'capped one-free offer loses to ten-bottle volume offer');
+eq(total($cart),422.50,'capped one-free offer loses to ten-bottle volume offer');
 eq($cart->get_coupon_discount_amount('qa-bogo'),0,'losing capped BOGO does not stack');
 $coupons['qa-bogo']=$qa_bogo;
 $coupons['qa-bogo']['meta']['_olr_aco_allow_reuse']='yes';
 eq(total(run_cart(array('a'=>line(901,2)),array('qa-bogo'))),65,'explicit overlap permits qualifying unit discount');
 $coupons['qa-bogo']=$qa_bogo;
 $coupons['qa-bogo']['meta']['_olr_aco_min_qualifying_spend']=1000;
-eq(total(run_cart(array('a'=>line(901,3)),array('qa-bogo'))),175.5,'unmet BOGO spend leaves volume available');
+eq(total(run_cart(array('a'=>line(901,3)),array('qa-bogo'))),156,'unmet BOGO spend leaves volume available');
 $coupons['qa-bogo']=$qa_bogo;
 $coupons['qa-bogo']['meta']['_olr_aco_qualifying_scope']='products';
 $coupons['qa-bogo']['meta']['_olr_aco_qualifying_product_ids']=array(901);
@@ -103,9 +103,9 @@ eq(total(run_cart($box_and_loose,array('qa-bogo'))),333.75,'three loose units un
 // Payment choice competition is tested as allocation only, not a real gateway.
 $wc->session->set('chosen_payment_method','zelle');
 $cart=run_cart(array('a'=>line(901,3),'b'=>line(902,1)));
-eq(total($cart),246.75,'volume winner and payment winner can differ by SKU');
+eq(total($cart),227.25,'volume winner and payment winner can differ by SKU');
 $wc->session->set('chosen_payment_method','card');
-eq(total(run_cart($cart->cart_contents,array(),$cart)),250.5,'switching away removes only payment savings');
+eq(total(run_cart($cart->cart_contents,array(),$cart)),231,'switching away removes only payment savings');
 
 // Saved allocation snapshots: this deliberately does NOT claim DB/email/refund coverage.
 $cart=run_cart(array('a'=>line(901,3),'b'=>line(902,1)),array('qa-percent'));

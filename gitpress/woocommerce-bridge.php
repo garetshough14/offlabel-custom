@@ -431,6 +431,45 @@ if ( ! function_exists( 'olr_get_catalog_product_detail' ) ) {
 	}
 }
 
+if ( ! function_exists( 'olr_is_catalog_product_visible' ) ) {
+	/** Keep published catalog products visible when sold out, respecting other visibility rules. */
+	function olr_is_catalog_product_visible( $product ) {
+		if ( ! $product instanceof WC_Product || 'publish' !== $product->get_status() || ! in_array( $product->get_catalog_visibility(), array( 'visible', 'catalog' ), true ) ) {
+			return false;
+		}
+		$show_sold_out = static function () { return 'no'; };
+		add_filter( 'pre_option_woocommerce_hide_out_of_stock_items', $show_sold_out, PHP_INT_MAX );
+		try {
+			return $product->is_visible();
+		} finally {
+			remove_filter( 'pre_option_woocommerce_hide_out_of_stock_items', $show_sold_out, PHP_INT_MAX );
+		}
+	}
+}
+
+if ( ! function_exists( 'olr_get_catalog_products' ) ) {
+	/** One complete result set; old olr_page links cannot offset or omit products. */
+	function olr_get_catalog_products( $category_slug = '', $sort = 'menu_order' ) {
+		$args = array( 'status' => 'publish', 'limit' => -1, 'paginate' => false, 'visibility' => 'catalog', 'orderby' => 'ID', 'order' => 'ASC' );
+		if ( '' !== $category_slug ) { $args['category'] = array( $category_slug ); }
+		$products = array_values( array_filter( wc_get_products( $args ), 'olr_is_catalog_product_visible' ) );
+		usort( $products, static function ( $left, $right ) use ( $sort ) {
+			if ( 'price' === $sort || 'price-desc' === $sort ) {
+				$comparison = (float) $left->get_price() <=> (float) $right->get_price();
+			} elseif ( 'newest' === $sort ) {
+				$left_date = $left->get_date_created();
+				$right_date = $right->get_date_created();
+				$comparison = ( $left_date ? $left_date->getTimestamp() : 0 ) <=> ( $right_date ? $right_date->getTimestamp() : 0 );
+			} else {
+				$comparison = $left->get_menu_order() <=> $right->get_menu_order();
+			}
+			if ( in_array( $sort, array( 'price-desc', 'newest' ), true ) ) { $comparison *= -1; }
+			return $comparison ?: $left->get_id() <=> $right->get_id();
+		} );
+		return $products;
+	}
+}
+
 if ( ! function_exists( 'olr_render_catalog_product_card' ) ) {
 	/**
 	 * Render one catalog card using live WooCommerce data.
@@ -439,7 +478,7 @@ if ( ! function_exists( 'olr_render_catalog_product_card' ) ) {
 	 * @return string
 	 */
 	function olr_render_catalog_product_card( $product ) {
-		if ( ! $product instanceof WC_Product || ! $product->is_visible() ) {
+		if ( ! olr_is_catalog_product_visible( $product ) ) {
 			return '';
 		}
 
@@ -505,7 +544,6 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 
 		$category_slug = isset( $_GET['olr_category'] ) ? sanitize_title( wp_unslash( $_GET['olr_category'] ) ) : '';
 		$sort          = isset( $_GET['olr_sort'] ) ? sanitize_key( wp_unslash( $_GET['olr_sort'] ) ) : 'menu_order';
-		$current_page  = isset( $_GET['olr_page'] ) ? max( 1, absint( wp_unslash( $_GET['olr_page'] ) ) ) : 1;
 		$sort_options  = array(
 			'menu_order' => array( 'label' => __( 'Featured', 'offlabel-research' ), 'orderby' => 'menu_order', 'order' => 'ASC' ),
 			'newest'     => array( 'label' => __( 'Newest', 'offlabel-research' ), 'orderby' => 'date', 'order' => 'DESC' ),
@@ -541,41 +579,10 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 		$query_category_slug = 'compounds' === $category_slug && '' !== $restricted_slug ? $restricted_slug : $category_slug;
 		$query_category_slug = 'metabolic' === $category_slug && '' !== $metabolic_slug ? $metabolic_slug : $query_category_slug;
 
-		$query_args = array(
-			'status'     => 'publish',
-			'limit'      => 12,
-			'page'       => $current_page,
-			'paginate'   => true,
-			'visibility' => 'catalog',
-			'orderby'    => $sort_options[ $sort ]['orderby'],
-			'order'      => $sort_options[ $sort ]['order'],
-		);
-
-		if ( '' !== $query_category_slug ) {
-			$query_args['category'] = array( $query_category_slug );
-		}
-
-		$results     = wc_get_products( $query_args );
-		$products    = isset( $results->products ) && is_array( $results->products ) ? $results->products : array();
-		$total       = isset( $results->total ) ? absint( $results->total ) : count( $products );
-		$total_pages = isset( $results->max_num_pages ) ? absint( $results->max_num_pages ) : 1;
-		$base_url    = olr_catalog_url();
-		$base_url    = remove_query_arg( array( 'olr_category', 'olr_sort', 'olr_page' ), $base_url );
-		$preferred   = array( $metabolic_term => 10, $restricted_term => 20, 'stack' => 30, 'essential' => 40, 'bundle' => 50 );
-		$pagination_base = str_replace(
-			'999999999',
-			'%#%',
-			add_query_arg(
-				array_filter(
-					array(
-						'olr_category' => $category_slug,
-						'olr_sort'     => $sort,
-						'olr_page'     => 999999999,
-					)
-				),
-				$base_url
-			)
-		);
+		$products = olr_get_catalog_products( $query_category_slug, $sort );
+		$total = count( $products );
+		$base_url = remove_query_arg( array( 'olr_category', 'olr_sort', 'olr_page' ), olr_catalog_url() );
+		$preferred = array( $metabolic_term => 10, $restricted_term => 20, 'stack' => 30, 'essential' => 40, 'bundle' => 50 );
 
 		usort(
 			$terms,
@@ -659,24 +666,6 @@ if ( ! function_exists( 'olr_render_research_catalog' ) ) {
 					<?php endforeach; ?>
 				</div>
 
-				<?php if ( $total_pages > 1 ) : ?>
-					<nav class="olr-research-shell olr-research-pagination" aria-label="Catalog pages">
-						<?php
-						echo wp_kses_post(
-							paginate_links(
-								array(
-									'base'      => $pagination_base,
-									'format'    => '',
-									'current'   => $current_page,
-									'total'     => $total_pages,
-									'prev_text' => '←',
-									'next_text' => '→',
-								)
-							)
-						);
-						?>
-					</nav>
-				<?php endif; ?>
 			<?php endif; ?>
 		</div>
 		<?php
