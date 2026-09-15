@@ -7,6 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+OLR_Affiliate_Flows::notice();
+
 $vm       = OLR_Account_Hub::affiliate_dashboard_data( get_current_user_id(), isset( $data ) ? $data : array() );
 $currency = $vm['currency'];
 $money    = static function ( $amount ) use ( $currency ) {
@@ -31,9 +33,11 @@ $status_labels   = array(
 	<section class="olr-affiliate-access-card" aria-label="<?php esc_attr_e( 'Affiliate access details', 'off-label-account-hub' ); ?>">
 		<div>
 			<p class="olr-account-eyebrow"><?php esc_html_e( 'Your code', 'off-label-account-hub' ); ?></p>
-			<strong class="olr-affiliate-access-card__value"><?php echo $vm['coupon_code'] ? esc_html( $vm['coupon_code'] ) : esc_html__( 'NOT CONFIGURED', 'off-label-account-hub' ); ?></strong>
-			<span><?php echo esc_html( $vm['policy']['customer_discount'] . ' ' . __( 'off their first qualifying order', 'off-label-account-hub' ) ); ?></span>
-			<?php if ( $vm['coupon_code'] ) : ?><button type="button" data-olr-copy data-copy-value="<?php echo esc_attr( $vm['coupon_code'] ); ?>"><?php esc_html_e( 'COPY CODE', 'off-label-account-hub' ); ?><span aria-hidden="true">&rarr;</span></button><?php endif; ?>
+			<strong class="olr-affiliate-access-card__value" data-olr-code-value><?php echo esc_html( $vm['coupon_code'] ); ?></strong>
+			<span><?php echo esc_html( OLR_Affiliate_Coupons::offer( get_current_user_id() ) . ' ' . __( 'off their first qualifying order', 'off-label-account-hub' ) ); ?></span>
+			<button type="button" data-olr-copy data-olr-code-copy data-copy-value="<?php echo esc_attr( $vm['coupon_code'] ); ?>" <?php echo $vm['coupon_code'] ? '' : 'hidden'; ?>><?php esc_html_e( 'COPY CODE', 'off-label-account-hub' ); ?><span aria-hidden="true">&rarr;</span></button>
+			<?php if ( ! $vm['coupon_code'] ) { OLR_Affiliate_Flows::code_form(); } ?>
+			<?php OLR_Affiliate_Flows::code_editor(); ?>
 		</div>
 		<div>
 			<p class="olr-account-eyebrow"><?php esc_html_e( 'Your referral link', 'off-label-account-hub' ); ?></p>
@@ -54,8 +58,8 @@ $status_labels   = array(
 		<article class="olr-affiliate-earnings-card">
 			<p class="olr-account-eyebrow"><?php esc_html_e( 'Your earnings', 'off-label-account-hub' ); ?></p>
 			<div class="olr-affiliate-earnings-totals"><div><strong><?php echo wp_kses_post( $money( $vm['pending'] ) ); ?></strong><span><?php esc_html_e( 'Pending', 'off-label-account-hub' ); ?></span></div><div><strong><?php echo wp_kses_post( $money( $vm['available'] ) ); ?></strong><span><?php esc_html_e( 'Available', 'off-label-account-hub' ); ?></span></div><div><strong><?php echo wp_kses_post( $money( $vm['paid'] ) ); ?></strong><span><?php esc_html_e( 'Paid', 'off-label-account-hub' ); ?></span></div></div>
-			<div class="olr-affiliate-payout-summary"><div><span><?php esc_html_e( 'Next payout', 'off-label-account-hub' ); ?></span><strong><?php echo esc_html( $vm['policy']['payout_schedule'] ); ?></strong><b><?php echo wp_kses_post( $money( $vm['available'] ) ); ?></b></div><div><span><?php esc_html_e( 'Payout method', 'off-label-account-hub' ); ?></span><strong><?php echo esc_html( $vm['policy']['payout_method'] ); ?></strong><a href="<?php echo esc_url( $payouts_url ); ?>"><?php esc_html_e( 'EDIT PAYMENT DETAILS', 'off-label-account-hub' ); ?> &rarr;</a></div></div>
-			<p class="olr-affiliate-card-note"><?php echo esc_html( sprintf( __( 'Commissions remain pending for %s before becoming eligible for payout.', 'off-label-account-hub' ), $vm['policy']['hold_period'] ) ); ?></p>
+			<div class="olr-affiliate-payout-summary"><div><span><?php esc_html_e( 'Payout timing', 'off-label-account-hub' ); ?></span><strong><?php esc_html_e( 'Store credit: instant', 'off-label-account-hub' ); ?><br><?php esc_html_e( 'Zelle: monthly', 'off-label-account-hub' ); ?></strong></div><div><a href="<?php echo esc_url( $payouts_url ); ?>"><?php esc_html_e( 'MANAGE PAYOUTS', 'off-label-account-hub' ); ?> &rarr;</a></div></div>
+			<p class="olr-affiliate-card-note"><?php esc_html_e( 'Approved commissions clear after 30 days. Both payout options require at least $50.', 'off-label-account-hub' ); ?></p>
 		</article>
 
 		<article class="olr-affiliate-performance-card">
@@ -90,7 +94,7 @@ $status_labels   = array(
 	</section>
 
 	<section class="olr-affiliate-resource-grid">
-		<article><p class="olr-account-eyebrow"><?php esc_html_e( 'Payouts', 'off-label-account-hub' ); ?></p><strong><?php echo wp_kses_post( $money( $vm['available'] ) ); ?></strong><span><?php esc_html_e( 'Available', 'off-label-account-hub' ); ?></span><p><?php echo esc_html( sprintf( __( 'Next %1$s payout · %2$s minimum · %3$s', 'off-label-account-hub' ), strtolower( $vm['policy']['payout_schedule'] ), $vm['policy']['minimum_payout'], $vm['policy']['payout_method'] ) ); ?></p><a href="<?php echo esc_url( $payouts_url ); ?>"><?php esc_html_e( 'VIEW PAYOUTS', 'off-label-account-hub' ); ?> &rarr;</a></article>
+		<article><p class="olr-account-eyebrow"><?php esc_html_e( 'Payouts', 'off-label-account-hub' ); ?></p><strong><?php echo wp_kses_post( $money( $vm['available'] ) ); ?></strong><span><?php esc_html_e( 'Available', 'off-label-account-hub' ); ?></span><p><?php esc_html_e( 'Store credit: instant. Zelle: monthly with an approved W-9. $50 minimum after the 30-day hold.', 'off-label-account-hub' ); ?></p><a href="<?php echo esc_url( $payouts_url ); ?>"><?php esc_html_e( 'VIEW PAYOUTS', 'off-label-account-hub' ); ?> &rarr;</a></article>
 		<article><p class="olr-account-eyebrow"><?php esc_html_e( 'Creative library', 'off-label-account-hub' ); ?></p><ul><li><a href="<?php echo esc_url( $creative_url ); ?>"><?php esc_html_e( 'CURRENT OFFER', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li><li><a href="<?php echo esc_url( $creative_url ); ?>"><?php esc_html_e( 'SOCIAL ASSETS', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li><li><a href="<?php echo esc_url( $creative_url ); ?>"><?php esc_html_e( 'PRODUCT IMAGERY', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li><li><a href="<?php echo esc_url( $creative_url ); ?>"><?php esc_html_e( 'APPROVED LANGUAGE', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li><li><a href="<?php echo esc_url( $creative_url ); ?>"><?php esc_html_e( 'BRAND GUIDELINES', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li></ul></article>
 		<article><p class="olr-account-eyebrow"><?php esc_html_e( 'Partner guidelines', 'off-label-account-hub' ); ?></p><ul><li><a href="<?php echo esc_url( $guidelines_url ); ?>"><?php esc_html_e( 'AFFILIATE DISCLOSURE', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li><li><a href="<?php echo esc_url( $guidelines_url ); ?>"><?php esc_html_e( 'RESEARCH USE GUIDELINES', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li><li><a href="<?php echo esc_url( $guidelines_url ); ?>"><?php esc_html_e( 'WHAT YOU CAN + CANNOT SAY', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li><li><a href="<?php echo esc_url( $guidelines_url ); ?>"><?php esc_html_e( 'AFFILIATE TERMS', 'off-label-account-hub' ); ?> <span>&rarr;</span></a></li></ul><?php if ( $support_email ) : ?><a class="olr-affiliate-support" href="mailto:<?php echo esc_attr( $support_email ); ?>"><?php esc_html_e( 'CONTACT AFFILIATE SUPPORT', 'off-label-account-hub' ); ?> &rarr;</a><?php endif; ?></article>
 	</section>

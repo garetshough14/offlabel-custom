@@ -1,0 +1,2646 @@
+[
+  {
+    "width": 320,
+    "tab": "overview",
+    "headings": [
+      {
+        "text": "WELCOME BACK, Alexandra.",
+        "size": 25
+      },
+      {
+        "text": "CONTINUE YOUR RESEARCH.",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "MY ACCOUNT\n\nWELCOME BACK, ALEXANDRA.\n\nHere’s a quick overview of your account.\n\nRECENT ORDER\n\nORDER #205\n\nSeptember 9, 2026\n\nCOMPLETED\n\nTRAC",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "orders",
+    "headings": [
+      {
+        "text": "YOUR ORDERS.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "#205",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "September 9, 2026",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "$286.00",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "Local CourierCUSTOM-123456Track package →USPS9400111899560000000000Track package →UPS1Z999AA10123456784Track package →",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "View →",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PURCHASE HISTORY\n\nYOUR ORDERS.\nORDER\tDATE\tSTATUS\tTOTAL\tTRACKING\tACTIONS\n#205\nSeptember 9, 2026\nCompleted\n$286.00\nLOCAL COURIER\nCUSTOM-123456",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "tracking",
+    "headings": [
+      {
+        "text": "TRACK YOUR ORDERS.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "#205",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "September 9, 2026",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "$286.00",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "Local CourierCUSTOM-123456Track package →USPS9400111899560000000000Track package →UPS1Z999AA10123456784Track package →",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "View →",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PURCHASE HISTORY\n\nTRACK YOUR ORDERS.\nORDER\tDATE\tSTATUS\tTOTAL\tTRACKING\tACTIONS\n#205\nSeptember 9, 2026\nCompleted\n$286.00\nLOCAL COURIER\nCUSTOM-",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "general",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "ACCOUNT DETAILS\nUSERNAME\nFIRST NAME\nLAST NAME\nEMAIL ADDRESS",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "password",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "CHANGE PASSWORD\nCURRENT PASSWORD\nPASSWORD\nCONFIRM PASSWORD",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "privacy",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PRIVACY\nSHOW MY LAST LOGIN?\nNO\nYES\nDOWNLOAD YOUR DATA\nENTER YOUR CURRENT PASSWORD TO CONFIRM A NEW EXPORT OF YOUR PERSONAL DATA.\nRequest dat",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "delete",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PRIVACY\nSHOW MY LAST LOGIN?\nNO\nYES\nDOWNLOAD YOUR DATA\nENTER YOUR CURRENT PASSWORD TO CONFIRM A NEW EXPORT OF YOUR PERSONAL DATA.\nRequest dat",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "addresses",
+    "headings": [
+      {
+        "text": "YOUR ADDRESSES.",
+        "size": 25
+      },
+      {
+        "text": "Billing address",
+        "size": 25
+      },
+      {
+        "text": "Shipping address",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "MY ACCOUNT\n\nYOUR ADDRESSES.\n\nThe following addresses will be used on the checkout page by default.\n\nBilling address\nAdd Billing address\nYou ",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "affiliate",
+    "headings": [
+      {
+        "text": "WELCOME BACK, ALEXANDRA.",
+        "size": 25
+      },
+      {
+        "text": "CUSTOMERS YOU’VE BROUGHT OFF LABEL",
+        "size": 19
+      },
+      {
+        "text": "RECENT COMMISSIONS",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "#177",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "68.58$",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "#178",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "12.50$",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "#179",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "2.00$",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "Approved",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "#180",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "500.00$",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      },
+      {
+        "text": "Pending",
+        "width": 244,
+        "right": 282,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nWELCOME BACK, ALEXANDRA.\nACTIVE AFFILIATE\n\nYOUR CODE\n\nOLR-45-IIFS6\n20% OFF THEIR FIRST QUALIFYING ORDER\nCOPY CODE\n→\nCho",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "performance",
+    "headings": [
+      {
+        "text": "PERFORMANCE.",
+        "size": 25
+      },
+      {
+        "text": "Reports",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nPERFORMANCE.\nACTIVE AFFILIATE\nREPORTS\n4\nTotal Approved Referrals\nrewards and commissions received by now\n0.00$\nTotal Wi",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "commissions",
+    "headings": [
+      {
+        "text": "COMMISSIONS.",
+        "size": 25
+      },
+      {
+        "text": "Referrals",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "177",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "68.58$",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "178",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "12.50$",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "179",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "2.00$",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "Approved",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "180",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "500.00$",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      },
+      {
+        "text": "Pending",
+        "width": 234,
+        "right": 277,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nCOMMISSIONS.\nACTIVE AFFILIATE\nREFERRALS\n2.00$\nApproved Referrals Amount\n500.00$\nPending Referrals Amount\n4\nTotal Number",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "payouts",
+    "headings": [
+      {
+        "text": "PAYOUTS & STORE CREDIT.",
+        "size": 25
+      },
+      {
+        "text": "Store credit",
+        "size": 19
+      },
+      {
+        "text": "Zelle",
+        "size": 19
+      },
+      {
+        "text": "W-9 for Zelle",
+        "size": 19
+      },
+      {
+        "text": "Payout history",
+        "size": 19
+      },
+      {
+        "text": "Store-credit activity",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "2026-09-09 03:35:34",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "Store credit",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "$25.00",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "2026-09-09 03:35:34",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "Conversion",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "$25.00",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "$0.00",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      },
+      {
+        "text": "—",
+        "width": 278,
+        "right": 299,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PAYOUTS & STORE CREDIT.\n$2.00\nCLEARED COMMISSIONS\n$25.00\nAVAILABLE STORE CREDIT\n\nBoth payout options require at least $50 in cleared commiss",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "creative",
+    "headings": [
+      {
+        "text": "CREATIVE.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nCREATIVE.\nACTIVE AFFILIATE\nTRACKING DETAILS\nTracking Code: dashboard_037e11f5\nYour unique identificator will be used fo",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 320,
+    "tab": "guidelines",
+    "headings": [
+      {
+        "text": "AFFILIATE GUIDELINES.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL ACCOUNT\n\nAFFILIATE GUIDELINES.\n\nReview the complete disclosure, research-use, promotion, and payout standards.\n\nVIEW GUIDELINES\n→",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "overview",
+    "headings": [
+      {
+        "text": "WELCOME BACK, Alexandra.",
+        "size": 25
+      },
+      {
+        "text": "CONTINUE YOUR RESEARCH.",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "MY ACCOUNT\n\nWELCOME BACK, ALEXANDRA.\n\nHere’s a quick overview of your account.\n\nRECENT ORDER\n\nORDER #205\n\nSeptember 9, 2026\n\nCOMPLETED\n\nTRAC",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "orders",
+    "headings": [
+      {
+        "text": "YOUR ORDERS.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "#205",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "September 9, 2026",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "$286.00",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "Local CourierCUSTOM-123456Track package →USPS9400111899560000000000Track package →UPS1Z999AA10123456784Track package →",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "View →",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PURCHASE HISTORY\n\nYOUR ORDERS.\nORDER\tDATE\tSTATUS\tTOTAL\tTRACKING\tACTIONS\n#205\nSeptember 9, 2026\nCompleted\n$286.00\nLOCAL COURIER\nCUSTOM-123456",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "tracking",
+    "headings": [
+      {
+        "text": "TRACK YOUR ORDERS.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "#205",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "September 9, 2026",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "$286.00",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "Local CourierCUSTOM-123456Track package →USPS9400111899560000000000Track package →UPS1Z999AA10123456784Track package →",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "View →",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PURCHASE HISTORY\n\nTRACK YOUR ORDERS.\nORDER\tDATE\tSTATUS\tTOTAL\tTRACKING\tACTIONS\n#205\nSeptember 9, 2026\nCompleted\n$286.00\nLOCAL COURIER\nCUSTOM-",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "general",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "ACCOUNT DETAILS\nUSERNAME\nFIRST NAME\nLAST NAME\nEMAIL ADDRESS",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "password",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "CHANGE PASSWORD\nCURRENT PASSWORD\nPASSWORD\nCONFIRM PASSWORD",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "privacy",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PRIVACY\nSHOW MY LAST LOGIN?\nNO\nYES\nDOWNLOAD YOUR DATA\nENTER YOUR CURRENT PASSWORD TO CONFIRM A NEW EXPORT OF YOUR PERSONAL DATA.\nRequest dat",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "delete",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PRIVACY\nSHOW MY LAST LOGIN?\nNO\nYES\nDOWNLOAD YOUR DATA\nENTER YOUR CURRENT PASSWORD TO CONFIRM A NEW EXPORT OF YOUR PERSONAL DATA.\nRequest dat",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "addresses",
+    "headings": [
+      {
+        "text": "YOUR ADDRESSES.",
+        "size": 25
+      },
+      {
+        "text": "Billing address",
+        "size": 25
+      },
+      {
+        "text": "Shipping address",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "MY ACCOUNT\n\nYOUR ADDRESSES.\n\nThe following addresses will be used on the checkout page by default.\n\nBilling address\nAdd Billing address\nYou ",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "affiliate",
+    "headings": [
+      {
+        "text": "WELCOME BACK, ALEXANDRA.",
+        "size": 25
+      },
+      {
+        "text": "CUSTOMERS YOU’VE BROUGHT OFF LABEL",
+        "size": 19
+      },
+      {
+        "text": "RECENT COMMISSIONS",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "#177",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "68.58$",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "#178",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "12.50$",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "#179",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "2.00$",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "Approved",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "#180",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "500.00$",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      },
+      {
+        "text": "Pending",
+        "width": 299,
+        "right": 337,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nWELCOME BACK, ALEXANDRA.\nACTIVE AFFILIATE\n\nYOUR CODE\n\nOLR-45-IIFS6\n20% OFF THEIR FIRST QUALIFYING ORDER\nCOPY CODE\n→\nCho",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "performance",
+    "headings": [
+      {
+        "text": "PERFORMANCE.",
+        "size": 25
+      },
+      {
+        "text": "Reports",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nPERFORMANCE.\nACTIVE AFFILIATE\nREPORTS\n4\nTotal Approved Referrals\nrewards and commissions received by now\n0.00$\nTotal Wi",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "commissions",
+    "headings": [
+      {
+        "text": "COMMISSIONS.",
+        "size": 25
+      },
+      {
+        "text": "Referrals",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "177",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "68.58$",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "178",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "12.50$",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "179",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "2.00$",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "Approved",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "180",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "500.00$",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      },
+      {
+        "text": "Pending",
+        "width": 289,
+        "right": 332,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nCOMMISSIONS.\nACTIVE AFFILIATE\nREFERRALS\n2.00$\nApproved Referrals Amount\n500.00$\nPending Referrals Amount\n4\nTotal Number",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "payouts",
+    "headings": [
+      {
+        "text": "PAYOUTS & STORE CREDIT.",
+        "size": 25
+      },
+      {
+        "text": "Store credit",
+        "size": 19
+      },
+      {
+        "text": "Zelle",
+        "size": 19
+      },
+      {
+        "text": "W-9 for Zelle",
+        "size": 19
+      },
+      {
+        "text": "Payout history",
+        "size": 19
+      },
+      {
+        "text": "Store-credit activity",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "2026-09-09 03:35:34",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "Store credit",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "$25.00",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "2026-09-09 03:35:34",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "Conversion",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "$25.00",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "$0.00",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      },
+      {
+        "text": "—",
+        "width": 333,
+        "right": 354,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PAYOUTS & STORE CREDIT.\n$2.00\nCLEARED COMMISSIONS\n$25.00\nAVAILABLE STORE CREDIT\n\nBoth payout options require at least $50 in cleared commiss",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "creative",
+    "headings": [
+      {
+        "text": "CREATIVE.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nCREATIVE.\nACTIVE AFFILIATE\nTRACKING DETAILS\nTracking Code: dashboard_037e11f5\nYour unique identificator will be used fo",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 375,
+    "tab": "guidelines",
+    "headings": [
+      {
+        "text": "AFFILIATE GUIDELINES.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL ACCOUNT\n\nAFFILIATE GUIDELINES.\n\nReview the complete disclosure, research-use, promotion, and payout standards.\n\nVIEW GUIDELINES\n→",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "overview",
+    "headings": [
+      {
+        "text": "WELCOME BACK, Alexandra.",
+        "size": 25
+      },
+      {
+        "text": "CONTINUE YOUR RESEARCH.",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "MY ACCOUNT\n\nWELCOME BACK, ALEXANDRA.\n\nHere’s a quick overview of your account.\n\nRECENT ORDER\n\nORDER #205\n\nSeptember 9, 2026\n\nCOMPLETED\n\nTRAC",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "orders",
+    "headings": [
+      {
+        "text": "YOUR ORDERS.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "#205",
+        "width": 83.8125,
+        "right": 104.8125,
+        "size": 13
+      },
+      {
+        "text": "September 9, 2026",
+        "width": 153.921875,
+        "right": 258.734375,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 100.734375,
+        "right": 359.46875,
+        "size": 13
+      },
+      {
+        "text": "$286.00",
+        "width": 78.65625,
+        "right": 438.125,
+        "size": 13
+      },
+      {
+        "text": "Local CourierCUSTOM-123456Track package →USPS9400111899560000000000Track package →UPS1Z999AA10123456784Track package →",
+        "width": 206.765625,
+        "right": 644.890625,
+        "size": 13
+      },
+      {
+        "text": "View →",
+        "width": 102.109375,
+        "right": 747,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PURCHASE HISTORY\n\nYOUR ORDERS.\nORDER\tDATE\tSTATUS\tTOTAL\tTRACKING\tACTIONS\n#205\tSeptember 9, 2026\tCompleted\t$286.00\t\nLOCAL COURIER\nCUSTOM-12345",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "tracking",
+    "headings": [
+      {
+        "text": "TRACK YOUR ORDERS.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "#205",
+        "width": 83.8125,
+        "right": 104.8125,
+        "size": 13
+      },
+      {
+        "text": "September 9, 2026",
+        "width": 153.921875,
+        "right": 258.734375,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 100.734375,
+        "right": 359.46875,
+        "size": 13
+      },
+      {
+        "text": "$286.00",
+        "width": 78.65625,
+        "right": 438.125,
+        "size": 13
+      },
+      {
+        "text": "Local CourierCUSTOM-123456Track package →USPS9400111899560000000000Track package →UPS1Z999AA10123456784Track package →",
+        "width": 206.765625,
+        "right": 644.890625,
+        "size": 13
+      },
+      {
+        "text": "View →",
+        "width": 102.109375,
+        "right": 747,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PURCHASE HISTORY\n\nTRACK YOUR ORDERS.\nORDER\tDATE\tSTATUS\tTOTAL\tTRACKING\tACTIONS\n#205\tSeptember 9, 2026\tCompleted\t$286.00\t\nLOCAL COURIER\nCUSTOM",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "general",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "ACCOUNT DETAILS\nUSERNAME\nFIRST NAME\nLAST NAME\nEMAIL ADDRESS",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "password",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "CHANGE PASSWORD\nCURRENT PASSWORD\nPASSWORD\nCONFIRM PASSWORD",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "privacy",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PRIVACY\nSHOW MY LAST LOGIN?\nNO\nYES\nDOWNLOAD YOUR DATA\nENTER YOUR CURRENT PASSWORD TO CONFIRM A NEW EXPORT OF YOUR PERSONAL DATA.\nRequest dat",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "delete",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PRIVACY\nSHOW MY LAST LOGIN?\nNO\nYES\nDOWNLOAD YOUR DATA\nENTER YOUR CURRENT PASSWORD TO CONFIRM A NEW EXPORT OF YOUR PERSONAL DATA.\nRequest dat",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "addresses",
+    "headings": [
+      {
+        "text": "YOUR ADDRESSES.",
+        "size": 25
+      },
+      {
+        "text": "Billing address",
+        "size": 25
+      },
+      {
+        "text": "Shipping address",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "MY ACCOUNT\n\nYOUR ADDRESSES.\n\nThe following addresses will be used on the checkout page by default.\n\nBilling address\nAdd Billing address\nYou ",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "affiliate",
+    "headings": [
+      {
+        "text": "WELCOME BACK, ALEXANDRA.",
+        "size": 25
+      },
+      {
+        "text": "CUSTOMERS YOU’VE BROUGHT OFF LABEL",
+        "size": 19
+      },
+      {
+        "text": "RECENT COMMISSIONS",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 228.125,
+        "right": 270.125,
+        "size": 13
+      },
+      {
+        "text": "#177",
+        "width": 144.609375,
+        "right": 414.734375,
+        "size": 13
+      },
+      {
+        "text": "68.58$",
+        "width": 168.953125,
+        "right": 583.6875,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 142.3125,
+        "right": 726,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 228.125,
+        "right": 270.125,
+        "size": 13
+      },
+      {
+        "text": "#178",
+        "width": 144.609375,
+        "right": 414.734375,
+        "size": 13
+      },
+      {
+        "text": "12.50$",
+        "width": 168.953125,
+        "right": 583.6875,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 142.3125,
+        "right": 726,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 228.125,
+        "right": 270.125,
+        "size": 13
+      },
+      {
+        "text": "#179",
+        "width": 144.609375,
+        "right": 414.734375,
+        "size": 13
+      },
+      {
+        "text": "2.00$",
+        "width": 168.953125,
+        "right": 583.6875,
+        "size": 13
+      },
+      {
+        "text": "Approved",
+        "width": 142.3125,
+        "right": 726,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 228.125,
+        "right": 270.125,
+        "size": 13
+      },
+      {
+        "text": "#180",
+        "width": 144.609375,
+        "right": 414.734375,
+        "size": 13
+      },
+      {
+        "text": "500.00$",
+        "width": 168.953125,
+        "right": 583.6875,
+        "size": 13
+      },
+      {
+        "text": "Pending",
+        "width": 142.3125,
+        "right": 726,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nWELCOME BACK, ALEXANDRA.\nACTIVE AFFILIATE\n\nYOUR CODE\n\nOLR-45-IIFS6\n20% OFF THEIR FIRST QUALIFYING ORDER\nCOPY CODE\n→\nCho",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "performance",
+    "headings": [
+      {
+        "text": "PERFORMANCE.",
+        "size": 25
+      },
+      {
+        "text": "Reports",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nPERFORMANCE.\nACTIVE AFFILIATE\nREPORTS\n4\nTotal Approved Referrals\nrewards and commissions received by now\n0.00$\nTotal Wi",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "commissions",
+    "headings": [
+      {
+        "text": "COMMISSIONS.",
+        "size": 25
+      },
+      {
+        "text": "Referrals",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "177",
+        "width": 39.4375,
+        "right": 81.4375,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 90.296875,
+        "right": 171.734375,
+        "size": 13
+      },
+      {
+        "text": "68.58$",
+        "width": 79.125,
+        "right": 250.859375,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 103.484375,
+        "right": 354.34375,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 106.015625,
+        "right": 460.359375,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 145.640625,
+        "right": 606,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 120,
+        "right": 726,
+        "size": 13
+      },
+      {
+        "text": "178",
+        "width": 39.4375,
+        "right": 81.4375,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 90.296875,
+        "right": 171.734375,
+        "size": 13
+      },
+      {
+        "text": "12.50$",
+        "width": 79.125,
+        "right": 250.859375,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 103.484375,
+        "right": 354.34375,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 106.015625,
+        "right": 460.359375,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 145.640625,
+        "right": 606,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 120,
+        "right": 726,
+        "size": 13
+      },
+      {
+        "text": "179",
+        "width": 39.4375,
+        "right": 81.4375,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 90.296875,
+        "right": 171.734375,
+        "size": 13
+      },
+      {
+        "text": "2.00$",
+        "width": 79.125,
+        "right": 250.859375,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 103.484375,
+        "right": 354.34375,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 106.015625,
+        "right": 460.359375,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 145.640625,
+        "right": 606,
+        "size": 13
+      },
+      {
+        "text": "Approved",
+        "width": 120,
+        "right": 726,
+        "size": 13
+      },
+      {
+        "text": "180",
+        "width": 39.4375,
+        "right": 81.4375,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 90.296875,
+        "right": 171.734375,
+        "size": 13
+      },
+      {
+        "text": "500.00$",
+        "width": 79.125,
+        "right": 250.859375,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 103.484375,
+        "right": 354.34375,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 106.015625,
+        "right": 460.359375,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 145.640625,
+        "right": 606,
+        "size": 13
+      },
+      {
+        "text": "Pending",
+        "width": 120,
+        "right": 726,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nCOMMISSIONS.\nACTIVE AFFILIATE\nREFERRALS\n2.00$\nApproved Referrals Amount\n500.00$\nPending Referrals Amount\n4\nTotal Number",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "payouts",
+    "headings": [
+      {
+        "text": "PAYOUTS & STORE CREDIT.",
+        "size": 25
+      },
+      {
+        "text": "Store credit",
+        "size": 19
+      },
+      {
+        "text": "Zelle",
+        "size": 19
+      },
+      {
+        "text": "W-9 for Zelle",
+        "size": 19
+      },
+      {
+        "text": "Payout history",
+        "size": 19
+      },
+      {
+        "text": "Store-credit activity",
+        "size": 19
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "2026-09-09 03:35:34",
+        "width": 254.71875,
+        "right": 274.71875,
+        "size": 13
+      },
+      {
+        "text": "Store credit",
+        "width": 159.453125,
+        "right": 434.171875,
+        "size": 13
+      },
+      {
+        "text": "$25.00",
+        "width": 159.140625,
+        "right": 593.3125,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 154.6875,
+        "right": 748,
+        "size": 13
+      },
+      {
+        "text": "2026-09-09 03:35:34",
+        "width": 170.0625,
+        "right": 190.0625,
+        "size": 13
+      },
+      {
+        "text": "Conversion",
+        "width": 107.4375,
+        "right": 297.5,
+        "size": 13
+      },
+      {
+        "text": "$25.00",
+        "width": 169.515625,
+        "right": 467.015625,
+        "size": 13
+      },
+      {
+        "text": "$0.00",
+        "width": 195.03125,
+        "right": 662.046875,
+        "size": 13
+      },
+      {
+        "text": "—",
+        "width": 85.953125,
+        "right": 748,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PAYOUTS & STORE CREDIT.\n$2.00\nCLEARED COMMISSIONS\n$25.00\nAVAILABLE STORE CREDIT\n\nBoth payout options require at least $50 in cleared commiss",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "creative",
+    "headings": [
+      {
+        "text": "CREATIVE.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nCREATIVE.\nACTIVE AFFILIATE\nTRACKING DETAILS\nTracking Code: dashboard_037e11f5\nYour unique identificator will be used fo",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 768,
+    "tab": "guidelines",
+    "headings": [
+      {
+        "text": "AFFILIATE GUIDELINES.",
+        "size": 25
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL ACCOUNT\n\nAFFILIATE GUIDELINES.\n\nReview the complete disclosure, research-use, promotion, and payout standards.\n\nVIEW GUIDELINES\n→",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "overview",
+    "headings": [
+      {
+        "text": "WELCOME BACK, Alexandra.",
+        "size": 28
+      },
+      {
+        "text": "CONTINUE YOUR RESEARCH.",
+        "size": 20
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "MY ACCOUNT\n\nWELCOME BACK, ALEXANDRA.\n\nHere’s a quick overview of your account.\n\nRECENT ORDER\n\nORDER #205\n\nSeptember 9, 2026\n\nCOMPLETED\n\nTRAC",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "orders",
+    "headings": [
+      {
+        "text": "YOUR ORDERS.",
+        "size": 28
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "#205",
+        "width": 108.484375,
+        "right": 396.671875,
+        "size": 13
+      },
+      {
+        "text": "September 9, 2026",
+        "width": 199.21875,
+        "right": 595.890625,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 130.390625,
+        "right": 726.28125,
+        "size": 13
+      },
+      {
+        "text": "$286.00",
+        "width": 101.796875,
+        "right": 828.078125,
+        "size": 13
+      },
+      {
+        "text": "Local CourierCUSTOM-123456Track package →USPS9400111899560000000000Track package →UPS1Z999AA10123456784Track package →",
+        "width": 267.609375,
+        "right": 1095.6875,
+        "size": 13
+      },
+      {
+        "text": "View →",
+        "width": 132.125,
+        "right": 1227.8125,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PURCHASE HISTORY\n\nYOUR ORDERS.\nORDER\tDATE\tSTATUS\tTOTAL\tTRACKING\tACTIONS\n#205\tSeptember 9, 2026\tCompleted\t$286.00\t\nLOCAL COURIER\nCUSTOM-12345",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "tracking",
+    "headings": [
+      {
+        "text": "TRACK YOUR ORDERS.",
+        "size": 28
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "#205",
+        "width": 108.484375,
+        "right": 396.671875,
+        "size": 13
+      },
+      {
+        "text": "September 9, 2026",
+        "width": 199.21875,
+        "right": 595.890625,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 130.390625,
+        "right": 726.28125,
+        "size": 13
+      },
+      {
+        "text": "$286.00",
+        "width": 101.796875,
+        "right": 828.078125,
+        "size": 13
+      },
+      {
+        "text": "Local CourierCUSTOM-123456Track package →USPS9400111899560000000000Track package →UPS1Z999AA10123456784Track package →",
+        "width": 267.609375,
+        "right": 1095.6875,
+        "size": 13
+      },
+      {
+        "text": "View →",
+        "width": 132.125,
+        "right": 1227.8125,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PURCHASE HISTORY\n\nTRACK YOUR ORDERS.\nORDER\tDATE\tSTATUS\tTOTAL\tTRACKING\tACTIONS\n#205\tSeptember 9, 2026\tCompleted\t$286.00\t\nLOCAL COURIER\nCUSTOM",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "general",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "ACCOUNT DETAILS\nUSERNAME\nFIRST NAME\nLAST NAME\nEMAIL ADDRESS",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "password",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "CHANGE PASSWORD\nCURRENT PASSWORD\nPASSWORD\nCONFIRM PASSWORD",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "privacy",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PRIVACY\nSHOW MY LAST LOGIN?\nNO\nYES\nDOWNLOAD YOUR DATA\nENTER YOUR CURRENT PASSWORD TO CONFIRM A NEW EXPORT OF YOUR PERSONAL DATA.\nRequest dat",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "delete",
+    "headings": [],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PRIVACY\nSHOW MY LAST LOGIN?\nNO\nYES\nDOWNLOAD YOUR DATA\nENTER YOUR CURRENT PASSWORD TO CONFIRM A NEW EXPORT OF YOUR PERSONAL DATA.\nRequest dat",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "addresses",
+    "headings": [
+      {
+        "text": "YOUR ADDRESSES.",
+        "size": 28
+      },
+      {
+        "text": "Billing address",
+        "size": 28
+      },
+      {
+        "text": "Shipping address",
+        "size": 28
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "MY ACCOUNT\n\nYOUR ADDRESSES.\n\nThe following addresses will be used on the checkout page by default.\n\nBilling address\nAdd Billing address\nYou ",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "affiliate",
+    "headings": [
+      {
+        "text": "WELCOME BACK, ALEXANDRA.",
+        "size": 28
+      },
+      {
+        "text": "CUSTOMERS YOU’VE BROUGHT OFF LABEL",
+        "size": 20
+      },
+      {
+        "text": "RECENT COMMISSIONS",
+        "size": 20
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 299.375,
+        "right": 608.5625,
+        "size": 13
+      },
+      {
+        "text": "#177",
+        "width": 189.78125,
+        "right": 798.34375,
+        "size": 13
+      },
+      {
+        "text": "68.58$",
+        "width": 221.71875,
+        "right": 1020.0625,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 186.75,
+        "right": 1206.8125,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 299.375,
+        "right": 608.5625,
+        "size": 13
+      },
+      {
+        "text": "#178",
+        "width": 189.78125,
+        "right": 798.34375,
+        "size": 13
+      },
+      {
+        "text": "12.50$",
+        "width": 221.71875,
+        "right": 1020.0625,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 186.75,
+        "right": 1206.8125,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 299.375,
+        "right": 608.5625,
+        "size": 13
+      },
+      {
+        "text": "#179",
+        "width": 189.78125,
+        "right": 798.34375,
+        "size": 13
+      },
+      {
+        "text": "2.00$",
+        "width": 221.71875,
+        "right": 1020.0625,
+        "size": 13
+      },
+      {
+        "text": "Approved",
+        "width": 186.75,
+        "right": 1206.8125,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 299.375,
+        "right": 608.5625,
+        "size": 13
+      },
+      {
+        "text": "#180",
+        "width": 189.78125,
+        "right": 798.34375,
+        "size": 13
+      },
+      {
+        "text": "500.00$",
+        "width": 221.71875,
+        "right": 1020.0625,
+        "size": 13
+      },
+      {
+        "text": "Pending",
+        "width": 186.75,
+        "right": 1206.8125,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nWELCOME BACK, ALEXANDRA.\nACTIVE AFFILIATE\n\nYOUR CODE\n\nOLR-45-IIFS6\n20% OFF THEIR FIRST QUALIFYING ORDER\nCOPY CODE\n→\nCho",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "performance",
+    "headings": [
+      {
+        "text": "PERFORMANCE.",
+        "size": 28
+      },
+      {
+        "text": "Reports",
+        "size": 20
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nPERFORMANCE.\nACTIVE AFFILIATE\nREPORTS\n4\nTotal Approved Referrals\nrewards and commissions received by now\n0.00$\nTotal Wi",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "commissions",
+    "headings": [
+      {
+        "text": "COMMISSIONS.",
+        "size": 28
+      },
+      {
+        "text": "Referrals",
+        "size": 20
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "177",
+        "width": 51.640625,
+        "right": 360.828125,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 124.140625,
+        "right": 484.96875,
+        "size": 13
+      },
+      {
+        "text": "68.58$",
+        "width": 108.109375,
+        "right": 593.078125,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 143.046875,
+        "right": 736.125,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 146.984375,
+        "right": 883.109375,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 203.703125,
+        "right": 1086.8125,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 120,
+        "right": 1206.8125,
+        "size": 13
+      },
+      {
+        "text": "178",
+        "width": 51.640625,
+        "right": 360.828125,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 124.140625,
+        "right": 484.96875,
+        "size": 13
+      },
+      {
+        "text": "12.50$",
+        "width": 108.109375,
+        "right": 593.078125,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 143.046875,
+        "right": 736.125,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 146.984375,
+        "right": 883.109375,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 203.703125,
+        "right": 1086.8125,
+        "size": 13
+      },
+      {
+        "text": "Rejected",
+        "width": 120,
+        "right": 1206.8125,
+        "size": 13
+      },
+      {
+        "text": "179",
+        "width": 51.640625,
+        "right": 360.828125,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 124.140625,
+        "right": 484.96875,
+        "size": 13
+      },
+      {
+        "text": "2.00$",
+        "width": 108.109375,
+        "right": 593.078125,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 143.046875,
+        "right": 736.125,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 146.984375,
+        "right": 883.109375,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 203.703125,
+        "right": 1086.8125,
+        "size": 13
+      },
+      {
+        "text": "Approved",
+        "width": 120,
+        "right": 1206.8125,
+        "size": 13
+      },
+      {
+        "text": "180",
+        "width": 51.640625,
+        "right": 360.828125,
+        "size": 13
+      },
+      {
+        "text": "-",
+        "width": 124.140625,
+        "right": 484.96875,
+        "size": 13
+      },
+      {
+        "text": "500.00$",
+        "width": 108.109375,
+        "right": 593.078125,
+        "size": 13
+      },
+      {
+        "text": "WooCommerce",
+        "width": 143.046875,
+        "right": 736.125,
+        "size": 13
+      },
+      {
+        "text": "",
+        "width": 146.984375,
+        "right": 883.109375,
+        "size": 13
+      },
+      {
+        "text": "August 9, 2026 3:35 am",
+        "width": 203.703125,
+        "right": 1086.8125,
+        "size": 13
+      },
+      {
+        "text": "Pending",
+        "width": 120,
+        "right": 1206.8125,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nCOMMISSIONS.\nACTIVE AFFILIATE\nREFERRALS\n2.00$\nApproved Referrals Amount\n500.00$\nPending Referrals Amount\n4\nTotal Number",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "payouts",
+    "headings": [
+      {
+        "text": "PAYOUTS & STORE CREDIT.",
+        "size": 28
+      },
+      {
+        "text": "Store credit",
+        "size": 20
+      },
+      {
+        "text": "Zelle",
+        "size": 20
+      },
+      {
+        "text": "W-9 for Zelle",
+        "size": 20
+      },
+      {
+        "text": "Payout history",
+        "size": 20
+      },
+      {
+        "text": "Store-credit activity",
+        "size": 20
+      }
+    ],
+    "overflow": [],
+    "cells": [
+      {
+        "text": "2026-09-09 03:35:34",
+        "width": 329.46875,
+        "right": 616.65625,
+        "size": 13
+      },
+      {
+        "text": "Store credit",
+        "width": 206.25,
+        "right": 822.90625,
+        "size": 13
+      },
+      {
+        "text": "$25.00",
+        "width": 205.84375,
+        "right": 1028.75,
+        "size": 13
+      },
+      {
+        "text": "Completed",
+        "width": 200.0625,
+        "right": 1228.8125,
+        "size": 13
+      },
+      {
+        "text": "2026-09-09 03:35:34",
+        "width": 219.96875,
+        "right": 507.15625,
+        "size": 13
+      },
+      {
+        "text": "Conversion",
+        "width": 138.96875,
+        "right": 646.125,
+        "size": 13
+      },
+      {
+        "text": "$25.00",
+        "width": 219.265625,
+        "right": 865.390625,
+        "size": 13
+      },
+      {
+        "text": "$0.00",
+        "width": 252.28125,
+        "right": 1117.671875,
+        "size": 13
+      },
+      {
+        "text": "—",
+        "width": 111.140625,
+        "right": 1228.8125,
+        "size": 13
+      }
+    ],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "PAYOUTS & STORE CREDIT.\n$2.00\nCLEARED COMMISSIONS\n$25.00\nAVAILABLE STORE CREDIT\n\nBoth payout options require at least $50 in cleared commiss",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "creative",
+    "headings": [
+      {
+        "text": "CREATIVE.",
+        "size": 28
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL AFFILIATE\n\nCREATIVE.\nACTIVE AFFILIATE\nTRACKING DETAILS\nTracking Code: dashboard_037e11f5\nYour unique identificator will be used fo",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  },
+  {
+    "width": 1280,
+    "tab": "guidelines",
+    "headings": [
+      {
+        "text": "AFFILIATE GUIDELINES.",
+        "size": 28
+      }
+    ],
+    "overflow": [],
+    "cells": [],
+    "valueOverflow": [],
+    "accents": [],
+    "mainText": "OFF LABEL ACCOUNT\n\nAFFILIATE GUIDELINES.\n\nReview the complete disclosure, research-use, promotion, and payout standards.\n\nVIEW GUIDELINES\n→",
+    "obsoleteWarning": false,
+    "opacity": "1"
+  }
+]

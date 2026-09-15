@@ -1,0 +1,20 @@
+PASS: Affiliate landing shortcode is registered
+PASS: Affiliate guidelines shortcode is registered
+PASS: Public pages are created as drafts
+PASS: Approved 20 percent customer offer is present
+PASS: Approved 10 percent commission is present
+PASS: HPOS-safe order lookup is used
+PASS: No mock affiliate name is embedded
+PASS: Guidelines include all 19 numbered sections
+PASS: Landing page fragment exists
+PASS: Guidelines page fragment exists
+PASS: GitPress bridge allowlists landing shortcode
+PASS: GitPress bridge allowlists guidelines shortcode
+C:\Users\User\Desktop\offlabel-custom\scripts\test-affiliate-surfaces.ps1 : FAIL: Desktop and mobile headers include 
+Affiliate
+At C:\Users\User\Desktop\offlabel-custom\scripts\test-affiliate-surfaces.ps1:37 char:30
++         Write-Error "FAIL: $($check.Key)"
++                              ~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,test-affiliate-surfaces.ps1
+ 

@@ -1,0 +1,5 @@
+.olr-credit-checkout { border: 1px solid #d7d4ca; padding: 1rem; margin: 1rem 0; text-align: left; }
+.olr-credit-checkout label { display: flex; align-items: flex-start; gap: .6rem; font-weight: 600; }
+.olr-credit-checkout input[type=checkbox] { width: 18px; height: 18px; flex: 0 0 auto; margin: .2rem 0 0; }
+.olr-credit-checkout p { font-size: .875rem; margin: .5rem 0 0; line-height: 1.5; }
+.olr-credit-applied td { color: #315140; }

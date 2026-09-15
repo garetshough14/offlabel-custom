@@ -1,0 +1,22 @@
+PASS: actual ShipStation 5.3.5 REST notification processor captures carrier URL and tracking through the hub hook
+PASS: ShipStation notification stores tracking through HPOS CRUD and deduplicates retries
+PASS: USPS parcel receives a carrier tracking link
+PASS: structured shipment and matching legacy note are shown once
+PASS: split shipment in historical private ShipStation note remains visible as tracking fields only
+PASS: tracking view does not disclose unrelated note bodies
+PASS: WooCommerce Shipment Tracking metadata supports custom carriers and multiple packages
+PASS: tracking data strips markup and unsafe URL schemes
+PASS: unrecognized note format is ignored
+PASS: dashboard greets the actual signed-in member
+PASS: latest real order shows amount and quantity without an invented delivery estimate
+PASS: order list exposes tracking numbers and carrier links
+PASS: owned order detail shows split shipment tracking
+PASS: another member cannot read tracking for this order
+PASS: direct order ID request cannot disclose another customer shipment
+PASS: new customer sees the no-orders state
+PASS: guests cannot read customer tracking
+PASS: navigation exposes dashboard, tracking and addresses
+PASS: active affiliates keep a dedicated dashboard navigation entry
+PASS: active affiliates land on the customer order dashboard
+PASS: actual Ultimate Member shortcode renders the customer dashboard and native navigation
+Completed 21 dashboard/tracking checks.

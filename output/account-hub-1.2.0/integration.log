@@ -1,0 +1,77 @@
+PASS: UAP 9.7.7 adapter, private key/storage and transactional tables are ready
+PASS: terms acceptance required
+PASS: pending applicant activates immediately
+PASS: activation preserves WordPress member roles
+PASS: configured default rank is assigned
+PASS: real WooCommerce coupon mapped to UAP affiliate
+PASS: live UAP coupon assignment takes precedence over stale display metadata
+PASS: repeated activation preserves affiliate and code
+PASS: legacy application history is preserved
+PASS: new code gives advertised 20% offer
+PASS: block disables hub and native UAP affiliate status
+PASS: blocked affiliate cannot reactivate
+PASS: explicit restore preserves roles and affiliate history
+PASS: legacy rejected applicant stays blocked
+PASS: administrators cannot enroll
+PASS: missing UAP fails without modifying affiliate state
+PASS: commission exactly 30 days old is eligible
+PASS: commission inside hold is excluded
+PASS: $49.99 cannot convert
+PASS: exactly $50 converts instantly without a W-9; invalid referrals excluded
+PASS: request replay cannot duplicate credit
+PASS: settled or ineligible commissions cannot be requested again
+PASS: another user cannot replay a payout key
+PASS: Zelle refused without W-9
+PASS: pending W-9 cannot unlock Zelle
+PASS: Zelle request reserves commissions against store-credit conversion
+PASS: pre-send queue review flags replacement W-9 before external payment
+PASS: replacement W-9 blocks pending Zelle completion
+PASS: superseded W-9 cannot be approved
+PASS: rejected request releases reserved commissions
+PASS: refunded reserved referral prevents payout
+PASS: UAP settlement preserves the frozen Zelle recipient snapshot
+PASS: Zelle completion and replay do not issue store credit
+PASS: injected failure rolls transaction back
+PASS: rollback preserves exact balance
+PASS: partial and full tender capped at spendable balance and gross total
+PASS: HPOS order reserves credit once
+PASS: competing checkout cannot overspend reserved credit
+PASS: failed payment releases credit
+PASS: payment retry recaptures once and preserves unused balance
+PASS: partial credit refund is retry-safe
+PASS: credit refund cannot exceed original credit used
+PASS: full refund restores only remaining credit portion
+PASS: partial cash refund returns proportional credit tender
+PASS: unsigned/missing upload rejected
+PASS: invalid Zelle destination rejected
+PASS: US Zelle mobile normalized
+PASS: native REST enrollment cannot bypass eligibility
+PASS: native enrollment SQL seam rejects unapproved origins
+PASS: currency mismatch blocks conversion
+PASS: disabled payouts cannot be invoked directly
+PASS: HPOS order exercised through WooCommerce CRUD
+PASS: new customer can apply the real referral coupon
+PASS: coupon calculates 20% off before 10% tax
+PASS: real cart applies credit after tax and retains $38 cash due
+PASS: real WooCommerce checkout creates credit-funded HPOS order
+PASS: UAP attributes the real coupon order and calculates commission using configured rules
+PASS: HPOS order preserves credit amount and original taxes
+PASS: checkout hook reserves the exact applied credit
+PASS: real payment-complete hook captures credit once
+PASS: payment completion clears reservation
+PASS: WooCommerce partial refund returns proportional store credit
+PASS: WooCommerce full refund restores original credit exactly
+PASS: real cart can be funded entirely with credit including tax
+PASS: fully funded order records store credit as its payment method
+PASS: credit-only payment completes without an external gateway
+PASS: credit-only order can be fully refunded to credit
+PASS: injected UAP payment failure aborts settlement
+PASS: failed settlement leaves credit and referral unpaid state unchanged
+Completed 69 integration checks.
+PASS: concurrent independent PHP processes settle and credit exactly once
+PASS: concurrent new-member activations create exactly one affiliate
+PASS: different payout keys cannot double-settle; simultaneous orders cannot double-spend credit
+PASS: five direct vendor routes and invalid CSRF nonce are rejected
+PASS: multipart uploads reject disguised files, wrong extensions, missing signature attestation, active content and oversized files
+PASS: valid W-9 encrypted; member download denied; admin receives original PDF; tampering fails closed
+Account Hub integration and request tests passed.

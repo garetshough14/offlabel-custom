@@ -20,6 +20,7 @@ function is_preview() { return false; }
 function is_page( $page ) { return 'account' === $page; }
 function is_user_logged_in() { return true; }
 function wp_unslash( $value ) { return $value; }
+function nocache_headers() {}
 function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); }
 function sanitize_key( $value ) { return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( (string) $value ) ); }
 function home_url( $path = '' ) { return 'https://example.test' . $path; }

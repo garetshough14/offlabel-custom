@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Account Hub
  * Description: Unified Ultimate Member, WooCommerce, and Ultimate Affiliate Pro account experience for Off Label Research.
- * Version: 1.1.2
+ * Version: 1.2.4
  * Author: Off Label Research
  * Text Domain: off-label-account-hub
  * Requires Plugins: ultimate-member, woocommerce
@@ -10,8 +10,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
+require_once __DIR__ . '/includes/class-olr-affiliate-service.php';
+require_once __DIR__ . '/includes/class-olr-affiliate-coupons.php';
+require_once __DIR__ . '/includes/class-olr-affiliate-flows.php';
+require_once __DIR__ . '/includes/class-olr-store-credit.php';
+require_once __DIR__ . '/includes/class-olr-order-tracking.php';
+
 final class OLR_Account_Hub {
-	const VERSION                  = '1.1.2';
+	const VERSION                  = '1.2.4';
 	const ACCOUNT_SLUG             = 'account';
 	const AFFILIATE_SLUG           = 'affiliate';
 	const GUIDELINES_SLUG          = 'affiliate-guidelines';
@@ -51,9 +57,13 @@ final class OLR_Account_Hub {
 		add_filter( 'dgs_allowed_inner_shortcodes', array( $this, 'allow_gitpress_shortcodes' ) );
 		add_filter( 'body_class', array( $this, 'body_classes' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_assets' ), 40 );
-		add_action( 'init', array( $this, 'maybe_submit_frontend_application' ), 1 );
+		OLR_Affiliate_Flows::boot();
+		OLR_Store_Credit::boot();
+		OLR_Order_Tracking::boot();
 		add_action( 'template_redirect', array( $this, 'route_account_requests' ), 5 );
 		add_filter( 'uap_filter_on_load_template', array( $this, 'uap_template_override' ), 100, 2 );
+		// Payment details belong to each hub Zelle request, not UAP's retired settings form.
+		add_filter( 'pre_option_uap_hide_payments_warnings', function ( $value ) { return self::$rendering_hub || $this->is_account_request() ? 1 : $value; } );
 
 		add_filter( 'um_account_page_default_tabs_hook', array( $this, 'ultimate_member_tabs' ), 100 );
 		add_filter( 'um_change_default_tab', array( $this, 'ultimate_member_current_tab' ), 100, 2 );
@@ -62,8 +72,6 @@ final class OLR_Account_Hub {
 			add_filter( 'um_account_content_hook_' . $tab_slug, array( $this, 'ultimate_member_tab_content' ) );
 		}
 
-		add_action( 'admin_post_olr_submit_affiliate_application', array( $this, 'submit_application' ) );
-		add_action( 'admin_post_olr_affiliate_application_action', array( $this, 'application_admin_action' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 99 );
 		add_action( 'admin_init', array( $this, 'protect_uap_affiliate_deletion' ), 1 );
 		add_action( 'wp_ajax_uap_ajax_remove_one_affiliate', array( $this, 'protect_uap_affiliate_ajax_deletion' ), -100 );
@@ -115,6 +123,8 @@ final class OLR_Account_Hub {
 		return array(
 			'overview',
 			'orders',
+			'tracking',
+			'addresses',
 			'affiliate',
 			'performance',
 			'commissions',
@@ -443,6 +453,7 @@ final class OLR_Account_Hub {
 			$styles->done[] = 'olr-account-hub';
 		}
 
+		$css = str_replace( array( 'url("fonts/', 'url("assets/fonts/' ), 'url("' . plugins_url( 'assets/fonts/', __FILE__ ), $css );
 		return '<style id="olr-account-hub-late-css">' . $css . '</style>';
 	}
 
@@ -495,13 +506,7 @@ final class OLR_Account_Hub {
 			}
 		}
 
-		$brand = sprintf(
-			'<a class="olr-account-brand" href="%1$s" aria-label="%2$s"><img src="%3$s" alt="%4$s" width="1199" height="169"></a>',
-			esc_url( home_url( '/' ) ),
-			esc_attr__( 'Off Label Research home', 'off-label-account-hub' ),
-			esc_url( $this->account_asset_url( 'off-label-logo-cropped-black.webp' ) ),
-			esc_attr__( 'Off Label Research', 'off-label-account-hub' )
-		);
+		$brand = '<p class="olr-account-brand">' . esc_html__( 'My account', 'off-label-account-hub' ) . '</p>';
 
 		return $late_styles . '<div class="olr-account-hub" data-olr-account-hub>' . $brand . $output . '</div>';
 	}
@@ -544,11 +549,11 @@ final class OLR_Account_Hub {
 			<section class="olr-affiliate-landing__payout" aria-labelledby="olr-affiliate-payout-title">
 				<h2 id="olr-affiliate-payout-title"><?php esc_html_e( 'GETTING PAID IS SIMPLE.', 'off-label-account-hub' ); ?></h2>
 				<div class="olr-affiliate-landing__payout-grid">
-					<div><?php echo $this->affiliate_icon( 'document' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php esc_html_e( 'W-9 required', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Complete your W-9 so we can properly report your earnings.', 'off-label-account-hub' ); ?></p></div>
-					<div><?php echo $this->affiliate_icon( 'payment' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php echo esc_html( $policy['payout_method'] . ' ' . __( 'only', 'off-label-account-hub' ) ); ?></h3><p><?php echo esc_html( sprintf( __( 'Payouts are made exclusively through %s. Add your details before payout.', 'off-label-account-hub' ), $policy['payout_method'] ) ); ?></p></div>
-					<div><?php echo $this->affiliate_icon( 'calendar' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php echo esc_html( $policy['payout_schedule'] . ' ' . __( 'payouts', 'off-label-account-hub' ) ); ?></h3><p><?php echo esc_html( sprintf( __( '%1$s hold period on new commissions. %2$s minimum payout.', 'off-label-account-hub' ), $policy['hold_period'], $policy['minimum_payout'] ) ); ?></p></div>
+					<div><?php echo $this->affiliate_icon( 'document' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php esc_html_e( 'W-9 for Zelle', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Upload a signed W-9 and wait for approval before requesting Zelle. Store credit does not require a W-9.', 'off-label-account-hub' ); ?></p></div>
+					<div><?php echo $this->affiliate_icon( 'payment' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php echo esc_html( $policy['payout_method'] . ' ' . __( 'only', 'off-label-account-hub' ) ); ?></h3><p><?php echo esc_html( sprintf( __( 'Choose %s. Store credit converts instantly; Zelle is processed monthly.', 'off-label-account-hub' ), $policy['payout_method'] ) ); ?></p></div>
+					<div><?php echo $this->affiliate_icon( 'calendar' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><h3><?php echo esc_html( __( 'Instant credit · Monthly Zelle', 'off-label-account-hub' ) ); ?></h3><p><?php echo esc_html( sprintf( __( '%1$s hold period on new commissions. %2$s minimum payout.', 'off-label-account-hub' ), $policy['hold_period'], $policy['minimum_payout'] ) ); ?></p></div>
 				</div>
-				<p class="olr-affiliate-landing__payout-note"><?php esc_html_e( 'You can activate your affiliate account and start earning right away. W-9 and payout information must be completed before any commission can be paid.', 'off-label-account-hub' ); ?></p>
+				<p class="olr-affiliate-landing__payout-note"><?php esc_html_e( 'Activate and start earning right away. Convert cleared commissions of $50 or more to store credit instantly, without a W-9. Zelle requires an approved W-9 and is processed monthly.', 'off-label-account-hub' ); ?></p>
 			</section>
 
 			<section class="olr-affiliate-landing__process" aria-labelledby="olr-affiliate-process-title">
@@ -592,6 +597,9 @@ final class OLR_Account_Hub {
 		$terms       = $terms ? $terms : home_url( '/affiliate-terms/' );
 		$ruo         = home_url( '/research-use-policy/' );
 		$creative    = $this->account_tab_url( 'creative' );
+		$example_discount = 200 * (float) $policy['customer_discount'] / 100;
+		$example_net = 200 - $example_discount;
+		$example_commission = $example_net * (float) $policy['commission'] / 100;
 
 		$cards = array(
 			array( '01', 'SHARE OFF LABEL', '<p>Share your link and code through the channels that work for you.</p><ul class="olr-guidelines-icon-list"><li><b>Text</b><span>Send your link directly to friends and contacts.</span></li><li><b>Email</b><span>Share your link and code through individual email.</span></li><li><b>Social</b><span>Share through your social media accounts and content.</span></li><li><b>Website / Blog</b><span>Use your link within appropriate original content.</span></li></ul><strong class="olr-guidelines-card__closing">Your link. Your code.<br>We track the rest.</strong>' ),
@@ -605,11 +613,11 @@ final class OLR_Account_Hub {
 			array( '09', 'NO SPAM', '<p>Share. Do not spam.</p><p>Do not use:</p><ul class="is-prohibited"><li>Purchased lists</li><li>Unsolicited bulk email or SMS</li><li>Automated spam</li><li>Deceptive outreach</li><li>Misleading messages</li></ul>' ),
 			array( '10', 'PAID ADVERTISING', '<p>Without written approval, do not bid on or purchase ads targeting Off Label, Off Label Research, our domain names, misspellings, or other branded terms.</p><div class="olr-guidelines-symbol">$</div><p>Do not run ads that reasonably appear to be official Off Label advertising.</p>' ),
 			array( '11', 'ACCURATE PROMOTIONS', '<p>Share the offer that actually exists.</p><ul class="is-checklist"><li>Current customer discount</li><li>Eligible products</li><li>Promotion dates</li><li>Affiliate code</li><li>Off Label pricing</li><li>Shipping offers</li><li>Other promotional terms</li></ul><p>Do not advertise expired or nonexistent offers.</p>' ),
-			array( '12', 'DISCOUNT STACKING', '<p>One promotion at a time. Affiliate discounts do not stack with other percentage promotions unless Off Label specifically states otherwise.</p><table><thead><tr><th>Example</th><th></th></tr></thead><tbody><tr><td>Affiliate offer</td><td>' . esc_html( $policy['customer_discount'] ) . '</td></tr><tr><td>Current Off Label promo</td><td>30%</td></tr><tr><td>Customer receives</td><td>30%</td></tr></tbody></table><small>The applicable offer is determined according to Off Label rules.</small>' ),
-			array( '13', 'HOW YOU EARN', '<div class="olr-guidelines-rate"><strong>' . esc_html( $policy['commission'] ) . '</strong><p>You earn ' . esc_html( $policy['commission'] ) . ' commission on qualifying net merchandise revenue after applicable discounts.</p></div><table><tbody><tr><td>Retail merchandise</td><td>$200.00</td></tr><tr><td>Customer receives ' . esc_html( $policy['customer_discount'] ) . ' off</td><td>−$40.00</td></tr><tr><td>Net eligible purchase</td><td>$160.00</td></tr><tr><td>Your commission (' . esc_html( $policy['commission'] ) . ')</td><td>$16.00</td></tr></tbody></table><p>Excludes shipping, tax, refunds, canceled items, chargebacks, and other noncommissionable amounts defined in the Affiliate Terms.</p>' ),
+			array( '12', 'DISCOUNT STACKING', '<p>One promotion at a time. Affiliate discounts do not stack with other percentage promotions unless Off Label specifically states otherwise.</p><table><thead><tr><th>Example</th><th></th></tr></thead><tbody><tr><td>Affiliate offer</td><td>' . esc_html( $policy['customer_discount'] ) . '</td></tr><tr><td>Current Off Label promo</td><td>30%</td></tr><tr><td>Customer receives</td><td>' . esc_html( OLR_Affiliate_Coupons::label( max( 30, (float) $policy['customer_discount'] ) ) ) . '</td></tr></tbody></table><small>The applicable offer is determined according to Off Label rules.</small>' ),
+			array( '13', 'HOW YOU EARN', '<div class="olr-guidelines-rate"><strong>' . esc_html( $policy['commission'] ) . '</strong><p>You earn ' . esc_html( $policy['commission'] ) . ' commission on qualifying net merchandise revenue after applicable discounts.</p></div><table><tbody><tr><td>Retail merchandise</td><td>$200.00</td></tr><tr><td>Customer receives ' . esc_html( $policy['customer_discount'] ) . ' off</td><td>−$' . esc_html( number_format( $example_discount, 2 ) ) . '</td></tr><tr><td>Net eligible purchase</td><td>$' . esc_html( number_format( $example_net, 2 ) ) . '</td></tr><tr><td>Your commission (' . esc_html( $policy['commission'] ) . ')</td><td>$' . esc_html( number_format( $example_commission, 2 ) ) . '</td></tr></tbody></table><p>Excludes shipping, tax, refunds, canceled items, chargebacks, and other noncommissionable amounts defined in the Affiliate Terms.</p>' ),
 			array( '14', 'LIFETIME COMMISSION', '<p>Refer once. Keep earning.</p><div class="olr-guidelines-lifetime"><span>First order<br><b>' . esc_html( $policy['commission'] ) . '</b></span><i>→</i><span>Repeat order<br><b>' . esc_html( $policy['commission'] ) . '</b></span><i>→</i><span>Repeat order<br><b>' . esc_html( $policy['commission'] ) . '</b></span><i>→</i><span>Repeat order<br><b>' . esc_html( $policy['commission'] ) . '</b></span></div><strong class="olr-guidelines-card__closing">They do not need to keep using your code. You referred them. We track the relationship.</strong>' ),
 			array( '15', 'STAY UP TO DATE', '<p>Program offers, commission structures, eligible transactions, payout requirements, and rules may change.</p><dl class="olr-guidelines-statuses"><div><dt>Pending</dt><dd>Within the ' . esc_html( $policy['hold_period'] ) . ' hold period.</dd></div><div><dt>Available</dt><dd>Cleared and eligible for payout.</dd></div><div><dt>Paid</dt><dd>Included in a completed payout.</dd></div><div><dt>Reversed</dt><dd>Adjusted due to refund, cancellation, chargeback, or other permitted reason.</dd></div></dl>' ),
-			array( '16', 'GETTING PAID', '<ul class="is-checklist"><li>W-9 required</li><li>' . esc_html( $policy['payout_method'] ) . ' only</li><li>' . esc_html( $policy['payout_schedule'] ) . ' payouts</li><li>' . esc_html( $policy['minimum_payout'] ) . ' minimum payout</li><li>' . esc_html( $policy['hold_period'] ) . ' commission hold</li></ul><p>Tax and payout details must be complete before commissions can be paid.</p>', 'dark' ),
+			array( '16', 'GETTING PAID', '<ul class="is-checklist"><li>Approved W-9 required for Zelle only</li><li>Store credit converts immediately; no W-9 required</li><li>' . esc_html( $policy['payout_method'] ) . ' only</li><li>' . esc_html( $policy['payout_schedule'] ) . ' Zelle payouts</li><li>' . esc_html( $policy['minimum_payout'] ) . ' minimum payout</li><li>' . esc_html( $policy['hold_period'] ) . ' commission hold</li></ul><p>Zelle requires approved tax documents and complete recipient details. Store credit is available immediately after conversion.</p>', 'dark' ),
 			array( '17', 'REFUNDS + CANCELLATIONS', '<p>Commission follows the sale.</p><ul class="is-prohibited"><li>Canceled orders can be canceled.</li><li>Refunded commission can be reduced or reversed.</li><li>Partially refunded orders are adjusted.</li><li>Chargebacks reverse related commission.</li><li>Paid commission may be deducted from a future payout where permitted.</li></ul>', 'dark' ),
 			array( '18', 'VIOLATIONS', '<p>We protect the program.</p><p>When guidelines are violated, Off Label may investigate, issue a warning, reverse unpaid commission, suspend affiliate access, or remove an affiliate from the program.</p><ul><li>Warning</li><li>Commission reversed</li><li>Account suspension</li><li>Affiliate removal</li></ul>', 'dark' ),
 			array( '19', 'STAY UP TO DATE', '<p>Program offers, commission structures, eligible transactions, payout requirements, and rules may change.</p><p>Material updates to Guidelines may be communicated through the affiliate account or current program materials.</p>', 'dark' ),
@@ -647,9 +655,9 @@ final class OLR_Account_Hub {
 	 */
 	public static function affiliate_program_policy() {
 		$policy = array(
-			'customer_discount' => '20%',
+			'customer_discount' => OLR_Affiliate_Coupons::label( OLR_Affiliate_Coupons::default_percent() ),
 			'commission'        => '10%',
-			'payout_method'     => 'Zelle',
+			'payout_method'     => 'Zelle or store credit',
 			'payout_schedule'   => __( 'Monthly', 'off-label-account-hub' ),
 			'hold_period'       => __( '30-day', 'off-label-account-hub' ),
 			'minimum_payout'    => '$50',
@@ -664,14 +672,14 @@ final class OLR_Account_Hub {
 	 * @return array
 	 */
 	private function affiliate_public_ctas() {
-		$application_url = $this->account_tab_url( 'affiliate' );
-		$dashboard_url   = $this->account_tab_url( 'overview' );
+		$activation_url = $this->account_tab_url( 'affiliate' );
+		$dashboard_url   = $this->account_tab_url( 'affiliate' );
 		$guidelines_url  = home_url( '/' . self::GUIDELINES_SLUG . '/' );
 
 		if ( ! is_user_logged_in() ) {
 			return array(
-				'primary'   => array( 'label' => __( 'ACTIVATE AFFILIATE ACCESS', 'off-label-account-hub' ), 'url' => $this->ultimate_member_register_url( $application_url ) ),
-				'secondary' => array( 'label' => __( 'ALREADY ACTIVE? SIGN IN', 'off-label-account-hub' ), 'url' => $this->ultimate_member_login_url( $application_url ) ),
+				'primary'   => array( 'label' => __( 'ACTIVATE AFFILIATE ACCESS', 'off-label-account-hub' ), 'url' => $this->ultimate_member_register_url( $activation_url ) ),
+				'secondary' => array( 'label' => __( 'ALREADY ACTIVE? SIGN IN', 'off-label-account-hub' ), 'url' => $this->ultimate_member_login_url( $activation_url ) ),
 			);
 		}
 
@@ -682,9 +690,8 @@ final class OLR_Account_Hub {
 			);
 		}
 
-		$status = $this->application_status( get_current_user_id() );
 		return array(
-			'primary'   => array( 'label' => $status ? __( 'VIEW APPLICATION STATUS', 'off-label-account-hub' ) : __( 'ACTIVATE AFFILIATE ACCESS', 'off-label-account-hub' ), 'url' => $application_url ),
+			'primary'   => array( 'label' => __( 'ACTIVATE AFFILIATE ACCESS', 'off-label-account-hub' ), 'url' => $activation_url ),
 			'secondary' => array( 'label' => __( 'VIEW GUIDELINES', 'off-label-account-hub' ), 'url' => $guidelines_url ),
 		);
 	}
@@ -754,7 +761,7 @@ final class OLR_Account_Hub {
 
 		$tabs[5]['overview'] = array(
 			'icon'   => 'um-faicon-home',
-			'title'  => __( 'Overview', 'off-label-account-hub' ),
+			'title'  => __( 'Dashboard', 'off-label-account-hub' ),
 			'custom' => true,
 		);
 		$tabs[10]['orders']   = array(
@@ -763,7 +770,10 @@ final class OLR_Account_Hub {
 			'custom' => true,
 		);
 
+		$tabs[12]['tracking'] = array( 'icon' => 'um-faicon-truck', 'title' => __( 'Tracking', 'off-label-account-hub' ), 'custom' => true );
+		$tabs[18]['addresses'] = array( 'icon' => 'um-faicon-map-marker', 'title' => __( 'Addresses', 'off-label-account-hub' ), 'custom' => true );
 		if ( self::is_active_affiliate( get_current_user_id() ) ) {
+			$tabs[19]['affiliate'] = array( 'icon' => 'um-faicon-share-alt', 'title' => __( 'Affiliate dashboard', 'off-label-account-hub' ), 'custom' => true );
 			if ( $this->uap_group_enabled( array( 'reports', 'visits' ) ) ) {
 				$tabs[20]['performance'] = array(
 					'icon'   => 'um-faicon-line-chart',
@@ -778,7 +788,7 @@ final class OLR_Account_Hub {
 					'custom' => true,
 				);
 			}
-			if ( $this->uap_tab_enabled( 'payments' ) ) {
+			if ( self::is_active_affiliate( get_current_user_id() ) ) {
 				$tabs[40]['payouts'] = array(
 					'icon'   => 'um-faicon-credit-card',
 					'title'  => __( 'Payouts', 'off-label-account-hub' ),
@@ -807,10 +817,14 @@ final class OLR_Account_Hub {
 
 		foreach ( $tabs as $group => $group_tabs ) {
 			if ( isset( $group_tabs['general'] ) ) {
-				$tabs[ $group ]['general']['title'] = __( 'Account', 'off-label-account-hub' );
+				$tabs[ $group ]['general']['title'] = __( 'Account details', 'off-label-account-hub' );
 				$tabs[ $group ]['general']['icon']  = 'um-faicon-user';
+				$account_details = $tabs[ $group ]['general'];
+				unset( $tabs[ $group ]['general'] );
 			}
 		}
+
+		if ( isset( $account_details ) ) { $tabs[15]['general'] = $account_details; }
 
 		$tabs[999]['olr_logout'] = array(
 			'icon'   => 'um-faicon-sign-out',
@@ -915,17 +929,26 @@ final class OLR_Account_Hub {
 
 		switch ( $tab ) {
 			case 'overview':
-				return $active ? $this->render_uap_section( 'overview' ) : $this->render_member_overview();
+				return $this->render_member_overview();
 			case 'orders':
 				return $this->render_orders();
+			case 'tracking':
+				return $this->render_orders( true );
+			case 'addresses':
+				if ( ! function_exists( 'wc_get_template' ) ) { return $this->empty_panel( __( 'Addresses are temporarily unavailable.', 'off-label-account-hub' ) ); }
+				ob_start();
+				echo '<section class="olr-account-panel"><p class="olr-account-eyebrow">My account</p><h2 class="olr-customer-title">YOUR ADDRESSES.</h2>';
+				wc_get_template( 'myaccount/my-address.php' );
+				echo '</section>';
+				return ob_get_clean();
 			case 'affiliate':
-				return $active ? $this->render_uap_section( 'overview' ) : $this->render_application();
+				return $active ? $this->render_uap_section( 'overview' ) : OLR_Affiliate_Flows::activation_panel();
 			case 'performance':
-				return $active ? $this->render_uap_section( 'reports' ) : $this->render_application();
+				return $active ? $this->render_uap_section( 'reports' ) : OLR_Affiliate_Flows::activation_panel();
 			case 'commissions':
-				return $active ? $this->render_uap_section( 'referrals' ) : $this->render_application();
+				return $active ? $this->render_uap_section( 'referrals' ) : OLR_Affiliate_Flows::activation_panel();
 			case 'payouts':
-				return $active ? $this->render_uap_section( 'payments' ) : $this->render_application();
+				return $active ? OLR_Affiliate_Flows::payout_panel() : OLR_Affiliate_Flows::activation_panel();
 			case 'creative':
 				$creative = $this->creative_uap_tab();
 				return $active && $creative ? $this->render_uap_section( $creative ) : $this->empty_panel( __( 'Creative resources are not configured yet.', 'off-label-account-hub' ) );
@@ -937,7 +960,7 @@ final class OLR_Account_Hub {
 						home_url( '/affiliate-guidelines/' ),
 						__( 'VIEW GUIDELINES', 'off-label-account-hub' )
 					)
-					: $this->render_application();
+					: OLR_Affiliate_Flows::activation_panel();
 			case 'olr_logout':
 				return $this->notice_panel(
 					__( 'LOG OUT', 'off-label-account-hub' ),
@@ -965,7 +988,7 @@ final class OLR_Account_Hub {
 			'overview'       => array( 'overview' ),
 			'reports'        => array( 'reports', 'visits', 'campaign_reports', 'referrals_history' ),
 			'referrals'      => array( 'referrals', 'referrals_history', 'source_details' ),
-			'payments'       => array( 'payments', 'payments_settings' ),
+			'payments'       => array( 'payments' ),
 			'affiliate_link' => array( 'affiliate_link', 'banners', 'campaigns', 'simple_links', 'landing_pages', 'coupons', 'product_links' ),
 			'banners'        => array( 'banners', 'affiliate_link', 'campaigns', 'simple_links', 'landing_pages', 'coupons', 'product_links' ),
 			'campaigns'      => array( 'campaigns', 'affiliate_link', 'banners', 'simple_links', 'landing_pages', 'coupons', 'product_links' ),
@@ -1061,28 +1084,7 @@ final class OLR_Account_Hub {
 	 * @return bool
 	 */
 	public static function is_active_affiliate( $user_id ) {
-		$user_id = absint( $user_id );
-		if ( ! $user_id ) {
-			return false;
-		}
-
-		$user = get_userdata( $user_id );
-		if ( $user instanceof WP_User && in_array( 'pending_user', (array) $user->roles, true ) ) {
-			return false;
-		}
-
-		global $indeed_db;
-		if ( ! is_object( $indeed_db ) ) {
-			return false;
-		}
-		if ( method_exists( $indeed_db, 'is_user_affiliate_by_uid' ) ) {
-			return (bool) $indeed_db->is_user_affiliate_by_uid( $user_id );
-		}
-		if ( method_exists( $indeed_db, 'affiliate_get_id_by_uid' ) ) {
-			return absint( $indeed_db->affiliate_get_id_by_uid( $user_id ) ) > 0;
-		}
-
-		return false;
+		return OLR_Affiliate_Service::active( absint( $user_id ) );
 	}
 
 	/**
@@ -1302,7 +1304,7 @@ final class OLR_Account_Hub {
 	 */
 	public static function affiliate_coupon_code( $user_id ) {
 		$user_id = absint( $user_id );
-		$code    = sanitize_text_field( (string) get_user_meta( $user_id, 'olr_affiliate_coupon_code', true ) );
+		$code    = OLR_Affiliate_Service::coupon_code( $user_id );
 		$code    = (string) apply_filters( 'olr_affiliate_dashboard_coupon_code', $code, $user_id, self::affiliate_id( $user_id ) );
 
 		return strtoupper( trim( sanitize_text_field( $code ) ) );
@@ -1314,41 +1316,13 @@ final class OLR_Account_Hub {
 	 * @return string
 	 */
 	private function render_member_overview() {
-		$user       = wp_get_current_user();
-		$first_name = $user->first_name ? $user->first_name : $user->display_name;
-		$status     = $this->application_status( $user->ID );
-		$order_count = function_exists( 'wc_get_customer_order_count' ) ? absint( wc_get_customer_order_count( $user->ID ) ) : 0;
-
+		$user = wp_get_current_user();
+		if ( ! $user->ID ) { return ''; }
+		$first_name = $user->first_name ?: $user->display_name;
+		$orders = function_exists( 'wc_get_orders' ) ? wc_get_orders( array( 'customer_id' => $user->ID, 'limit' => 1, 'orderby' => 'date', 'order' => 'DESC', 'return' => 'objects' ) ) : array();
+		$recent = $orders ? reset( $orders ) : false;
 		ob_start();
-		?>
-		<section class="olr-account-panel olr-account-overview" aria-labelledby="olr-account-overview-title">
-			<div class="olr-account-panel__header">
-				<div>
-					<p class="olr-account-eyebrow"><?php esc_html_e( 'Off Label account', 'off-label-account-hub' ); ?></p>
-					<h2 id="olr-account-overview-title"><?php echo esc_html( sprintf( __( 'WELCOME BACK, %s.', 'off-label-account-hub' ), strtoupper( $first_name ) ) ); ?></h2>
-				</div>
-				<span class="olr-account-status"><span aria-hidden="true"></span><?php esc_html_e( 'Active member', 'off-label-account-hub' ); ?></span>
-			</div>
-			<div class="olr-account-stat-grid olr-account-stat-grid--two">
-				<a class="olr-account-stat" href="<?php echo esc_url( $this->account_tab_url( 'orders' ) ); ?>">
-					<strong><?php echo esc_html( number_format_i18n( $order_count ) ); ?></strong>
-					<span><?php esc_html_e( 'Orders', 'off-label-account-hub' ); ?></span>
-				</a>
-				<a class="olr-account-stat" href="<?php echo esc_url( $this->account_tab_url( 'affiliate' ) ); ?>">
-					<strong><?php echo esc_html( $status ? strtoupper( $status ) : __( 'APPLY', 'off-label-account-hub' ) ); ?></strong>
-					<span><?php esc_html_e( 'Affiliate program', 'off-label-account-hub' ); ?></span>
-				</a>
-			</div>
-			<div class="olr-account-callout">
-				<div>
-					<p class="olr-account-eyebrow"><?php esc_html_e( 'Affiliate access', 'off-label-account-hub' ); ?></p>
-					<h3><?php esc_html_e( 'SHARE THE RESEARCH.', 'off-label-account-hub' ); ?></h3>
-					<p><?php esc_html_e( 'Apply from this account to receive a personal referral link and track eligible activity after approval.', 'off-label-account-hub' ); ?></p>
-				</div>
-				<a class="olr-account-button" href="<?php echo esc_url( $this->account_tab_url( 'affiliate' ) ); ?>"><?php esc_html_e( 'VIEW AFFILIATE PROGRAM', 'off-label-account-hub' ); ?><span aria-hidden="true">&rarr;</span></a>
-			</div>
-		</section>
-		<?php
+		require __DIR__ . '/templates/member-dashboard.php';
 		return ob_get_clean();
 	}
 
@@ -1357,7 +1331,7 @@ final class OLR_Account_Hub {
 	 *
 	 * @return string
 	 */
-	private function render_orders() {
+	private function render_orders( $tracking_only = false ) {
 		if ( ! function_exists( 'wc_get_orders' ) ) {
 			return $this->empty_panel( __( 'Order history is temporarily unavailable.', 'off-label-account-hub' ) );
 		}
@@ -1387,12 +1361,12 @@ final class OLR_Account_Hub {
 		?>
 		<section class="olr-account-panel" aria-labelledby="olr-orders-title">
 			<div class="olr-account-panel__header">
-				<div><p class="olr-account-eyebrow"><?php esc_html_e( 'Purchase history', 'off-label-account-hub' ); ?></p><h2 id="olr-orders-title"><?php esc_html_e( 'YOUR ORDERS.', 'off-label-account-hub' ); ?></h2></div>
+				<div><p class="olr-account-eyebrow"><?php esc_html_e( 'Purchase history', 'off-label-account-hub' ); ?></p><h2 id="olr-orders-title"><?php echo esc_html( $tracking_only ? __( 'TRACK YOUR ORDERS.', 'off-label-account-hub' ) : __( 'YOUR ORDERS.', 'off-label-account-hub' ) ); ?></h2></div>
 			</div>
 			<?php if ( $orders ) : ?>
 				<div class="olr-account-table-wrap">
 					<table class="olr-account-table">
-						<thead><tr><th><?php esc_html_e( 'Order', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Date', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Status', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Total', 'off-label-account-hub' ); ?></th><th><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'off-label-account-hub' ); ?></span></th></tr></thead>
+						<thead><tr><th><?php esc_html_e( 'Order', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Date', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Status', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Total', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Tracking', 'off-label-account-hub' ); ?></th><th><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'off-label-account-hub' ); ?></span></th></tr></thead>
 						<tbody>
 						<?php foreach ( $orders as $order ) :
 							$date    = $order->get_date_created();
@@ -1403,6 +1377,7 @@ final class OLR_Account_Hub {
 				<td data-label="<?php esc_attr_e( 'Date', 'off-label-account-hub' ); ?>"><?php echo esc_html( $date ? $date->date_i18n( get_option( 'date_format' ) ) : '—' ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Status', 'off-label-account-hub' ); ?>"><?php echo esc_html( wc_get_order_status_name( $order->get_status() ) ); ?></td>
 								<td data-label="<?php esc_attr_e( 'Total', 'off-label-account-hub' ); ?>"><?php echo wp_kses_post( $order->get_formatted_order_total() ); ?></td>
+								<td data-label="<?php esc_attr_e( 'Tracking', 'off-label-account-hub' ); ?>"><?php echo wp_kses_post( OLR_Order_Tracking::render( $order, true ) ); ?></td>
 								<td><div class="olr-order-actions"><?php echo wp_kses_post( $this->render_order_actions( $order, $view_url ) ); ?></div></td>
 							</tr>
 						<?php endforeach; ?>
@@ -1411,9 +1386,9 @@ final class OLR_Account_Hub {
 				</div>
 				<?php if ( $pages > 1 ) : ?>
 					<nav class="olr-account-pagination" aria-label="<?php esc_attr_e( 'Order history pages', 'off-label-account-hub' ); ?>">
-						<?php if ( $page > 1 ) : ?><a href="<?php echo esc_url( add_query_arg( array( 'um_tab' => 'orders', 'order_page' => $page - 1 ), $this->account_url() ) ); ?>">&larr; <?php esc_html_e( 'Previous', 'off-label-account-hub' ); ?></a><?php endif; ?>
+						<?php if ( $page > 1 ) : ?><a href="<?php echo esc_url( add_query_arg( array( 'um_tab' => $tracking_only ? 'tracking' : 'orders', 'order_page' => $page - 1 ), $this->account_url() ) ); ?>">&larr; <?php esc_html_e( 'Previous', 'off-label-account-hub' ); ?></a><?php endif; ?>
 						<span><?php echo esc_html( sprintf( __( 'Page %1$d of %2$d', 'off-label-account-hub' ), $page, $pages ) ); ?></span>
-						<?php if ( $page < $pages ) : ?><a href="<?php echo esc_url( add_query_arg( array( 'um_tab' => 'orders', 'order_page' => $page + 1 ), $this->account_url() ) ); ?>"><?php esc_html_e( 'Next', 'off-label-account-hub' ); ?> &rarr;</a><?php endif; ?>
+						<?php if ( $page < $pages ) : ?><a href="<?php echo esc_url( add_query_arg( array( 'um_tab' => $tracking_only ? 'tracking' : 'orders', 'order_page' => $page + 1 ), $this->account_url() ) ); ?>"><?php esc_html_e( 'Next', 'off-label-account-hub' ); ?> &rarr;</a><?php endif; ?>
 					</nav>
 				<?php endif; ?>
 			<?php else : ?>
@@ -1433,7 +1408,7 @@ final class OLR_Account_Hub {
 	 */
 	private function render_order_details( $order_id, $user_id ) {
 		$order = function_exists( 'wc_get_order' ) ? wc_get_order( $order_id ) : false;
-		if ( ! $order || absint( $order->get_user_id() ) !== absint( $user_id ) ) {
+		if ( ! $user_id || ! $order || absint( $order->get_user_id() ) !== absint( $user_id ) ) {
 			return $this->notice_panel(
 				__( 'ORDER NOT AVAILABLE', 'off-label-account-hub' ),
 				__( 'That order could not be found in this account.', 'off-label-account-hub' ),
@@ -1447,6 +1422,7 @@ final class OLR_Account_Hub {
 		<section class="olr-account-panel olr-account-order-detail" aria-labelledby="olr-order-detail-title">
 			<a class="olr-account-back" href="<?php echo esc_url( $this->account_tab_url( 'orders' ) ); ?>">&larr; <?php esc_html_e( 'Back to orders', 'off-label-account-hub' ); ?></a>
 			<div class="olr-account-panel__header"><div><p class="olr-account-eyebrow"><?php echo esc_html( sprintf( __( 'Order #%s', 'off-label-account-hub' ), $order->get_order_number() ) ); ?></p><h2 id="olr-order-detail-title"><?php esc_html_e( 'ORDER DETAILS.', 'off-label-account-hub' ); ?></h2></div><span class="olr-account-status"><span aria-hidden="true"></span><?php echo esc_html( wc_get_order_status_name( $order->get_status() ) ); ?></span></div>
+			<div class="olr-order-tracking-panel"><h3>Shipment tracking</h3><?php echo wp_kses_post( OLR_Order_Tracking::render( $order ) ); ?></div>
 			<div class="olr-account-native-order">
 			<?php
 			if ( function_exists( 'woocommerce_order_details_table' ) ) {
@@ -1488,172 +1464,14 @@ final class OLR_Account_Hub {
 	}
 
 	/**
-	 * Render application, pending, or rejected affiliate state.
+	 * Register the account-owned affiliate management screen.
 	 *
 	 * @return string
 	 */
-	private function render_application() {
-		$user       = wp_get_current_user();
-		$status     = $this->application_status( $user->ID );
-		$terms_url  = trim( (string) get_option( self::OPTION_TERMS_URL, '' ) );
-		$notice     = isset( $_GET['olr_notice'] ) ? sanitize_key( wp_unslash( $_GET['olr_notice'] ) ) : '';
-		$ineligible = self::is_administrator_account( $user->ID );
-
-		if ( in_array( 'pending_user', (array) $user->roles, true ) ) {
-			$status = 'pending';
-		}
-
-		ob_start();
-		?>
-		<section class="olr-account-panel olr-affiliate-application" aria-labelledby="olr-affiliate-application-title">
-			<div class="olr-account-panel__header">
-				<div><p class="olr-account-eyebrow"><?php esc_html_e( 'Off Label affiliate', 'off-label-account-hub' ); ?></p><h2 id="olr-affiliate-application-title"><?php esc_html_e( 'AFFILIATE PROGRAM.', 'off-label-account-hub' ); ?></h2></div>
-				<?php if ( $status ) : ?><span class="olr-account-status olr-account-status--<?php echo esc_attr( $status ); ?>"><span aria-hidden="true"></span><?php echo esc_html( ucfirst( $status ) ); ?></span><?php endif; ?>
-			</div>
-
-			<?php if ( 'application_submitted' === $notice ) : ?><div class="olr-account-notice" role="status"><?php esc_html_e( 'Your application was submitted for review.', 'off-label-account-hub' ); ?></div><?php endif; ?>
-			<?php if ( 'application_invalid' === $notice ) : ?><div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Enter a valid website or social URL, describe your plan, and accept the affiliate terms.', 'off-label-account-hub' ); ?></div><?php endif; ?>
-			<?php if ( 'application_session_expired' === $notice ) : ?><div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Your form session expired. Refresh the page and submit the application again.', 'off-label-account-hub' ); ?></div><?php endif; ?>
-			<?php if ( 'application_ineligible' === $notice ) : ?><div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Administrator accounts cannot enroll in the affiliate program. Use a standard member account.', 'off-label-account-hub' ); ?></div><?php endif; ?>
-
-			<?php if ( 'pending' === $status ) : ?>
-				<div class="olr-account-empty"><p class="olr-account-eyebrow"><?php esc_html_e( 'Application received', 'off-label-account-hub' ); ?></p><h3><?php esc_html_e( 'YOUR APPLICATION IS UNDER REVIEW.', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'You will receive an update after the affiliate team completes its review.', 'off-label-account-hub' ); ?></p></div>
-			<?php elseif ( 'rejected' === $status ) : ?>
-				<div class="olr-account-empty"><p class="olr-account-eyebrow"><?php esc_html_e( 'Application status', 'off-label-account-hub' ); ?></p><h3><?php esc_html_e( 'APPLICATION NOT APPROVED.', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Contact affiliate support if your information has changed and you would like the application reset.', 'off-label-account-hub' ); ?></p></div>
-			<?php elseif ( 'approved' === $status ) : ?>
-				<div class="olr-account-empty"><p class="olr-account-eyebrow"><?php esc_html_e( 'Application approved', 'off-label-account-hub' ); ?></p><h3><?php esc_html_e( 'AFFILIATE ACCESS NEEDS REVIEW.', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Your application is approved, but the affiliate record is not currently active. Contact affiliate support to restore access.', 'off-label-account-hub' ); ?></p></div>
-			<?php elseif ( $ineligible ) : ?>
-				<div class="olr-account-empty"><p class="olr-account-eyebrow"><?php esc_html_e( 'Account type', 'off-label-account-hub' ); ?></p><h3><?php esc_html_e( 'USE A MEMBER ACCOUNT TO APPLY.', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Administrator accounts manage applications but cannot become affiliates. Sign in with a standard member account to test or submit an application.', 'off-label-account-hub' ); ?></p></div>
-			<?php elseif ( ! $terms_url ) : ?>
-				<div class="olr-account-notice olr-account-notice--error" role="alert"><?php esc_html_e( 'Applications will open after the affiliate terms are published.', 'off-label-account-hub' ); ?></div>
-			<?php else : ?>
-				<div class="olr-affiliate-application__intro"><h3><?php esc_html_e( 'APPLY TO WORK WITH OFF LABEL.', 'off-label-account-hub' ); ?></h3><p><?php esc_html_e( 'Tell us where you plan to share Off Label Research. Applications are reviewed before affiliate tools become available.', 'off-label-account-hub' ); ?></p></div>
-				<form class="olr-account-form" method="post" action="<?php echo esc_url( $this->account_tab_url( 'affiliate' ) ); ?>" novalidate>
-					<input type="hidden" name="olr_account_action" value="submit_affiliate_application">
-					<?php wp_nonce_field( 'olr_submit_affiliate_application', 'olr_affiliate_application_nonce' ); ?>
-					<div class="olr-account-form__grid">
-						<p><label><?php esc_html_e( 'Name', 'off-label-account-hub' ); ?><input type="text" value="<?php echo esc_attr( $user->display_name ); ?>" readonly></label></p>
-						<p><label><?php esc_html_e( 'Email', 'off-label-account-hub' ); ?><input type="email" value="<?php echo esc_attr( $user->user_email ); ?>" readonly></label></p>
-					</div>
-					<p><label for="olr-affiliate-url"><?php esc_html_e( 'Website or social URL', 'off-label-account-hub' ); ?> <span aria-hidden="true">*</span></label><input id="olr-affiliate-url" type="text" inputmode="url" autocomplete="url" name="olr_affiliate_url" value="<?php echo esc_attr( get_user_meta( $user->ID, self::META_URL, true ) ); ?>" aria-required="true"></p>
-					<p><label for="olr-affiliate-plan"><?php esc_html_e( 'How do you plan to introduce Off Label Research to your audience?', 'off-label-account-hub' ); ?> <span aria-hidden="true">*</span></label><textarea id="olr-affiliate-plan" name="olr_affiliate_plan" maxlength="1200" rows="6" aria-required="true"><?php echo esc_textarea( get_user_meta( $user->ID, self::META_PLAN, true ) ); ?></textarea></p>
-					<label class="olr-account-checkbox"><input type="checkbox" name="olr_affiliate_terms" value="1" aria-required="true"><span><?php echo wp_kses_post( sprintf( __( 'I have read and agree to the <a href="%s" target="_blank" rel="noopener">affiliate terms</a>.', 'off-label-account-hub' ), esc_url( $terms_url ) ) ); ?></span></label>
-					<button class="olr-account-button" type="submit"><?php esc_html_e( 'SUBMIT APPLICATION', 'off-label-account-hub' ); ?><span aria-hidden="true">&rarr;</span></button>
-				</form>
-			<?php endif; ?>
-		</section>
-		<?php
-		return ob_get_clean();
-	}
-
-	/**
-	 * Save a member's affiliate application without changing their role.
-	 */
-	public function submit_application() {
-		if ( ! is_user_logged_in() ) {
-			wp_safe_redirect( $this->ultimate_member_login_url() );
-			exit;
-		}
-
-		$user_id = get_current_user_id();
-		$nonce   = isset( $_POST['olr_affiliate_application_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['olr_affiliate_application_nonce'] ) ) : '';
-		if ( self::is_administrator_account( $user_id ) ) {
-			$this->redirect_to_application( 'application_ineligible' );
-		}
-		if ( ! wp_verify_nonce( $nonce, 'olr_submit_affiliate_application' ) ) {
-			$this->redirect_to_application( 'application_session_expired' );
-		}
-		if ( self::is_active_affiliate( $user_id ) || $this->application_status( $user_id ) ) {
-			$this->redirect_to_application( 'application_invalid' );
-		}
-
-		$terms_url = trim( (string) get_option( self::OPTION_TERMS_URL, '' ) );
-		$raw_url   = isset( $_POST['olr_affiliate_url'] ) && is_scalar( $_POST['olr_affiliate_url'] ) ? trim( sanitize_text_field( wp_unslash( (string) $_POST['olr_affiliate_url'] ) ) ) : '';
-		if ( $raw_url && ! preg_match( '#^https?://#i', $raw_url ) ) {
-			$raw_url = 'https://' . ltrim( $raw_url, '/' );
-		}
-		$url       = esc_url_raw( $raw_url, array( 'http', 'https' ) );
-		$plan      = isset( $_POST['olr_affiliate_plan'] ) && is_scalar( $_POST['olr_affiliate_plan'] ) ? trim( sanitize_textarea_field( wp_unslash( (string) $_POST['olr_affiliate_plan'] ) ) ) : '';
-		$accepted  = ! empty( $_POST['olr_affiliate_terms'] );
-		$length    = function_exists( 'mb_strlen' ) ? mb_strlen( $plan ) : strlen( $plan );
-
-		if ( ! $terms_url || ! $accepted || ! $url || ! wp_http_validate_url( $url ) || $length < 1 || $length > 1200 ) {
-			$this->redirect_to_application( 'application_invalid' );
-		}
-
-		$now = current_time( 'mysql' );
-		update_user_meta( $user_id, self::META_STATUS, 'pending' );
-		update_user_meta( $user_id, self::META_URL, $url );
-		update_user_meta( $user_id, self::META_PLAN, $plan );
-		update_user_meta( $user_id, self::META_SUBMITTED, $now );
-		update_user_meta( $user_id, self::META_TERMS_URL, $terms_url );
-		update_user_meta( $user_id, self::META_TERMS_ACCEPTED, $now );
-		delete_user_meta( $user_id, self::META_REJECTED );
-		do_action( 'olr_affiliate_application_submitted', $user_id );
-		$this->send_application_email( $user_id, 'submitted' );
-		$this->send_application_admin_email( $user_id );
-
-		$this->redirect_to_application( 'application_submitted' );
-	}
-
-	/**
-	 * Process the application form on the public account route.
-	 *
-	 * Ultimate Member can block non-administrators from wp-admin, including
-	 * admin-post.php. Keeping this POST on /account/ avoids that redirect while
-	 * retaining the same nonce, validation, and post-submit redirect.
-	 */
-	public function maybe_submit_frontend_application() {
-		if ( 'POST' !== strtoupper( isset( $_SERVER['REQUEST_METHOD'] ) ? (string) $_SERVER['REQUEST_METHOD'] : '' ) ) {
-			return;
-		}
-
-		$action = isset( $_POST['olr_account_action'] ) && is_scalar( $_POST['olr_account_action'] )
-			? sanitize_key( wp_unslash( (string) $_POST['olr_account_action'] ) )
-			: '';
-		if ( 'submit_affiliate_application' !== $action ) {
-			return;
-		}
-
-		$this->submit_application();
-	}
-
-	/**
-	 * Redirect to the affiliate application tab with a safe notice key.
-	 *
-	 * @param string $notice Notice key.
-	 */
-	private function redirect_to_application( $notice ) {
-		wp_safe_redirect(
-			add_query_arg(
-				array(
-					'um_tab'     => 'affiliate',
-					'olr_notice' => sanitize_key( $notice ),
-				),
-				$this->account_url()
-			)
-		);
-		exit;
-	}
-
-	/**
-	 * Add the application screen beneath UAP when available.
-	 */
 	public function admin_menu() {
-		$parent = defined( 'UAP_PATH' ) ? 'ultimate_affiliates_pro' : 'users.php';
-		add_submenu_page(
-			$parent,
-			__( 'Affiliate Applications', 'off-label-account-hub' ),
-			__( 'Affiliate Applications', 'off-label-account-hub' ),
-			'manage_options',
-			'olr-affiliate-applications',
-			array( $this, 'admin_page' )
-		);
+		add_submenu_page( defined( 'UAP_PATH' ) ? 'ultimate_affiliates_pro' : 'users.php', 'Affiliate Management', 'Affiliate Management', 'manage_options', 'olr-affiliate-management', array( 'OLR_Affiliate_Flows', 'admin_page' ) );
 	}
 
-	/**
-	 * Register the required terms URL setting.
-	 */
 	public function register_settings() {
 		register_setting(
 			'olr_account_hub',
@@ -1676,324 +1494,7 @@ final class OLR_Account_Hub {
 	}
 
 	/**
-	 * Render the administrator application queue and terms setting.
-	 */
-	public function admin_page() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		$error_code = isset( $_GET['olr_error'] ) && is_scalar( $_GET['olr_error'] )
-			? sanitize_key( wp_unslash( (string) $_GET['olr_error'] ) )
-			: '';
-		$applicants = get_users(
-			array(
-				'meta_key' => self::META_STATUS,
-				'orderby'  => 'registered',
-				'order'    => 'DESC',
-				'number'   => -1,
-			)
-		);
-		?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Affiliate Applications', 'off-label-account-hub' ); ?></h1>
-			<?php if ( isset( $_GET['olr_updated'] ) ) : ?><div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Application updated.', 'off-label-account-hub' ); ?></p></div><?php endif; ?>
-			<?php if ( $error_code ) : ?><div class="notice notice-error"><p><?php echo esc_html( $this->application_error_message( $error_code ) ); ?></p></div><?php endif; ?>
-
-			<form method="post" action="options.php" style="max-width:900px;margin:24px 0 32px;padding:20px;background:#fff;border:1px solid #c3c4c7;">
-				<?php settings_fields( 'olr_account_hub' ); ?>
-				<h2 style="margin-top:0"><?php esc_html_e( 'Application settings', 'off-label-account-hub' ); ?></h2>
-				<p><label for="olr-affiliate-terms-url"><strong><?php esc_html_e( 'Affiliate terms URL', 'off-label-account-hub' ); ?></strong></label></p>
-				<input class="regular-text" id="olr-affiliate-terms-url" type="url" name="<?php echo esc_attr( self::OPTION_TERMS_URL ); ?>" value="<?php echo esc_attr( get_option( self::OPTION_TERMS_URL, '' ) ); ?>" placeholder="https://offlabelresearch.com/affiliate-terms/">
-				<p class="description"><?php esc_html_e( 'Applications remain closed until this points to published terms.', 'off-label-account-hub' ); ?></p>
-				<p><label for="olr-affiliate-notification-email"><strong><?php esc_html_e( 'Application notification email', 'off-label-account-hub' ); ?></strong></label></p>
-				<input class="regular-text" id="olr-affiliate-notification-email" type="email" name="<?php echo esc_attr( self::OPTION_NOTIFICATION_EMAIL ); ?>" value="<?php echo esc_attr( $this->application_notification_email() ); ?>" placeholder="<?php echo esc_attr( get_option( 'admin_email', '' ) ); ?>">
-				<p class="description"><?php esc_html_e( 'New application alerts are sent here. The WordPress administration email is used when this field is empty.', 'off-label-account-hub' ); ?></p>
-				<?php submit_button( __( 'Save application settings', 'off-label-account-hub' ) ); ?>
-			</form>
-
-			<table class="widefat striped">
-				<thead><tr><th><?php esc_html_e( 'Applicant', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Status', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Website or social URL', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Promotion plan', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Submitted', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Actions', 'off-label-account-hub' ); ?></th></tr></thead>
-				<tbody>
-				<?php if ( ! $applicants ) : ?>
-					<tr><td colspan="6"><?php esc_html_e( 'No applications have been submitted.', 'off-label-account-hub' ); ?></td></tr>
-				<?php else : foreach ( $applicants as $applicant ) :
-					$status = $this->application_status( $applicant->ID );
-					?>
-					<tr>
-						<td><strong><?php echo esc_html( $applicant->display_name ); ?></strong><br><a href="mailto:<?php echo esc_attr( $applicant->user_email ); ?>"><?php echo esc_html( $applicant->user_email ); ?></a></td>
-						<td><?php echo esc_html( ucfirst( $status ) ); ?></td>
-						<td><a href="<?php echo esc_url( get_user_meta( $applicant->ID, self::META_URL, true ) ); ?>" target="_blank" rel="noopener"><?php echo esc_html( get_user_meta( $applicant->ID, self::META_URL, true ) ); ?></a></td>
-						<td style="max-width:420px;white-space:pre-wrap"><?php echo esc_html( get_user_meta( $applicant->ID, self::META_PLAN, true ) ); ?></td>
-						<td><?php echo esc_html( get_user_meta( $applicant->ID, self::META_SUBMITTED, true ) ); ?></td>
-						<td><?php echo wp_kses_post( $this->admin_application_actions( $applicant->ID, $status ) ); ?></td>
-					</tr>
-				<?php endforeach; endif; ?>
-				</tbody>
-			</table>
-
-			<?php
-			$legacy_pending = get_users(
-				array(
-					'role'   => 'pending_user',
-					'number' => -1,
-				)
-			);
-			if ( $legacy_pending ) :
-				?>
-				<h2 style="margin-top:32px"><?php esc_html_e( 'Legacy pending-role audit', 'off-label-account-hub' ); ?></h2>
-				<p><?php esc_html_e( 'These users already have UAP’s legacy pending role. This plugin will not change that role automatically; review each user and restore the correct Ultimate Member role during staging.', 'off-label-account-hub' ); ?></p>
-				<table class="widefat striped">
-					<thead><tr><th><?php esc_html_e( 'User', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Email', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'UAP affiliate ID', 'off-label-account-hub' ); ?></th><th><?php esc_html_e( 'Application status', 'off-label-account-hub' ); ?></th></tr></thead>
-					<tbody><?php foreach ( $legacy_pending as $pending_user ) : ?><tr><td><?php echo esc_html( $pending_user->display_name ); ?></td><td><?php echo esc_html( $pending_user->user_email ); ?></td><td><?php echo esc_html( self::affiliate_id( $pending_user->ID ) ?: '—' ); ?></td><td><?php echo esc_html( $this->application_status( $pending_user->ID ) ?: __( 'Legacy pending', 'off-label-account-hub' ) ); ?></td></tr><?php endforeach; ?></tbody>
-				</table>
-			<?php endif; ?>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Build nonce-protected admin decision links.
-	 *
-	 * @param int    $user_id User ID.
-	 * @param string $status  Application status.
-	 * @return string
-	 */
-	private function admin_application_actions( $user_id, $status ) {
-		$links = array();
-		if ( 'pending' === $status ) {
-			if ( self::is_administrator_account( $user_id ) ) {
-				$links[] = '<span title="' . esc_attr__( 'UAP does not create affiliate records for administrator accounts.', 'off-label-account-hub' ) . '">' . esc_html__( 'Approval unavailable', 'off-label-account-hub' ) . '</span>';
-			} else {
-				$links[] = $this->admin_action_link( $user_id, 'approve', __( 'Approve', 'off-label-account-hub' ) );
-			}
-			$links[] = $this->admin_action_link( $user_id, 'reject', __( 'Reject', 'off-label-account-hub' ) );
-		}
-		if ( 'pending' === $status || 'rejected' === $status ) {
-			$links[] = $this->admin_action_link( $user_id, 'reset', __( 'Reset', 'off-label-account-hub' ) );
-		}
-
-		return implode( ' | ', $links );
-	}
-
-	/**
-	 * Build one application decision URL.
-	 *
-	 * @param int    $user_id User ID.
-	 * @param string $decision Decision.
-	 * @param string $label Link label.
-	 * @return string
-	 */
-	private function admin_action_link( $user_id, $decision, $label ) {
-		$url = add_query_arg(
-			array(
-				'action'   => 'olr_affiliate_application_action',
-				'user_id'  => absint( $user_id ),
-				'decision' => sanitize_key( $decision ),
-			),
-			admin_url( 'admin-post.php' )
-		);
-		$url = wp_nonce_url( $url, 'olr_affiliate_application_' . $decision . '_' . absint( $user_id ) );
-
-		return '<a href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a>';
-	}
-
-	/**
-	 * Process an administrator's application decision.
-	 */
-	public function application_admin_action() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage affiliate applications.', 'off-label-account-hub' ) );
-		}
-
-		$user_id  = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
-		$decision = isset( $_GET['decision'] ) ? sanitize_key( wp_unslash( $_GET['decision'] ) ) : '';
-		if ( ! $user_id || ! in_array( $decision, array( 'approve', 'reject', 'reset' ), true ) ) {
-			wp_die( esc_html__( 'Invalid application action.', 'off-label-account-hub' ) );
-		}
-		check_admin_referer( 'olr_affiliate_application_' . $decision . '_' . $user_id );
-		$current_status = $this->application_status( $user_id );
-		if ( ( in_array( $decision, array( 'approve', 'reject' ), true ) && 'pending' !== $current_status ) || ( 'reset' === $decision && ! in_array( $current_status, array( 'pending', 'rejected' ), true ) ) ) {
-			wp_die( esc_html__( 'This application is no longer in a state that allows that action.', 'off-label-account-hub' ) );
-		}
-
-		$redirect_args = array( 'page' => 'olr-affiliate-applications' );
-		if ( 'approve' === $decision ) {
-			$result = $this->approve_application( $user_id );
-			if ( is_wp_error( $result ) ) {
-				$redirect_args['olr_error'] = sanitize_key( $result->get_error_code() );
-			} else {
-				$redirect_args['olr_updated'] = 1;
-			}
-		} elseif ( 'reject' === $decision ) {
-			update_user_meta( $user_id, self::META_STATUS, 'rejected' );
-			update_user_meta( $user_id, self::META_REJECTED, current_time( 'mysql' ) );
-			$redirect_args['olr_updated'] = 1;
-		} else {
-			$this->reset_application_state( $user_id );
-			$redirect_args['olr_updated'] = 1;
-		}
-
-		wp_safe_redirect( add_query_arg( $redirect_args, admin_url( 'admin.php' ) ) );
-		exit;
-	}
-
-	/**
-	 * Create the UAP affiliate record while preserving the existing WordPress role.
-	 *
-	 * @param int $user_id WordPress user ID.
-	 * @return true|WP_Error
-	 */
-	private function approve_application( $user_id ) {
-		global $indeed_db;
-		$user = get_userdata( $user_id );
-		if ( ! $user instanceof WP_User ) {
-			return new WP_Error( 'user_missing' );
-		}
-		if ( self::is_administrator_account( $user_id ) ) {
-			return new WP_Error( 'administrator_account' );
-		}
-		if ( ! self::uap_is_available() ) {
-			return new WP_Error( 'uap_unavailable' );
-		}
-
-		if ( ! is_object( $indeed_db ) && class_exists( 'Uap_Database' ) ) {
-			$indeed_db = new Uap_Database();
-		}
-		if ( ! is_object( $indeed_db ) || ! method_exists( $indeed_db, 'save_affiliate' ) ) {
-			return new WP_Error( 'uap_unavailable' );
-		}
-
-		$affiliate_id = self::affiliate_id( $user_id );
-		if ( ! $affiliate_id ) {
-			$affiliate_id = absint( $indeed_db->save_affiliate( $user_id ) );
-			if ( ! $affiliate_id ) {
-				$affiliate_id = self::affiliate_id( $user_id );
-			}
-		}
-		if ( ! $affiliate_id ) {
-			return new WP_Error( 'record_creation_failed' );
-		}
-
-		$default_rank = absint( get_option( 'uap_register_new_user_rank' ) );
-		if ( ! $default_rank && method_exists( $indeed_db, 'return_settings_from_wp_option' ) ) {
-			$register_settings = (array) $indeed_db->return_settings_from_wp_option( 'register' );
-			$default_rank      = ! empty( $register_settings['uap_register_new_user_rank'] ) ? absint( $register_settings['uap_register_new_user_rank'] ) : 0;
-		}
-		if ( $default_rank && method_exists( $indeed_db, 'update_affiliate_rank_by_uid' ) ) {
-			$indeed_db->update_affiliate_rank_by_uid( $user_id, $default_rank );
-		}
-
-		update_user_meta( $user_id, self::META_STATUS, 'approved' );
-		update_user_meta( $user_id, self::META_APPROVED, current_time( 'mysql' ) );
-		delete_user_meta( $user_id, self::META_REJECTED );
-		$notification_sent = false;
-		if ( function_exists( 'uap_send_user_notifications' ) ) {
-			$notification_sent = (bool) uap_send_user_notifications( $user_id, 'affiliate_account_approve', $default_rank );
-		}
-		if ( ! $notification_sent ) {
-			$this->send_application_email( $user_id, 'approved' );
-		}
-		do_action( 'olr_affiliate_application_approved', $user_id, $affiliate_id );
-
-		return true;
-	}
-
-	/**
-	 * Send a transactional application-status email to the applicant.
-	 *
-	 * @param int    $user_id WordPress user ID.
-	 * @param string $event   submitted or approved.
-	 * @return bool
-	 */
-	private function send_application_email( $user_id, $event ) {
-		$user = get_userdata( absint( $user_id ) );
-		if ( ! $user instanceof WP_User || ! is_email( $user->user_email ) ) {
-			return false;
-		}
-
-		$site_name = wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES );
-		$name      = $user->display_name ? $user->display_name : $user->user_login;
-		if ( 'submitted' === $event ) {
-			$subject = sprintf( __( '[%s] Affiliate application received', 'off-label-account-hub' ), $site_name );
-			$message = sprintf(
-				__( "Hello %1\$s,\n\nWe received your affiliate application for %2\$s. Its status is pending review.\n\nWe will email you again after the application is reviewed.", 'off-label-account-hub' ),
-				$name,
-				$site_name
-			);
-		} elseif ( 'approved' === $event ) {
-			$subject = sprintf( __( '[%s] Affiliate application approved', 'off-label-account-hub' ), $site_name );
-			$message = sprintf(
-				__( "Hello %1\$s,\n\nYour affiliate application for %2\$s has been approved.\n\nSign in to your account to access the affiliate portal: %3\$s", 'off-label-account-hub' ),
-				$name,
-				$site_name,
-				$this->account_url()
-			);
-		} else {
-			return false;
-		}
-
-		return (bool) wp_mail( $user->user_email, $subject, $message );
-	}
-
-	/**
-	 * Resolve the administrator address used for new-application alerts.
-	 *
-	 * @return string
-	 */
-	private function application_notification_email() {
-		$email = sanitize_email( (string) get_option( self::OPTION_NOTIFICATION_EMAIL, '' ) );
-		if ( ! is_email( $email ) ) {
-			$email = sanitize_email( (string) get_option( 'admin_email', '' ) );
-		}
-
-		return is_email( $email ) ? $email : '';
-	}
-
-	/**
-	 * Notify the affiliate manager when a new application is submitted.
-	 *
-	 * @param int $user_id Applicant WordPress user ID.
-	 * @return bool
-	 */
-	private function send_application_admin_email( $user_id ) {
-		$user = get_userdata( absint( $user_id ) );
-		$to   = $this->application_notification_email();
-		if ( ! $user instanceof WP_User || ! $to ) {
-			return false;
-		}
-
-		$site_name = wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES );
-		$subject   = sprintf( __( '[%s] New affiliate application', 'off-label-account-hub' ), $site_name );
-		$message   = sprintf(
-			__( "A new affiliate application is ready for review.\n\nApplicant: %1\$s\nEmail: %2\$s\nWebsite or social URL: %3\$s\nPromotion plan:\n%4\$s\n\nReview applications: %5\$s", 'off-label-account-hub' ),
-			$user->display_name ? $user->display_name : $user->user_login,
-			$user->user_email,
-			(string) get_user_meta( $user->ID, self::META_URL, true ),
-			(string) get_user_meta( $user->ID, self::META_PLAN, true ),
-			admin_url( 'admin.php?page=olr-affiliate-applications' )
-		);
-
-		return (bool) wp_mail( $to, $subject, $message );
-	}
-
-	/**
-	 * Clear application history so a member can submit a fresh application.
-	 *
-	 * @param int $user_id WordPress user ID.
-	 */
-	private function reset_application_state( $user_id ) {
-		foreach ( array( self::META_STATUS, self::META_URL, self::META_PLAN, self::META_SUBMITTED, self::META_TERMS_URL, self::META_TERMS_ACCEPTED, self::META_APPROVED, self::META_REJECTED ) as $meta_key ) {
-			delete_user_meta( absint( $user_id ), $meta_key );
-		}
-	}
-
-	/**
-	 * Convert UAP dashboard deletions into affiliate-only removals.
-	 *
-	 * UAP 9.7.7's delete_affiliates() also deletes the underlying WordPress user.
-	 * The account hub must preserve the member identity, UM profile, and store
-	 * access, so valid UAP deletion requests are intercepted before page render.
+	 * Prevent native affiliate deletion from destroying member and financial history.
 	 */
 	public function protect_uap_affiliate_deletion() {
 		if ( ! current_user_can( 'manage_options' ) || 'POST' !== strtoupper( isset( $_SERVER['REQUEST_METHOD'] ) ? (string) $_SERVER['REQUEST_METHOD'] : '' ) ) {
@@ -2078,65 +1579,17 @@ final class OLR_Account_Hub {
 	 */
 	private function remove_affiliate_access( $affiliate_ids ) {
 		global $indeed_db;
-
-		$affiliate_ids = array_values( array_unique( array_filter( array_map( 'absint', (array) $affiliate_ids ) ) ) );
-		if ( ! $affiliate_ids ) {
-			return 0;
-		}
-		if ( ! is_object( $indeed_db ) && class_exists( 'Uap_Database' ) ) {
-			$indeed_db = new Uap_Database();
-		}
-		if ( ! is_object( $indeed_db ) || ! method_exists( $indeed_db, 'get_uid_by_affiliate_id' ) ) {
-			return 0;
-		}
-
-		$removed = 0;
-		foreach ( $affiliate_ids as $affiliate_id ) {
-			$user_id = absint( $indeed_db->get_uid_by_affiliate_id( $affiliate_id ) );
-			if ( ! $user_id || ! get_userdata( $user_id ) ) {
-				continue;
-			}
-
-			$did_remove = false;
-			if ( method_exists( $indeed_db, 'remove_user_from_affiliate' ) ) {
-				$did_remove = (bool) $indeed_db->remove_user_from_affiliate( $user_id );
-			} elseif ( method_exists( $indeed_db, 'delete_affiliate_details' ) ) {
-				$indeed_db->delete_affiliate_details( $affiliate_id );
-				$did_remove = true;
-			}
-
-			if ( $did_remove ) {
-				$this->reset_application_state( $user_id );
-				++$removed;
+		$count = 0;
+		foreach ( array_unique( array_map( 'absint', (array) $affiliate_ids ) ) as $id ) {
+			$uid = is_object( $indeed_db ) ? (int) $indeed_db->get_uid_by_affiliate_id( $id ) : 0;
+			if ( $uid ) {
+				try { OLR_Affiliate_Service::set_block( $uid, true ); ++$count; }
+				catch ( Exception $e ) { /* Keep the member and financial history intact. */ }
 			}
 		}
-
-		return $removed;
+		return $count;
 	}
 
-	/**
-	 * Explain a safe administrator-facing application failure.
-	 *
-	 * @param string $code Error code.
-	 * @return string
-	 */
-	private function application_error_message( $code ) {
-		$messages = array(
-			'administrator_account' => __( 'Ultimate Affiliate Pro does not allow WordPress administrator accounts to become affiliates. Reset this application and test with a standard member account.', 'off-label-account-hub' ),
-			'uap_unavailable'       => __( 'Ultimate Affiliate Pro is not available to create the affiliate record. Confirm the plugin is active and finish its setup.', 'off-label-account-hub' ),
-			'user_missing'          => __( 'The applicant account no longer exists.', 'off-label-account-hub' ),
-			'record_creation_failed' => __( 'Ultimate Affiliate Pro was detected, but it did not create the affiliate record. Review its database setup and logs, then try again.', 'off-label-account-hub' ),
-		);
-
-		return isset( $messages[ $code ] ) ? $messages[ $code ] : __( 'The affiliate record could not be created.', 'off-label-account-hub' );
-	}
-
-	/**
-	 * Match UAP's native restriction against administrator affiliate records.
-	 *
-	 * @param int $user_id WordPress user ID.
-	 * @return bool
-	 */
 	private static function is_administrator_account( $user_id ) {
 		$user = get_userdata( absint( $user_id ) );
 		return $user instanceof WP_User && in_array( 'administrator', (array) $user->roles, true );
@@ -2157,17 +1610,6 @@ final class OLR_Account_Hub {
 			|| class_exists( 'Ultimate_Affiliate_Pro_Main' )
 			|| class_exists( 'Uap_Database' )
 			|| is_object( $indeed_db );
-	}
-
-	/**
-	 * Return a normalized application status.
-	 *
-	 * @param int $user_id WordPress user ID.
-	 * @return string
-	 */
-	private function application_status( $user_id ) {
-		$status = sanitize_key( (string) get_user_meta( absint( $user_id ), self::META_STATUS, true ) );
-		return in_array( $status, array( 'pending', 'approved', 'rejected' ), true ) ? $status : '';
 	}
 
 	/**
@@ -2303,6 +1745,10 @@ final class OLR_Account_Hub {
 	 * Route logged-out and retired account surfaces safely.
 	 */
 	public function route_account_requests() {
+		if ( $this->is_account_request() ) {
+			if ( ! defined( 'DONOTCACHEPAGE' ) ) { define( 'DONOTCACHEPAGE', true ); }
+			nocache_headers();
+		}
 		if ( is_admin() || wp_doing_ajax() || is_preview() ) {
 			return;
 		}
@@ -2375,10 +1821,10 @@ final class OLR_Account_Hub {
 		}
 
 		if ( defined( 'UAP_PLUGIN_VER' ) && '9.7.7' !== (string) UAP_PLUGIN_VER ) {
-			echo '<div class="notice notice-warning"><p>' . esc_html( sprintf( __( 'Off Label Account Hub was verified with Ultimate Affiliate Pro 9.7.7. Installed version: %s. Review the affiliate templates on staging before launch.', 'off-label-account-hub' ), UAP_PLUGIN_VER ) ) . '</p></div>';
+			echo '<div class="notice notice-warning"><p>' . esc_html( sprintf( __( 'Off Label Account Hub was verified with Ultimate Affiliate Pro 9.7.7. Installed version: %s. Payouts require a compatibility review before using this version.', 'off-label-account-hub' ), UAP_PLUGIN_VER ) ) . '</p></div>';
 		}
 		if ( ! get_option( self::OPTION_TERMS_URL ) ) {
-			echo '<div class="notice notice-warning"><p>' . wp_kses_post( sprintf( __( 'Affiliate applications are closed until an <a href="%s">affiliate terms URL</a> is configured.', 'off-label-account-hub' ), esc_url( admin_url( 'admin.php?page=olr-affiliate-applications' ) ) ) ) . '</p></div>';
+			echo '<div class="notice notice-warning"><p>' . wp_kses_post( sprintf( __( 'Affiliate activation is unavailable until an <a href="%s">affiliate terms URL</a> is configured.', 'off-label-account-hub' ), esc_url( admin_url( 'admin.php?page=olr-affiliate-management' ) ) ) ) . '</p></div>';
 		}
 
 		$page = isset( $_GET['page'] ) && is_scalar( $_GET['page'] ) ? sanitize_key( wp_unslash( (string) $_GET['page'] ) ) : '';
@@ -2386,11 +1832,11 @@ final class OLR_Account_Hub {
 		if ( 'ultimate_affiliates_pro' === $page && 'affiliates' === $tab ) {
 			if ( ! empty( $_GET['olr_affiliate_unlinked'] ) ) {
 				$count = absint( $_GET['olr_affiliate_unlinked'] );
-				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( _n( 'Affiliate access was removed. The member account was preserved and can apply again.', 'Affiliate access was removed for %d users. Their member accounts were preserved and can apply again.', $count, 'off-label-account-hub' ), $count ) ) . '</p></div>';
+				echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( _n( 'Affiliate access was removed. The member account and history were preserved. Self-activation is blocked.', 'Affiliate access was removed for %d users. Their member accounts and history were preserved. Self-activation is blocked.', $count, 'off-label-account-hub' ), $count ) ) . '</p></div>';
 			} elseif ( isset( $_GET['olr_affiliate_unlink_error'] ) ) {
 				echo '<div class="notice notice-error"><p>' . esc_html__( 'Affiliate access could not be removed safely. No WordPress member account was deleted.', 'off-label-account-hub' ) . '</p></div>';
 			}
-			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Account protection is active: Delete removes affiliate access and affiliate records, preserves the member account, and opens a fresh application. Use Reject in Affiliate Applications only when reapplication should remain locked.', 'off-label-account-hub' ) . '</p></div>';
+			echo '<div class="notice notice-warning"><p>' . esc_html__( 'Account protection is active: Delete blocks affiliate access while preserving the member account and financial history. Restore eligibility in Affiliate Management.', 'off-label-account-hub' ) . '</p></div>';
 		}
 	}
 
@@ -2423,6 +1869,12 @@ final class OLR_Account_Hub {
 }
 
 OLR_Account_Hub::instance();
+
+add_action( 'before_woocommerce_init', static function () {
+	if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	}
+} );
 
 if ( function_exists( 'register_activation_hook' ) ) {
 	register_activation_hook( __FILE__, array( 'OLR_Account_Hub', 'activate' ) );
