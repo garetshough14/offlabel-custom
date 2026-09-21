@@ -6,7 +6,7 @@ namespace Automattic\WooCommerce\Utilities {
 namespace {
 set_error_handler(static function($severity,$message,$file,$line){throw new \ErrorException($message,0,$severity,$file,$line);});
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'WC_VERSION', '11.1.0' );
+define( 'WC_VERSION', getenv( 'OLR_TEST_WC_VERSION' ) ?: '11.1.0' );
 define( 'OLR_ACO_VERSION', '1.1.0' );
 $wp_filter = array(); $products = array(); $coupons = array(); $options = array( 'olr_best_offer_enabled' => 'yes' ); $notices = array();
 function add_filter( $name, $fn, $priority = 10, $argc = 1 ) { global $wp_filter; if ( ! isset( $wp_filter[$name] ) ) $wp_filter[$name] = (object) array( 'callbacks' => array() ); $wp_filter[$name]->callbacks[$priority][] = array( 'function' => $fn, 'accepted_args' => $argc ); }
@@ -85,7 +85,7 @@ class TestOrderLine {
 	public function get_meta($key,$single=true){return $this->meta[$key]??'';}public function add_meta_data($key,$value,$unique=true){$this->meta[$key]=$value;}public function update_meta_data($key,$value){$this->meta[$key]=$value;}public function delete_meta_data($key){unset($this->meta[$key]);}
 }
 class WC_Order {public $items=array(),$meta=array();public function get_items($type='line_item'){return $this->items;}public function get_prices_include_tax(){return false;}public function get_meta($key){return $this->meta[$key]??'';}public function update_meta_data($key,$value){$this->meta[$key]=$value;}}
-require __DIR__.'/../output/pricing-audit/class-wc-discounts.php';
+require getenv( 'OLR_TEST_WC_DISCOUNTS' ) ?: __DIR__.'/../output/pricing-audit/class-wc-discounts.php';
 $aco_source = getenv('OLR_ACO_SOURCE') ?: __DIR__.'/fixtures/advanced-cart-offers-1.1.0';
 require $aco_source.'/includes/class-olr-aco-rule.php';
 require $aco_source.'/includes/class-olr-aco-rule-engine.php';
@@ -190,5 +190,5 @@ eq($preview_guard->block_store_checkout(null,null,new TestRestRequest('GET','/wc
 $wc->cart=new WC_Cart();$wc->cart->cart_contents=array('normal'=>line(1,2));eq($preview_guard->block_order(123,null),123,'normal customer order untouched');$gateways=array('card'=>new \stdClass());eq($preview_guard->gateways($gateways),$gateways,'normal customer gateways untouched');eq($preview_guard->mark_item(array(),1,0,1),array(),'normal customer cart data untouched');
 $environment='staging';
 mt_srand(7);for($i=0;$i<1000;$i++){ $weights=array('a'=>mt_rand(0,999999),'b'=>mt_rand(0,999999),'c'=>mt_rand(0,999999));$amount=mt_rand(0,array_sum($weights)+100);$map=OLR_Offer_Planner::allocate($amount,$weights);eq(array_sum($map),min($amount,array_sum($weights)),'allocation preserves sum');foreach($map as $key=>$value)eq($value>=0&&$value<=$weights[$key],true,'allocation capped'); }
-echo "PASS: $checks assertions; real WooCommerce 11.1.0 discount calculator and Advanced Cart Offers 1.1.0. WP persistence, real checkout, taxes and payments still require staging.\n";
+echo 'PASS: '.$checks.' assertions; real WooCommerce '.WC_VERSION." discount calculator and Advanced Cart Offers 1.1.0. WP persistence, real checkout, taxes and payments still require staging.\n";
 }
