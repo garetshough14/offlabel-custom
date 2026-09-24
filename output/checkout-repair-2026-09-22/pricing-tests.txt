@@ -1,0 +1,3 @@
+PASS: 4089 assertions; real WooCommerce 11.1.2 discount calculator and Advanced Cart Offers 1.1.0. WP persistence, real checkout, taxes and payments still require staging.
+PASS: 36 additional release-gate assertions; 4125 total. Full staging order/email/refund/payment tests NOT performed.
+PASS: 41 live-control assertions; 4166 total. No real database, gateway, email or refund verification.

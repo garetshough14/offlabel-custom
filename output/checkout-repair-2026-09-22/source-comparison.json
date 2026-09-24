@@ -1,0 +1,37 @@
+[
+  {
+    "file": "includes/abstracts/abstract-wc-order.php",
+    "identical": true,
+    "sha256": "2b3384b5e8a49ad8d6e948eaa40cd5492c7e8f0354617df6c6db9774b02fbe64"
+  },
+  {
+    "file": "includes/class-wc-cart-totals.php",
+    "identical": true,
+    "sha256": "ce03dbbd988979ea00e90dbe21f4427c49fd76d6f408ff0f3f03338c77fb9210"
+  },
+  {
+    "file": "includes/class-wc-cart.php",
+    "identical": true,
+    "sha256": "9a892ba6cfc03830df766a0287323ae7b9765ed42a16a409fb42f51781c2fbc1"
+  },
+  {
+    "file": "includes/class-wc-checkout.php",
+    "identical": true,
+    "sha256": "a195880bca8a9f07f63b685dc73561946189f90a4b6d79afd950660cbaec667e"
+  },
+  {
+    "file": "includes/class-wc-coupon.php",
+    "identical": true,
+    "sha256": "50bca4c4868f90ef8b7d8b1d5b86955cd9b1ae159d59c1d6fd8d10b42179f701"
+  },
+  {
+    "file": "includes/class-wc-discounts.php",
+    "identical": true,
+    "sha256": "2c0647d04eb331ae093b756dfc9fe7c4c23c90ec3ab793aa96105269094847a6"
+  },
+  {
+    "file": "includes/shortcodes/class-wc-shortcode-checkout.php",
+    "identical": true,
+    "sha256": "c8f05469f813ce417110c91e544356d0eee5b6b3743d84a73b15c5bae595bd84"
+  }
+]

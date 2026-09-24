@@ -1,0 +1,44 @@
+.olr-pp-admin { max-width: 1240px; margin-right: 24px; }
+.olr-pp-admin * { box-sizing: border-box; }
+.olr-pp-admin [hidden] { display: none !important; }
+.olr-pp-admin__intro { display: flex; justify-content: space-between; gap: 24px; align-items: center; background: #efeee6; border: 1px solid #d4d6cc; padding: 30px 32px; margin: 20px 0 24px; }
+.olr-pp-admin .olr-pp-admin__eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; margin: 0 0 15px; }
+.olr-pp-admin__intro h2 { font-size: 30px; line-height: 1.15; margin: 0 0 10px; letter-spacing: -1px; font-weight: 500; color: #1d211d; }
+.olr-pp-admin__intro p { margin: 0; color: #50564b; }
+.olr-pp-admin__status { border: 1px solid #a8afa0; border-radius: 3px; padding: 7px 12px; font-size: 12px; flex-shrink: 0; }
+.olr-pp-admin__layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start; }
+.olr-pp-admin__card { background: #fff; border: 1px solid #dcdcde; padding: 26px; margin-bottom: 20px; }
+.olr-pp-admin__card h2 { margin: 0 0 22px; font-size: 18px; line-height: 1.4; font-weight: 600; }
+.olr-pp-admin__card h2 > span { display: inline-block; font-size: 11px; color: #606758; padding-right: 12px; vertical-align: middle; }
+.olr-pp-admin__card p { line-height: 1.6; }
+.olr-pp-admin__label { display: block; font-weight: 600; margin: 22px 0 8px; font-size: 13px; }
+.olr-pp-admin__card input[type="text"], .olr-pp-admin__card input[type="search"], .olr-pp-admin__card input[type="password"], .olr-pp-admin__card input[type="url"], .olr-pp-admin__card textarea, .olr-pp-admin__card select { width: 100%; max-width: none; min-height: 38px; }
+.olr-pp-admin__card textarea { line-height: 1.65; padding: 8px 10px; resize: vertical; }
+.olr-pp-admin__check { display: flex; gap: 8px; align-items: flex-start; min-height: 32px; line-height: 1.6; margin-top: 18px; }
+.olr-pp-admin__check input { flex-shrink: 0; margin-top: 3px; }
+.olr-pp-admin .description { color: #50575b; font-size: 12px; line-height: 1.6; margin-top: 7px; }
+.olr-pp-admin__pages { max-height: 240px; overflow: auto; border: 1px solid #dcdcde; border-radius: 2px; margin-top: 10px; }
+.olr-pp-admin__page { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-bottom: 1px solid #eee; cursor: pointer; min-height: 44px; }
+.olr-pp-admin__page:last-child { border-bottom: 0; }
+.olr-pp-admin__page:hover { background: #f6f6f1; }
+.olr-pp-admin__page input { margin: 0; flex-shrink: 0; }
+.olr-pp-admin__page small { margin-left: auto; color: #616860; }
+.olr-pp-admin__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.olr-pp-admin__pair input { width: 100%; min-height: 38px; }
+.olr-pp-admin__aside code { display: block; padding: 12px; border: 1px solid #d7d9d0; background: #f6f6f0; font-size: 14px; margin: 20px 0; }
+.olr-pp-admin__aside .olr-pp-admin__card { background: #f9f9f5; }
+.olr-pp-admin__aside .olr-pp-admin__card h2 { margin-bottom: 12px; }
+.olr-pp-admin__note { background: #f4f5ef; border-left: 3px solid #87977a; padding: 18px 20px; margin-top: 24px; line-height: 1.7; }
+.olr-pp-admin__note ol { margin-left: 18px; }
+.olr-pp-admin__note p { margin-bottom: 12px; }
+.olr-pp-admin__save { display: flex; gap: 10px; margin: 0 0 28px; }
+.olr-pp-admin__save .button { min-height: 40px; padding: 3px 18px; }
+.olr-pp-admin__activity-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.olr-pp-admin__activity-heading h2 { margin: 0; }
+.olr-pp-admin__table { overflow: auto; margin-top: 18px; }
+.olr-pp-admin__table table { min-width: 650px; }
+.olr-pp-admin__table th, .olr-pp-admin__table td { padding: 12px; }
+.olr-pp-admin__table td p { font-size: 12px; margin-bottom: 0; max-width: 420px; }
+.olr-pp-admin__activity .page-numbers { display: inline-block; padding: 8px 12px; margin-top: 12px; }
+@media (max-width: 1120px) { .olr-pp-admin__layout { grid-template-columns: minmax(0, 1fr); } .olr-pp-admin__aside { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; } }
+@media (max-width: 782px) { .olr-pp-admin { margin-right: 12px; } .olr-pp-admin__intro, .olr-pp-admin__activity-heading { align-items: flex-start; flex-direction: column; } .olr-pp-admin__intro, .olr-pp-admin__card { padding: 20px; } .olr-pp-admin__aside, .olr-pp-admin__pair { grid-template-columns: 1fr; } .olr-pp-admin__check input { margin-top: 0; } .olr-pp-admin__card input, .olr-pp-admin__card textarea, .olr-pp-admin__card select { font-size: 16px; } }

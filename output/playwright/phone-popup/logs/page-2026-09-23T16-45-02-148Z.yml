@@ -1,0 +1,446 @@
+- generic [ref=f3e2]:
+  - navigation "Main menu":
+    - link "Skip to main content" [ref=f3e3] [cursor=pointer]:
+      - /url: "#wpbody-content"
+    - link "Skip to toolbar" [ref=f3e4] [cursor=pointer]:
+      - /url: "#wp-toolbar"
+    - list [ref=f3e7]:
+      - listitem [ref=f3e8]:
+        - link "Dashboard" [ref=f3e9] [cursor=pointer]:
+          - /url: index.php
+          - generic [aria-hidden] [ref=f3e10]: 
+        - list [ref=f3e12]:
+          - listitem [ref=f3e13]:
+            - link "Home" [ref=f3e14] [cursor=pointer]:
+              - /url: index.php
+          - listitem [ref=f3e15]:
+            - link "Updates" [ref=f3e16] [cursor=pointer]:
+              - /url: update-core.php
+      - listitem [aria-hidden] [ref=f3e17]
+      - listitem [ref=f3e19]:
+        - link "Posts" [ref=f3e20] [cursor=pointer]:
+          - /url: edit.php
+          - generic [aria-hidden] [ref=f3e21]: 
+        - list [ref=f3e23]:
+          - listitem [ref=f3e24]:
+            - link "All Posts" [ref=f3e25] [cursor=pointer]:
+              - /url: edit.php
+          - listitem [ref=f3e26]:
+            - link "Add Post" [ref=f3e27] [cursor=pointer]:
+              - /url: post-new.php
+          - listitem [ref=f3e28]:
+            - link "Categories" [ref=f3e29] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=category
+          - listitem [ref=f3e30]:
+            - link "Tags" [ref=f3e31] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=post_tag
+      - listitem [ref=f3e32]:
+        - link "Media" [ref=f3e33] [cursor=pointer]:
+          - /url: upload.php
+          - generic [aria-hidden] [ref=f3e34]: 
+        - list [ref=f3e36]:
+          - listitem [ref=f3e37]:
+            - link "Library" [ref=f3e38] [cursor=pointer]:
+              - /url: upload.php
+          - listitem [ref=f3e39]:
+            - link "Add Media File" [ref=f3e40] [cursor=pointer]:
+              - /url: media-new.php
+      - listitem [ref=f3e41]:
+        - link "Pages" [ref=f3e42] [cursor=pointer]:
+          - /url: edit.php?post_type=page
+          - generic [aria-hidden] [ref=f3e43]: 
+        - list [ref=f3e45]:
+          - listitem [ref=f3e46]:
+            - link "All Pages" [ref=f3e47] [cursor=pointer]:
+              - /url: edit.php?post_type=page
+          - listitem [ref=f3e48]:
+            - link "Add Page" [ref=f3e49] [cursor=pointer]:
+              - /url: post-new.php?post_type=page
+      - listitem [ref=f3e50]:
+        - link "Comments" [ref=f3e51] [cursor=pointer]:
+          - /url: edit-comments.php
+          - generic [aria-hidden] [ref=f3e52]: 
+      - listitem [ref=f3e54]:
+        - link "Phone Popup" [ref=f3e55] [cursor=pointer]:
+          - /url: admin.php?page=olr-phone-popup
+          - generic [aria-hidden] [ref=f3e56]: 
+      - listitem [aria-hidden] [ref=f3e58]
+      - listitem [ref=f3e60]:
+        - link "Appearance" [ref=f3e61] [cursor=pointer]:
+          - /url: themes.php
+          - generic [aria-hidden] [ref=f3e62]: 
+        - list [ref=f3e64]:
+          - listitem [ref=f3e65]:
+            - link "Themes" [ref=f3e66] [cursor=pointer]:
+              - /url: themes.php
+          - listitem [ref=f3e67]:
+            - link "Editor" [ref=f3e68] [cursor=pointer]:
+              - /url: site-editor.php
+          - listitem [ref=f3e69]:
+            - link "Fonts" [ref=f3e70] [cursor=pointer]:
+              - /url: font-library.php
+      - listitem [ref=f3e71]:
+        - link "Plugins" [ref=f3e72] [cursor=pointer]:
+          - /url: plugins.php
+          - generic [aria-hidden] [ref=f3e73]: 
+        - list [ref=f3e75]:
+          - listitem [ref=f3e76]:
+            - link "Installed Plugins" [ref=f3e77] [cursor=pointer]:
+              - /url: plugins.php
+          - listitem [ref=f3e78]:
+            - link "Add Plugin" [ref=f3e79] [cursor=pointer]:
+              - /url: plugin-install.php
+      - listitem [ref=f3e80]:
+        - link "Users" [ref=f3e81] [cursor=pointer]:
+          - /url: users.php
+          - generic [aria-hidden] [ref=f3e82]: 
+        - list [ref=f3e84]:
+          - listitem [ref=f3e85]:
+            - link "All Users" [ref=f3e86] [cursor=pointer]:
+              - /url: users.php
+          - listitem [ref=f3e87]:
+            - link "Add User" [ref=f3e88] [cursor=pointer]:
+              - /url: user-new.php
+          - listitem [ref=f3e89]:
+            - link "Profile" [ref=f3e90] [cursor=pointer]:
+              - /url: profile.php
+      - listitem [ref=f3e91]:
+        - link "Tools" [ref=f3e92] [cursor=pointer]:
+          - /url: tools.php
+          - generic [aria-hidden] [ref=f3e93]: 
+        - list [ref=f3e95]:
+          - listitem [ref=f3e96]:
+            - link "Available Tools" [ref=f3e97] [cursor=pointer]:
+              - /url: tools.php
+          - listitem [ref=f3e98]:
+            - link "Import" [ref=f3e99] [cursor=pointer]:
+              - /url: import.php
+          - listitem [ref=f3e100]:
+            - link "Export" [ref=f3e101] [cursor=pointer]:
+              - /url: export.php
+          - listitem [ref=f3e102]:
+            - link "Site Health" [ref=f3e103] [cursor=pointer]:
+              - /url: site-health.php
+          - listitem [ref=f3e104]:
+            - link "Export Personal Data" [ref=f3e105] [cursor=pointer]:
+              - /url: export-personal-data.php
+          - listitem [ref=f3e106]:
+            - link "Erase Personal Data" [ref=f3e107] [cursor=pointer]:
+              - /url: erase-personal-data.php
+          - listitem [ref=f3e108]:
+            - link "Theme File Editor" [ref=f3e109] [cursor=pointer]:
+              - /url: theme-editor.php
+          - listitem [ref=f3e110]:
+            - link "Plugin File Editor" [ref=f3e111] [cursor=pointer]:
+              - /url: plugin-editor.php
+      - listitem [ref=f3e112]:
+        - link "Settings" [ref=f3e113] [cursor=pointer]:
+          - /url: options-general.php
+          - generic [aria-hidden] [ref=f3e114]: 
+        - list [ref=f3e116]:
+          - listitem [ref=f3e117]:
+            - link "General" [ref=f3e118] [cursor=pointer]:
+              - /url: options-general.php
+          - listitem [ref=f3e119]:
+            - link "Connectors" [ref=f3e120] [cursor=pointer]:
+              - /url: options-connectors.php
+          - listitem [ref=f3e121]:
+            - link "Writing" [ref=f3e122] [cursor=pointer]:
+              - /url: options-writing.php
+          - listitem [ref=f3e123]:
+            - link "Reading" [ref=f3e124] [cursor=pointer]:
+              - /url: options-reading.php
+          - listitem [ref=f3e125]:
+            - link "Discussion" [ref=f3e126] [cursor=pointer]:
+              - /url: options-discussion.php
+          - listitem [ref=f3e127]:
+            - link "Media" [ref=f3e128] [cursor=pointer]:
+              - /url: options-media.php
+          - listitem [ref=f3e129]:
+            - link "Permalinks" [ref=f3e130] [cursor=pointer]:
+              - /url: options-permalink.php
+          - listitem [ref=f3e131]:
+            - link "Privacy" [ref=f3e132] [cursor=pointer]:
+              - /url: options-privacy.php
+      - listitem [ref=f3e133]:
+        - button "Collapse Main menu" [expanded] [ref=f3e134] [cursor=pointer]:
+          - generic [ref=f3e136]: Collapse Menu
+  - generic [ref=f3e137]:
+    - generic [ref=f3e138]:
+      - navigation "Toolbar":
+        - menu:
+          - group [ref=f3e139]:
+            - menuitem "About WordPress" [ref=f3e140] [cursor=pointer]
+          - group [ref=f3e143]:
+            - menuitem "Phone Popup QA" [ref=f3e144] [cursor=pointer]
+          - group [ref=f3e145]:
+            - menuitem "⌘K Open command palette" [ref=f3e146] [cursor=pointer]:
+              - generic [ref=f3e148]:
+                - text: ⌘K
+                - generic [ref=f3e149]: Open command palette
+          - group [ref=f3e150]:
+            - menuitem "0 Comments in moderation" [ref=f3e151] [cursor=pointer]:
+              - generic [aria-hidden] [ref=f3e153]: "0"
+          - group [ref=f3e155]:
+            - menuitem "New" [ref=f3e156] [cursor=pointer]
+        - menu [ref=f3e159]:
+          - group [ref=f3e160]:
+            - menuitem "Howdy, popup_qa" [ref=f3e161] [cursor=pointer]
+    - main [ref=f3e162]:
+      - generic [ref=f3e164]:
+        - heading "Phone Popup" [level=1] [ref=f3e165]
+        - generic [ref=f3e166]:
+          - paragraph [ref=f3e167]: Settings saved.
+          - button "Dismiss this notice." [ref=f3e168] [cursor=pointer]
+        - generic [ref=f3e170]:
+          - generic [ref=f3e171]:
+            - paragraph [ref=f3e172]: OFF LABEL / MEMBER DETAILS
+            - heading "A number. A connection." [level=2] [ref=f3e173]
+            - paragraph [ref=f3e174]: Collect mobile numbers from your members, right where you want to ask.
+          - generic [ref=f3e175]: Popup enabled
+        - generic [ref=f3e177]:
+          - generic [ref=f3e178]:
+            - region [ref=f3e179]:
+              - heading "01 Where it appears" [level=2] [ref=f3e180]:
+                - generic [ref=f3e181]: "01"
+                - text: Where it appears
+              - generic [ref=f3e182]:
+                - checkbox "Enable the popup" [checked] [ref=f3e183] [cursor=pointer]
+                - text: Enable the popup
+              - paragraph [ref=f3e184]: Only signed-in members see it, so every number saves to the correct account. New members can see it on their first page after signing in.
+              - generic [ref=f3e185]:
+                - checkbox "Show on all published pages" [ref=f3e186] [cursor=pointer]
+                - text: Show on all published pages
+              - generic [ref=f3e187]:
+                - generic [ref=f3e188]: Choose pages
+                - searchbox "Choose pages" [ref=f3e189]
+                - generic [ref=f3e190]:
+                  - generic [ref=f3e191] [cursor=pointer]:
+                    - 'checkbox "No Popup Here #5" [ref=f3e192]'
+                    - generic [ref=f3e193]: No Popup Here
+                    - generic [ref=f3e194]: "#5"
+                  - generic [ref=f3e195] [cursor=pointer]:
+                    - 'checkbox "No Popup Here #8" [ref=f3e196]'
+                    - generic [ref=f3e197]: No Popup Here
+                    - generic [ref=f3e198]: "#8"
+                  - generic [ref=f3e199] [cursor=pointer]:
+                    - 'checkbox "Phone Popup Test #4" [ref=f3e200]'
+                    - generic [ref=f3e201]: Phone Popup Test
+                    - generic [ref=f3e202]: "#4"
+                  - generic [ref=f3e203] [cursor=pointer]:
+                    - 'checkbox "Phone Popup Test #7" [checked] [ref=f3e204]'
+                    - generic [ref=f3e205]: Phone Popup Test
+                    - generic [ref=f3e206]: "#7"
+                  - generic [ref=f3e207] [cursor=pointer]:
+                    - 'checkbox "Sample Page #2" [ref=f3e208]'
+                    - generic [ref=f3e209]: Sample Page
+                    - generic [ref=f3e210]: "#2"
+                - paragraph [ref=f3e211]: 1 pages selected
+              - generic [ref=f3e212]: Who sees it
+              - combobox "Who sees it" [ref=f3e213] [cursor=pointer]:
+                - option "Members with no billing phone number" [selected]
+                - option "Members who have not opted in through this popup"
+              - paragraph [ref=f3e214]: The second option requires SMS signup and can prefill an existing number. Past popup opt-ins are not prompted again. Existing Omnisend subscribers do not receive another first-subscription coupon.
+              - generic [ref=f3e215]:
+                - generic [ref=f3e216]:
+                  - generic [ref=f3e217]: Show after (seconds)
+                  - spinbutton "Show after (seconds)" [ref=f3e218]: "0"
+                - generic [ref=f3e219]:
+                  - generic [ref=f3e220]: Ask again after dismissal (days)
+                  - spinbutton "Ask again after dismissal (days)" [ref=f3e221]: "7"
+            - region [ref=f3e222]:
+              - heading "02 What it says" [level=2] [ref=f3e223]:
+                - generic [ref=f3e224]: "02"
+                - text: What it says
+              - generic [ref=f3e225]: Heading
+              - textbox "Heading" [ref=f3e226]: Let’s keep in touch.
+              - generic [ref=f3e227]: Message
+              - textbox "Message" [ref=f3e228]: Add your mobile number to your account so we can keep your details up to date.
+              - generic [ref=f3e229]: Button text
+              - textbox "Button text" [ref=f3e230]: Save my number
+              - generic [ref=f3e231]:
+                - checkbox "Accept US / Canada numbers without a country code" [checked] [ref=f3e232] [cursor=pointer]
+                - text: Accept US / Canada numbers without a country code
+              - paragraph [ref=f3e233]: These numbers are saved with +1. Other countries must include their country code.
+            - region [ref=f3e234]:
+              - heading "03 Text signup & Omnisend" [level=2] [ref=f3e235]:
+                - generic [ref=f3e236]: "03"
+                - text: Text signup & Omnisend
+              - generic [ref=f3e237]:
+                - checkbox "Collect SMS consent and send opt-ins to Omnisend" [ref=f3e238] [cursor=pointer]
+                - text: Collect SMS consent and send opt-ins to Omnisend
+              - paragraph [ref=f3e239]: When off, this plugin only saves the account phone number. When on, members must check the SMS consent box to submit this offer.
+              - generic [ref=f3e240]: Omnisend API key
+              - textbox "Omnisend API key" [ref=f3e241]:
+                - /placeholder: A key is saved. Leave blank to keep it.
+              - generic [ref=f3e242]:
+                - checkbox "Remove the saved API key" [ref=f3e243] [cursor=pointer]
+                - text: Remove the saved API key
+              - generic [ref=f3e244]: SMS consent wording
+              - textbox "SMS consent wording" [ref=f3e245]: I agree to receive recurring automated marketing texts from Off Label Research at the number provided. Consent is not a condition of purchase. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe or HELP for help.
+              - paragraph [ref=f3e246]: Use your approved SMS disclosure. Keep your brand name, recurring marketing consent, message rates and frequency, STOP / HELP instructions, and no-purchase-condition wording.
+              - generic [ref=f3e247]: SMS terms URL
+              - textbox "SMS terms URL" [ref=f3e248]:
+                - /placeholder: https://…
+                - text: https://example.test/sms-terms
+              - generic [ref=f3e249]: Privacy policy URL
+              - textbox "Privacy policy URL" [ref=f3e250]:
+                - /placeholder: https://…
+                - text: https://example.test/privacy
+              - generic [ref=f3e251]:
+                - strong [ref=f3e252]: Set up the coupon text in Omnisend
+                - list [ref=f3e253]:
+                  - listitem [ref=f3e254]: Create a Welcome automation with Subscribed to Marketing as its trigger.
+                  - listitem [ref=f3e255]: Filter to SMS, First subscription = true, and Origin = API. Remove the default “Signup form” method filter.
+                  - listitem [ref=f3e256]: Add an SMS with your unique WooCommerce discount code. Enable WooCommerce discount generation first.
+                  - listitem [ref=f3e257]: Remove intentional delays, then enable the workflow before enabling this popup. Quiet hours and carrier delivery still apply.
+                - paragraph [ref=f3e258]: Use offer copy that matches the coupon you configure. This plugin saves and subscribes the contact; Omnisend creates the code and sends the text.
+                - link "Omnisend coupon setup ↗" [ref=f3e259] [cursor=pointer]:
+                  - /url: https://support.omnisend.com/en/articles/9470439-add-unique-discounts-to-automated-sms-mms
+            - generic [ref=f3e260]:
+              - button "Save settings" [ref=f3e261] [cursor=pointer]
+              - button "Preview popup" [ref=f3e262] [cursor=pointer]
+          - complementary [ref=f3e263]:
+            - generic [ref=f3e264]:
+              - paragraph [ref=f3e265]: ONE ACCOUNT FIELD
+              - heading "Saved where it belongs." [level=2] [ref=f3e266]
+              - paragraph [ref=f3e267]: Every submission updates the member’s existing WooCommerce billing phone.
+              - code [ref=f3e268]: billing_phone
+              - paragraph [ref=f3e269]: Matches the billing_phone column in your export. No new phone field is created. Shipping phone numbers are not changed.
+            - generic [ref=f3e270]:
+              - heading "See it before it’s live" [level=2] [ref=f3e271]
+              - paragraph [ref=f3e272]: Preview your current wording and consent form. Nothing is saved or sent in the preview.
+              - button "Preview popup" [ref=f3e273] [cursor=pointer]
+            - generic [ref=f3e274]:
+              - heading "After signup" [level=2] [ref=f3e275]
+              - paragraph [ref=f3e276]: The popup stops appearing. Dismissals are remembered on the member’s account across devices.
+              - paragraph [ref=f3e277]: Use a page members reach after login, such as Account or Shop. Logged-out visitors and pending accounts that cannot sign in will not see it.
+        - generic [ref=f3e278]:
+          - generic [ref=f3e279]:
+            - heading "Captured accounts" [level=2] [ref=f3e280]
+            - button "Test saved Omnisend connection" [ref=f3e282] [cursor=pointer]
+          - paragraph [ref=f3e283]: Most recent submissions first. “Synced” confirms the subscription, not delivery of a text. Omnisend remains the source for current subscription status and delivery reports.
+          - table [ref=f3e285]:
+            - rowgroup [ref=f3e286]:
+              - row [ref=f3e287]:
+                - columnheader "Member" [ref=f3e288]
+                - columnheader "Account phone" [ref=f3e289]
+                - columnheader "Saved (UTC)" [ref=f3e290]
+                - columnheader "Signup status" [ref=f3e291]
+                - columnheader "Action" [ref=f3e292]
+            - rowgroup [ref=f3e293]:
+              - row [ref=f3e294]:
+                - cell [ref=f3e295]:
+                  - link "pp-changed" [ref=f3e296] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=10
+                - cell "+14155550199" [ref=f3e297]
+                - cell "2026-09-23 16:43" [ref=f3e298]
+                - cell [ref=f3e299]:
+                  - strong [ref=f3e300]: Failed
+                  - paragraph [ref=f3e301]: Account details changed after consent. This submission will not be sent.
+                - cell "—" [ref=f3e302]
+              - row [ref=f3e303]:
+                - cell [ref=f3e304]:
+                  - link "pp-ignored" [ref=f3e305] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=11
+                - cell "+14155550133" [ref=f3e306]
+                - cell "2026-09-23 16:43" [ref=f3e307]
+                - cell [ref=f3e308]:
+                  - strong [ref=f3e309]: Failed
+                  - paragraph [ref=f3e310]: Omnisend did not confirm the phone subscription. Review the contact before retrying.
+                - cell [ref=f3e311]:
+                  - button "Retry sync" [ref=f3e313] [cursor=pointer]
+              - row [ref=f3e314]:
+                - cell [ref=f3e315]:
+                  - link "pp-bad-key" [ref=f3e316] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=12
+                - cell "+14155550134" [ref=f3e317]
+                - cell "2026-09-23 16:43" [ref=f3e318]
+                - cell [ref=f3e319]:
+                  - strong [ref=f3e320]: Failed
+                  - paragraph [ref=f3e321]: Omnisend rejected the API key or its permissions.
+                - cell [ref=f3e322]:
+                  - button "Retry sync" [ref=f3e324] [cursor=pointer]
+              - row [ref=f3e325]:
+                - cell [ref=f3e326]:
+                  - link "pp-prefill" [ref=f3e327] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=13
+                - cell "+14155550135" [ref=f3e328]
+                - cell "2026-09-23 16:43" [ref=f3e329]
+                - cell [ref=f3e330]:
+                  - strong [ref=f3e331]: Synced
+                - cell "—" [ref=f3e332]
+              - row [ref=f3e333]:
+                - cell [ref=f3e334]:
+                  - link "pp-collect" [ref=f3e335] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=2
+                - cell "+14155550123" [ref=f3e336]
+                - cell "2026-09-23 16:43" [ref=f3e337]
+                - cell [ref=f3e338]:
+                  - strong [ref=f3e339]: Saved
+                - cell "—" [ref=f3e340]
+              - row [ref=f3e341]:
+                - cell [ref=f3e342]:
+                  - link "pp-sms" [ref=f3e343] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=4
+                - cell "+14155550126" [ref=f3e344]
+                - cell "2026-09-23 16:43" [ref=f3e345]
+                - cell [ref=f3e346]:
+                  - strong [ref=f3e347]: Synced
+                - cell "—" [ref=f3e348]
+              - row [ref=f3e349]:
+                - cell [ref=f3e350]:
+                  - link "pp-offline" [ref=f3e351] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=5
+                - cell "+14155550127" [ref=f3e352]
+                - cell "2026-09-23 16:43" [ref=f3e353]
+                - cell [ref=f3e354]:
+                  - strong [ref=f3e355]: Synced
+                - cell "—" [ref=f3e356]
+              - row [ref=f3e357]:
+                - cell [ref=f3e358]:
+                  - link "pp-lost-response" [ref=f3e359] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=6
+                - cell "+14155550128" [ref=f3e360]
+                - cell "2026-09-23 16:43" [ref=f3e361]
+                - cell [ref=f3e362]:
+                  - strong [ref=f3e363]: Synced
+                - cell "—" [ref=f3e364]
+              - row [ref=f3e365]:
+                - cell [ref=f3e366]:
+                  - link "pp-conflict" [ref=f3e367] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=7
+                - cell "+14155550129" [ref=f3e368]
+                - cell "2026-09-23 16:43" [ref=f3e369]
+                - cell [ref=f3e370]:
+                  - strong [ref=f3e371]: Failed
+                  - paragraph [ref=f3e372]: This phone belongs to another Omnisend contact. Resolve it in Omnisend before retrying.
+                - cell [ref=f3e373]:
+                  - button "Retry sync" [ref=f3e375] [cursor=pointer]
+              - row [ref=f3e376]:
+                - cell [ref=f3e377]:
+                  - link "pp-unsubscribed" [ref=f3e378] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=8
+                - cell "+14155550130" [ref=f3e379]
+                - cell "2026-09-23 16:43" [ref=f3e380]
+                - cell [ref=f3e381]:
+                  - strong [ref=f3e382]: Failed
+                  - paragraph [ref=f3e383]: This contact has unsubscribed from SMS. Use Omnisend’s resubscription process; this plugin will not override it.
+                - cell "—" [ref=f3e384]
+              - row [ref=f3e385]:
+                - cell [ref=f3e386]:
+                  - link "pp-existing-email" [ref=f3e387] [cursor=pointer]:
+                    - /url: http://127.0.0.1:8347/wp-admin/user-edit.php?user_id=9
+                - cell "+14155550131" [ref=f3e388]
+                - cell "2026-09-23 16:43" [ref=f3e389]
+                - cell [ref=f3e390]:
+                  - strong [ref=f3e391]: Synced
+                - cell "—" [ref=f3e392]
+  - contentinfo [ref=f3e393]:
+    - paragraph [ref=f3e394]:
+      - generic [ref=f3e395]:
+        - text: Thank you for creating with
+        - link "WordPress" [ref=f3e396] [cursor=pointer]:
+          - /url: https://wordpress.org/
+        - text: .
+    - paragraph [ref=f3e397]: Version 7.1.2

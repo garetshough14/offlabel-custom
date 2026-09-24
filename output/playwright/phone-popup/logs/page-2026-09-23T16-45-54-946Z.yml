@@ -1,0 +1,130 @@
+- generic [ref=f2e2]:
+  - navigation "Main menu":
+    - link "Skip to main content" [ref=f2e3] [cursor=pointer]:
+      - /url: "#wpbody-content"
+    - link "Skip to toolbar" [ref=f2e4] [cursor=pointer]:
+      - /url: "#wp-toolbar"
+    - list [ref=f2e7]:
+      - listitem [ref=f2e8]:
+        - link "Dashboard" [ref=f2e9] [cursor=pointer]:
+          - /url: index.php
+          - generic [aria-hidden] [ref=f2e10]: 
+      - listitem [aria-hidden] [ref=f2e12]
+      - listitem [ref=f2e14]:
+        - link "Profile" [ref=f2e15] [cursor=pointer]:
+          - /url: profile.php
+          - generic [aria-hidden] [ref=f2e16]: 
+      - listitem [ref=f2e18]:
+        - button "Collapse Main menu" [expanded] [ref=f2e19] [cursor=pointer]:
+          - generic [ref=f2e21]: Collapse Menu
+  - generic [ref=f2e22]:
+    - generic [ref=f2e23]:
+      - navigation "Toolbar":
+        - menu:
+          - group [ref=f2e24]:
+            - menuitem "About WordPress" [ref=f2e25] [cursor=pointer]
+          - group [ref=f2e28]:
+            - menuitem "Phone Popup QA" [ref=f2e29] [cursor=pointer]
+          - group [ref=f2e30]:
+            - menuitem "⌘K Open command palette" [ref=f2e31] [cursor=pointer]:
+              - generic [ref=f2e33]:
+                - text: ⌘K
+                - generic [ref=f2e34]: Open command palette
+        - menu [ref=f2e35]:
+          - group [ref=f2e36]:
+            - menuitem "Howdy, pp-browser" [ref=f2e37] [cursor=pointer]
+    - main [ref=f2e38]:
+      - generic [ref=f2e39]:
+        - button "Help" [ref=f2e42] [cursor=pointer]
+        - generic [ref=f2e43]:
+          - heading "Profile" [level=1] [ref=f2e44]
+          - generic [ref=f2e45]:
+            - paragraph
+            - heading "Personal Options" [level=2] [ref=f2e46]
+            - text: Administration Color Scheme
+            - group "Administration Color Scheme" [ref=f2e47]:
+              - generic [ref=f2e50] [cursor=pointer]:
+                - radio "Default" [checked] [ref=f2e51]
+                - generic [ref=f2e52]: Default
+              - generic [ref=f2e57] [cursor=pointer]:
+                - radio "Fresh" [ref=f2e58]
+                - generic [ref=f2e59]: Fresh
+              - generic [ref=f2e65] [cursor=pointer]:
+                - radio "Light" [ref=f2e66]
+                - generic [ref=f2e67]: Light
+              - generic [ref=f2e73] [cursor=pointer]:
+                - radio "Blue" [ref=f2e74]
+                - generic [ref=f2e75]: Blue
+              - generic [ref=f2e81] [cursor=pointer]:
+                - radio "Coffee" [ref=f2e82]
+                - generic [ref=f2e83]: Coffee
+              - generic [ref=f2e89] [cursor=pointer]:
+                - radio "Ectoplasm" [ref=f2e90]
+                - generic [ref=f2e91]: Ectoplasm
+              - generic [ref=f2e97] [cursor=pointer]:
+                - radio "Midnight" [ref=f2e98]
+                - generic [ref=f2e99]: Midnight
+              - generic [ref=f2e105] [cursor=pointer]:
+                - radio "Ocean" [ref=f2e106]
+                - generic [ref=f2e107]: Ocean
+              - generic [ref=f2e113] [cursor=pointer]:
+                - radio "Sunrise" [ref=f2e114]
+                - generic [ref=f2e115]: Sunrise
+            - text: Toolbar
+            - generic [ref=f2e121]:
+              - checkbox "Show Toolbar when viewing site" [checked] [ref=f2e122] [cursor=pointer]
+              - text: Show Toolbar when viewing site
+            - heading "Name" [level=2] [ref=f2e123]
+            - text: Username
+            - textbox "Username" [ref=f2e124]: pp-browser
+            - text: Usernames cannot be changed. First Name
+            - textbox "First Name" [ref=f2e125]
+            - text: Last Name
+            - textbox "Last Name" [ref=f2e126]
+            - generic [ref=f2e127]: Nickname (required)
+            - textbox "Nickname (required)" [ref=f2e128]: pp-browser
+            - text: Display name publicly as
+            - combobox "Display name publicly as" [ref=f2e129] [cursor=pointer]:
+              - option "pp-browser" [selected]
+            - heading "Contact Info" [level=2] [ref=f2e130]
+            - generic [ref=f2e131]: Email (required)
+            - textbox "Email (required)" [ref=f2e132]: pp-browser@example.test
+            - paragraph [ref=f2e133]:
+              - text: If you change this, an email will be sent at your new address to confirm it.
+              - strong [ref=f2e134]: The new address will not become active until confirmed.
+            - text: Website
+            - textbox "Website" [ref=f2e135]
+            - heading "About Yourself" [level=2] [ref=f2e136]
+            - text: Biographical Info
+            - textbox "Biographical Info" [ref=f2e137]
+            - paragraph [ref=f2e138]: Share a little biographical information to fill out your profile. This may be shown publicly.
+            - text: Profile Picture
+            - paragraph [ref=f2e139]:
+              - link "You can change your profile picture on Gravatar" [ref=f2e140] [cursor=pointer]:
+                - /url: https://gravatar.com/
+              - text: .
+            - heading "Account Management" [level=2] [ref=f2e141]
+            - text: New Password
+            - button "Set New Password" [ref=f2e142] [cursor=pointer]
+            - text:   Sessions
+            - button "Log Out Everywhere Else" [disabled] [ref=f2e144]
+            - paragraph [ref=f2e145]: You are only logged in at this location.
+            - generic [ref=f2e146]:
+              - heading "Application Passwords" [level=2] [ref=f2e147]
+              - paragraph [ref=f2e148]: Application passwords allow authentication via non-interactive systems, such as XML-RPC or the REST API, without providing your actual password. Application passwords can be easily revoked. They cannot be used for traditional logins to your website.
+              - paragraph [ref=f2e149]: The application password feature requires HTTPS, which is not enabled on this site.
+              - paragraph [ref=f2e150]:
+                - text: If this is a development website, you can
+                - link "set the environment type accordingly" [ref=f2e151] [cursor=pointer]:
+                  - /url: https://developer.wordpress.org/apis/wp-config-php/#wp-environment-type
+                - text: to enable application passwords.
+            - paragraph [ref=f2e152]:
+              - button "Update Profile" [ref=f2e153] [cursor=pointer]
+  - contentinfo [ref=f2e154]:
+    - paragraph [ref=f2e155]:
+      - generic [ref=f2e156]:
+        - text: Thank you for creating with
+        - link "WordPress" [ref=f2e157] [cursor=pointer]:
+          - /url: https://wordpress.org/
+        - text: .
+    - paragraph [ref=f2e158]: Version 7.1.2

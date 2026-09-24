@@ -1,0 +1,4 @@
+[     450ms] [LOG] JQMIGRATE: Migrate is installed, version 3.4.1 @ http://127.0.0.1:8347/wp-admin/load-scripts.php?c=0&load%5Bchunk_0%5D=jquery-core,jquery-migrate,utils&ver=7.1.2:4
+[     632ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "username"): (More info: https://goo.gl/9p2vKq) %o @ http://127.0.0.1:8347/wp-admin/admin.php?page=olr-phone-popup:0
+[   82900ms] [LOG] JQMIGRATE: Migrate is installed, version 3.4.1 @ http://127.0.0.1:8347/wp-admin/load-scripts.php?c=1&load%5Bchunk_0%5D=jquery-core,jquery-migrate,utils&ver=7.1.2:4
+[   82987ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "username"): (More info: https://goo.gl/9p2vKq) %o @ http://127.0.0.1:8347/wp-admin/admin.php?page=olr-phone-popup:0

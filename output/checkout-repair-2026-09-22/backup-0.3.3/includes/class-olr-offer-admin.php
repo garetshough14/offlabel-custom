@@ -4,7 +4,6 @@ defined( 'ABSPATH' ) || exit;
 final class OLR_Offer_Admin {
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'menu' ) );
-		add_action( 'admin_notices', array( $this, 'compatibility_notice' ) );
 		add_action( 'admin_post_olr_save_best_offer', array( $this, 'save_settings' ) );
 		add_action( 'admin_post_olr_save_live_best_offer', array( $this, 'save_live_settings' ) );
 		add_action( 'woocommerce_product_options_general_product_data', array( $this, 'product_fields' ) );
@@ -15,16 +14,10 @@ final class OLR_Offer_Admin {
 	public function menu() {
 		add_submenu_page( 'woocommerce', 'Off Label Pricing', 'Off Label Pricing', 'manage_woocommerce', 'olr-best-offer', array( $this, 'page' ) );
 	}
-	public function compatibility_notice() {
-		if ( ! current_user_can( 'manage_woocommerce' ) || ! OLR_Best_Offer::live_requested() ) { return; }
-		$errors = OLR_Best_Offer::compatibility_errors();
-		if ( ! $errors ) { return; }
-		echo '<div class="notice notice-error"><p><strong>Off Label checkout is paused.</strong> ' . esc_html( implode( ' ', $errors ) ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=olr-best-offer' ) ) . '">Review Off Label Pricing</a></p></div>';
-	}
 	public function page() {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) { return; }
 		echo '<div class="wrap"><h1>Off Label Pricing</h1>';
-		echo '<p>Disabled by default. Supports stable WooCommerce 11.1.x maintenance releases, Build Your Box 1.3.3/1.3.4/1.3.5, Advanced Cart Offers 1.1.0 and ELEX 1.3.2. Test compatibility before upgrading to another WooCommerce release series. Keep Checkout 1.4.4 and your other plugins installed.</p>';
+		echo '<p>Disabled by default. Targets WooCommerce 11.1.0/11.1.1, Build Your Box 1.3.3/1.3.4/1.3.5, Advanced Cart Offers 1.1.0 and ELEX 1.3.2. Keep Checkout 1.4.4 and your other plugins installed.</p>';
 		echo '<p>Environment: <strong>' . esc_html( wp_get_environment_type() ) . '</strong>. WooCommerce: <strong>' . esc_html( defined( 'WC_VERSION' ) ? WC_VERSION : 'not loaded' ) . '</strong>.</p>';
 		if ( 'production' === wp_get_environment_type() ) { $this->production_controls(); $this->live_controls(); echo '</div>'; return; }
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="olr_save_best_offer">';

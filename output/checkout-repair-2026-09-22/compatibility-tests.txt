@@ -1,0 +1,4 @@
+PASS: WooCommerce missing remains blocked.
+
+ked.
+hout blocking checkout.
