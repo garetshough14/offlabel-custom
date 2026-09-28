@@ -163,6 +163,17 @@
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__intro { max-width: none !important; margin: 0 0 1rem !important; border-top: 1px solid var(--olr-line) !important; padding-top: .85rem !important; color: var(--olr-ink) !important; font-size: .72rem !important; line-height: 1.55 !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__intro > :last-child { margin-bottom: 0 !important; }
 
+/* Explicit product contents remain separate from the hidden catalog descriptions. */
+.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__contents {
+  margin: 0 0 1.3rem !important;
+  color: var(--olr-ink) !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+}
+.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__contents p { margin: 0 0 .65rem !important; padding: 0 !important; }
+.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__contents ul { margin: 0 !important; padding: 0 0 0 1.25rem !important; list-style: disc outside !important; }
+.olr-gitpress-site[data-olr-page="product-detail"] .olr-product-view__contents li { margin: 0 0 .2rem !important; padding: 0 !important; line-height: inherit !important; }
+
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-volume-pricing > p { display: block !important; margin: .8rem 0 .55rem !important; color: var(--olr-ink) !important; font-size: .64rem !important; line-height: 1.3 !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-volume-pricing > p strong { display: block !important; font-weight: 700 !important; letter-spacing: .08em !important; text-transform: uppercase !important; }
 .olr-gitpress-site[data-olr-page="product-detail"] .olr-volume-pricing > p span { display: block !important; }

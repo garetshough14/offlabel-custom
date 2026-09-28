@@ -316,7 +316,7 @@ add_action(
 				'olr-product-record',
 				'https://cdn.jsdelivr.net/gh/garetshough14/offlabel-custom@main/styles-product.css',
 				array(),
-				'20260901.1'
+				'20260928.1'
 			);
 
 			wp_enqueue_script(
@@ -796,6 +796,24 @@ if ( ! function_exists( 'olr_render_product_record' ) ) {
 				<p class="olr-label">Off Label Research</p>
 				<h1 id="olr-product-title-<?php echo esc_attr( (string) $product_id ); ?>"><?php echo esc_html( $product->get_name() ); ?></h1>
 				<p class="olr-product-view__ruo">Research use only</p>
+				<?php if ( 'lipo-pure' === $product->get_slug() ) : ?>
+					<div class="olr-product-view__contents">
+						<p><strong>Lipo-C contents per mL:</strong></p>
+						<ul>
+							<li>B5 (Dexpanthenol) 25mg</li>
+							<li>B6 (Pyridoxine) 25mg</li>
+							<li>B12 (Methyl cobalamin) 1mg</li>
+							<li>L-Arginine 20mg</li>
+							<li>L-Carnitine 50mg</li>
+							<li>L-Methionine 25mg</li>
+							<li>L-Inositol 50mg</li>
+							<li>Choline Chloride 50mg</li>
+							<li>Lidocaine 1%</li>
+							<li>Benzyl Alcohol (as preservative) 1%</li>
+							<li>Sterile water</li>
+						</ul>
+					</div>
+				<?php endif; ?>
 				<?php if ( '' !== $variation_attribute_name && ! empty( $variation_attribute_values ) ) : ?>
 					<fieldset class="olr-strength-selector" data-olr-variation-control data-attribute-name="attribute_<?php echo esc_attr( sanitize_title( $variation_attribute_name ) ); ?>">
 						<legend><?php esc_html_e( 'Strength / Amount', 'offlabel-research' ); ?></legend>

@@ -181,6 +181,8 @@ GitPress Managed renders the global header, the selected page body, and the glob
 
 Install `gitpress/woocommerce-bridge.php` through Code Snippets, a child theme, or `mu-plugins`.
 
+The product record shows the supplied Lipo-C contents list only for Lipo Pure (`lipo-pure`), below its title and research-use label. Other product descriptions remain hidden. Deploy the updated bridge, `styles-product.css`, and `gitpress/pages/product.html` together for this exception; the existing Production Rollout description-hiding rules remain compatible.
+
 The bridge allowlists the WooCommerce and Off Label Research shortcodes used by these page fragments, including the live research catalog, isolated single-product output, categories, cart, checkout, account, document archive, and cart count output. It does not alter native singular product pages, and it does not add, remove, or configure payment gateways. WooCommerce remains responsible for products, prices, inventory, customers, carts, checkout, orders, shipping, taxes, and the site's existing payment methods.
 
 The bridge adds scoped responsive body classes to the existing Contact, Shipping, Returns, Terms, Privacy, and Research Use Policy pages. Their WordPress content and URLs remain unchanged; the shared stylesheet provides the responsive canvas, typography, forms, tables, and embedded-content constraints.
