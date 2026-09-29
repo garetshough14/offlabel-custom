@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Off Label Account Hub
  * Description: Unified Ultimate Member, WooCommerce, and Ultimate Affiliate Pro account experience for Off Label Research.
- * Version: 1.2.4
+ * Version: 1.2.7
  * Author: Off Label Research
  * Text Domain: off-label-account-hub
  * Requires Plugins: ultimate-member, woocommerce
@@ -15,9 +15,11 @@ require_once __DIR__ . '/includes/class-olr-affiliate-coupons.php';
 require_once __DIR__ . '/includes/class-olr-affiliate-flows.php';
 require_once __DIR__ . '/includes/class-olr-store-credit.php';
 require_once __DIR__ . '/includes/class-olr-order-tracking.php';
+require_once __DIR__ . '/includes/class-olr-taxbandits-pdf.php';
+require_once __DIR__ . '/includes/class-olr-taxbandits-sandbox.php';
 
 final class OLR_Account_Hub {
-	const VERSION                  = '1.2.4';
+	const VERSION                  = '1.2.7';
 	const ACCOUNT_SLUG             = 'account';
 	const AFFILIATE_SLUG           = 'affiliate';
 	const GUIDELINES_SLUG          = 'affiliate-guidelines';
@@ -60,6 +62,7 @@ final class OLR_Account_Hub {
 		OLR_Affiliate_Flows::boot();
 		OLR_Store_Credit::boot();
 		OLR_Order_Tracking::boot();
+		OLR_TaxBandits_Sandbox::boot();
 		add_action( 'template_redirect', array( $this, 'route_account_requests' ), 5 );
 		add_filter( 'uap_filter_on_load_template', array( $this, 'uap_template_override' ), 100, 2 );
 		// Payment details belong to each hub Zelle request, not UAP's retired settings form.

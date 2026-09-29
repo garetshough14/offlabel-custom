@@ -1,5 +1,7 @@
 # W-9 setup for offlabelresearch.com
 
+**Update, September 14, 2026:** WordPress.com support confirmed that this hosting does not provide persistent private storage outside the public root. Do not repeat the support request below or attempt its filesystem configuration on this site. The user has chosen to evaluate TaxBandits and created a sandbox account. Follow [TAXBANDITS-SANDBOX.md](TAXBANDITS-SANDBOX.md) instead. The older investigation below is retained as background and guidance for compatible hosting only.
+
 The live Affiliate Management page was checked on September 8, 2026 (Pacific time). It reports missing `OLR_AFFILIATE_PRIVATE_DIR` and `OLR_AFFILIATE_W9_KEY_FILE` constants. The hosting dashboard shows WordPress.com Business, PHP 8.4, SFTP enabled and SSH disabled. No live configuration was changed.
 
 That error occurs before the Sodium check. It means the document location and encryption-key file have not been connected to the plugin; it does not mean all three checks failed.

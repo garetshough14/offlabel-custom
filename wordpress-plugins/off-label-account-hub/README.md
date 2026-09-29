@@ -1,4 +1,18 @@
-# Off Label Account Hub 1.2.4
+# Off Label Account Hub 1.2.7
+
+## Encrypted sandbox PDF viewing (1.2.7)
+
+Add the four TaxBandits PDF values under **Affiliate Management > TaxBandits sandbox setup > 1b. Encrypted PDF access**: AWS AccessKey, AWS SecretKey, Base64Key and S3 Bucket Name. These come from TaxBandits, not a personal AWS account. **View completed W-9** now supports the private `pdfs/.../FormW9/...pdf` reference returned by the real sandbox. It uses signed SSE-C GetObject requests and passes the PDF to the administrator from memory with no-store headers. No document is written to WordPress storage. Existing credentials and tests are preserved; sandbox-only approval remains isolated from real payouts. See [setup instructions](TAXBANDITS-SANDBOX.md).
+
+## Completed sandbox W-9 review (1.2.6)
+
+Version 1.2.6 added **View completed W-9** with exact submission checks and HTTPS PDF viewing, replacing the incorrect direction to find documents in the developer console. Version 1.2.7 adds encrypted-PDF retrieval through the provider credentials described above.
+
+## TaxBandits sandbox onboarding (1.2.5)
+
+In **Ultimate Affiliate Pro > Affiliate Management > TaxBandits sandbox setup**, enter the three sandbox API credentials, test authentication, prepare a sample business, and generate a hosted test W-9. Complete the synthetic form, check its status, use **View completed W-9**, and record a test approval or replacement request in WordPress. See [TAXBANDITS-SANDBOX.md](TAXBANDITS-SANDBOX.md) for the steps.
+
+This is an administrator-only sandbox integration. It cannot approve real members or enable payouts, and contains no live API switch. It stores no W-9 PDFs or tax IDs in WordPress. Credentials and test-form links are encrypted using host-configured WordPress AUTH_KEY and AUTH_SALT; no database-secret fallback is permitted. A salt change requires credentials to be re-entered. The existing production payout readiness gate remains unchanged. Member-facing production collection is a subsequent integration after the real sandbox account has been tested and TaxBandits grants production access.
 
 ## Desktop menu correction (1.2.4)
 
@@ -65,7 +79,7 @@ Members choose conversion; earnings are never automatically converted. Credit ha
 No staging site is required for these instructions. Local test coverage and its remaining limits are recorded in the release QA report. This ZIP does not install itself or enable payouts.
 
 1. Back up the database and current plugin. Before upgrading, reconcile any existing native UAP pending payments and wallet coupons against transfers already sent. Do not mark previously sent funds unpaid. New payouts remain blocked while native UAP payment records have pending status; native payout administration is replaced after upgrade.
-2. Upload `off-label-account-hub-v1.2.4.zip` as an update to the existing Account Hub plugin. The installed main file must be `wp-content/plugins/off-label-account-hub/off-label-account-hub.php` with exactly one plugin directory level. Keep Ultimate Member, UAP, WooCommerce and existing checkout plugins installed.
+2. Upload `off-label-account-hub-v1.2.7.zip` as an update to the existing Account Hub plugin. The installed main file must be `wp-content/plugins/off-label-account-hub/off-label-account-hub.php` with exactly one plugin directory level. Keep Ultimate Member, UAP, WooCommerce and existing checkout plugins installed.
 3. Keep the existing `/account/` page assigned in Ultimate Member. Its GitPress content remains:
 
    `[divi_github_content owner="garetshough14" repo="offlabel-custom" path="gitpress/pages/account.html" branch="main" format="html" updated_meta="false"]`
@@ -79,7 +93,7 @@ No staging site is required for these instructions. Local test coverage and its 
 
 ### Private W-9 configuration
 
-**WordPress.com hosting:** the live site's current error identifies missing `OLR_AFFILIATE_PRIVATE_DIR` and `OLR_AFFILIATE_W9_KEY_FILE` definitions; this does not establish a Sodium failure. WordPress.com documents Sodium and Fileinfo as available and allows `wp-config.php` editing through SFTP. Its documentation does not establish an available persistent directory outside the public root for this site. First obtain host confirmation of suitable storage and key paths; do not paste the example paths below unchanged. See [W9-HOSTING-SETUP.md](W9-HOSTING-SETUP.md) for the exact support request and completion steps.
+**WordPress.com hosting:** support has confirmed that persistent storage outside the public document root is unavailable for this site. The filesystem implementation below cannot be configured there. Version 1.2.6 adds a separate TaxBandits sandbox connection for testing provider-hosted collection; it does not yet replace production member collection. See [TAXBANDITS-SANDBOX.md](TAXBANDITS-SANDBOX.md). Keep the example paths below for compatible hosts only.
 
 Have the host create separate private storage and secrets directories outside the document root, owned by the PHP service account. Recommended permissions are 0700 for directories and 0600 for files (or equivalent restricted ACLs). Neither location may have a public web-server alias or CDN mapping. If the host cannot provide this, leave payouts disabled; do not substitute `wp-content/uploads`.
 

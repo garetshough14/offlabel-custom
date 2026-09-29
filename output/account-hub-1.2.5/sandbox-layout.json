@@ -1,0 +1,34 @@
+[
+  {
+    "width": 320,
+    "overflow": [],
+    "nested": false,
+    "nonces": true,
+    "blankSecrets": true,
+    "passwordFields": 3
+  },
+  {
+    "width": 375,
+    "overflow": [],
+    "nested": false,
+    "nonces": true,
+    "blankSecrets": true,
+    "passwordFields": 3
+  },
+  {
+    "width": 768,
+    "overflow": [],
+    "nested": false,
+    "nonces": true,
+    "blankSecrets": true,
+    "passwordFields": 3
+  },
+  {
+    "width": 1280,
+    "overflow": [],
+    "nested": false,
+    "nonces": true,
+    "blankSecrets": true,
+    "passwordFields": 3
+  }
+]

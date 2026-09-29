@@ -30,6 +30,7 @@ with zipfile.ZipFile(target) as bundle:
     assert bundle.namelist() == [name for _, name in files]
     for required in ('off-label-account-hub.php', 'includes/class-olr-affiliate-service.php',
                      'includes/class-olr-affiliate-coupons.php',
+                     'includes/class-olr-taxbandits-sandbox.php', 'includes/class-olr-taxbandits-pdf.php', 'TAXBANDITS-SANDBOX.md',
                      'includes/class-olr-affiliate-flows.php', 'includes/class-olr-store-credit.php',
                      'includes/class-olr-order-tracking.php', 'templates/member-dashboard.php',
                      'assets/account-hub.css', 'assets/store-credit.css', 'assets/fonts/BebasNeue-Regular.ttf', 'assets/fonts/OFL.txt', 'README.md'):
